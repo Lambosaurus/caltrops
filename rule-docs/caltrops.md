@@ -87,18 +87,47 @@ The cost to increase a skill score by `1` increases every `2` increases, but doe
 
 # Equipment
 
-
+// TODO
 
 # Wounds
 
+Players are given `5` wound slots.
+
+When a wound is dealt, it occupies one or more wound slots, depending on the size of the wound.
+
+| Description | Size |
+| ----------- | ---- |
+| Minor       | 1    |
+| Major       | 2    |
+
+Wound size is capped at `2`. Any additional wound size is truncated.
+
+> Optionally, the wound size cap may be increased to 3: Mortal.
+
+The wound should be recorded in the taken slots, along with a description.
+
 > The setting may decrease the wound slots to `4` for a grittier game.
+
+## Treating wounds
+
+// TODO
 
 # Powers
 
+Powers are a special class of [skills](#skills). A skill corresponding to the power should be included in the skills table.
+
+> For magic, consider making skills for each school, such as pyromancy, cryomancy, ect.
+
+> Power skills should not be used in checks by those who do not have a score of at least `1`.
+
+> It may be extremely advantageous for players to get a single point in multiple powers. Currently there is not mechanism to discourage this, except for the DM.
+
+// TODO.
+// Describe using powers.
 
 # **Settings**
 
-
+// TODO
 
 # **Checks**
 
@@ -120,9 +149,9 @@ Flat checks have a pre-determined threshold for success. The reccommended thresh
 
 | Difficulty | Threshold |
 | ---------- | --------- |
-| Moderate   | 1 |
-| Difficult  | 2 |
-| Extreme    | 3 |
+| Moderate   | 1         |
+| Difficult  | 2         |
+| Extreme    | 3         |
 
 > Easy actions should not require a roll
 
@@ -259,8 +288,9 @@ In this event, the [contested check](#contested-checks) still proceeds, but the 
 
 # **Foes**
 
-Foes do not require complex stat blocks - merely a single strength value.
+Foes do not require complex stat blocks - merely a [strength value](#foe-strength) and [wound count](#foe-strength).
 
+## Foe Strength
 The strength value is the number of dice they roll in [combat](#combat).
 
 > In combat, their dice may be modified with [Bonuses](#bonuses) by the DM.
@@ -280,3 +310,12 @@ Reference strength values are listed below:
 
 > Because combat is broken into [combat groups](#combat-groups), is is trivial to run swarm enemies. Allow excess wounds to kill multiple foes in the swarm.
 
+## Foe wounds
+
+Most foes should be given `1` [wound slot](#wounds), and die upon taking a single wound.
+
+Large or important creatures may be given multiple wounds.
+
+# Pause
+
+// TODO
