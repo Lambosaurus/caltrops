@@ -136,6 +136,18 @@ Contested checks involve a player rolling against a [Foe](#foes). The DM will ro
 
 The side with the highest number of successes wins. Equal successes represents an impasse.
 
+# Group checks
+
+Groups checks are modifications to [flat](#flat-checks) or [contested](#contested-checks) checks, where multiple members are involved in either side.
+
+Players may be assigned different skills, aspects or bonuses, depending on how they are contributing to the check.
+
+The players sum their total successes.
+
+In the case of a flat group check, the success threshold should be multiplied by the number of players.
+
+> For example, an easy check with 3 players requires 3 total successes (on average 1 success each).
+
 # Converting failures to wounds
 
 In the case of a check failure, the DM may opt do deal a [Wound](#wounds) to the player.
@@ -145,6 +157,10 @@ The size of the wound increases for each missing success.
 In the case of contested checks, extra successes will deal wounds to the [Foe](#foes).
 
 > The DM should always use their judgement when converting failures into wounds. For example: a ranged attacker is unlikely to recieve damage for failing to hit his mark.
+
+In the case of a group check, assign the wounds considering:
+* The player targeted by the foes
+* The player with the least number of successes
 
 # Aspect and skill selection
 
@@ -184,12 +200,83 @@ Outside of [combat](#combat), checks should never be repeated by players.
 
 > Having multiple players attempt the same check creates a disproportionate chance of success, and enables them to brute force problems.
 
-Once an attempt has been made to overcome an obstacle.
-
 > Failure does not represent a momentary failure, but rather the players incapability of overcoming the problem.
 
+Once an attempt has been made to overcome an obstacle, there shall be no more attempts, even by other party members.
 
-# Group checks
+To make a new attempt, they players should come up with a new approach, such as breaking down a door after failing to pick the lock.
+
+> As an optional rule: the DM may allow players to reroll checks - but they take exhaustion as a [Wound](#wounds) whether they succeed of fail.
+
+> Note: Because failure is common, it is very easy for players to fail important checks - disrupting the flow of the session. A failed roll may mean that the players succeed their goal, but have negative side effects, such as taking a [Wound](#wounds) instead.
+
+## Retries with bonuses:
+Players may fail a check, and afterwards come up with several methods with which to improve their odds via [Bonuses](#bonuses).
+
+The DM **may** allow them to roll the newly gained bonus dice. They should not reroll the entire dice pool.
+
+# **Combat**
+
+Combat is handled in successive rounds where, where in each round, players act simultaneously.
+
+A round consists of the following steps:
+1. The DM describes the situation, including the apparent actions of any [Foes](#foes).
+2. The players may deliberate on their actions.
+3. The players describe their actions to the DM.
+4. The DM breaks the combat into indivisible [combat groups](#combat-groups)
+5. Each [combat group](#combat-groups) is individually resolved as a [contested](#contested-checks) [group](#group-checks) check.
+
+> In most cases, a round of combat is resolved by [dealing wounds](#converting-failures-to-wounds).
+
+## Combat groups
+
+Players and foes that are interracting in combat should be subdivided into the smallest possible groups. Units that are interracting must be in the same group.
+
+> For example, consider the following scenario:
+> * Foe[1] attacks Player[1]
+> * Foe[2] attacks Player[2]
+> * Foe[3] attacks Player[2]
+>
+> The groups are:
+> * Foe[1] vs Player[1]
+> * Foe[2] + Foe[3] vs Player[2]
+
+## Overwhelming force
+
+If a player wields overwhelming force (such as pushing a rock onto foes, using explosives, or magic), then they can be rewarded by allowing a [foe](#foes) to be killed with a single success, bypassing the foes roll.
+
+> This is effectively converting the check into an easy flat check.
+
+If the player fails, the foes roll should still be considered.
+
+## Uncontested attacks
+
+If a player (or foe) is the target of attacks, but cannot use their action to evade or mitigate the attack, then the attack is uncontested.
+
+In this event, the [contested check](#contested-checks) still proceeds, but the target does not roll - their score is automatically `0`.
+
+> This is effectively converting the check into an easy flat check.
 
 # **Foes**
+
+Foes do not require complex stat blocks - merely a single strength value.
+
+The strength value is the number of dice they roll in [combat](#combat).
+
+> In combat, their dice may be modified with [Bonuses](#bonuses) by the DM.
+>
+> The DM should prefer to modify the players dice rather than the foes, as this provides clear feedback to the players.
+
+Reference strength values are listed below:
+
+| Strength | Difficulty  |
+| -------- | ----------- |
+| 1        | Swarm critter |
+| 3        | Easy        |
+| 5        | Moderate    |
+| 8        | Difficult   |
+
+> Consider that most players will contriute ~5 dice to a contested check at low levels.
+
+> Because combat is broken into [combat groups](#combat-groups), is is trivial to run swarm enemies. Allow excess wounds to kill multiple foes in the swarm.
 
