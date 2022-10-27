@@ -93,6 +93,8 @@ The cost to increase a skill score by `1` increases every `2` increases, but doe
 
 Players are given `5` wound slots.
 
+> The setting may decrease the wound slots to `4` for a grittier game.
+
 When a wound is dealt, it occupies one or more wound slots, depending on the size of the wound.
 
 | Description | Size |
@@ -104,13 +106,38 @@ Wound size is capped at `2`. Any additional wound size is truncated.
 
 > Optionally, the wound size cap may be increased to 3: Mortal.
 
-The wound should be recorded in the taken slots, along with a description.
+The wound should be recorded in the taken slots, along with a description provided by the DM.
 
-> The setting may decrease the wound slots to `4` for a grittier game.
+When a wound is applied that cannot fit in the provided wound slots - then the player is killed.
+
+> Wounds may be any kind of affliction, not just damage from creatures. This could include diseases, poisoning, exhaustion, or even psychological damage.
+
+> The DM is encouraged to use wounds as a status effect - such as a broken hand preventing the use of the players hand.
 
 ## Treating wounds
 
-// TODO
+The treatment of wounds can be performed by players. This should be done with an appropriate [check](#checks).
+
+> Typically a medicine [skill](#skills) is provided by the setting for this purpose.
+
+> The use of appropriate [equipment](#equipment) should typically be required by the DM, such as bandages.
+
+If the treatment is a success, then the wound size is reduced by `1`. Once treatment has ben attempted (success or fail), the wound becomes [locked](#locked-wounds).
+
+> For example, on success:
+> * A major wound becomes a locked minor wound
+> * A minor wound is removed
+
+Treating wounds should require [passage of time](#passage-of-time).
+
+## Locked wounds
+
+A locked wound occupies a wound slot - chipping away at the players health pool.
+
+These can only be removed by special means. These may include:
+ * Several days of bed rest
+ * Treatment by a specialist healer
+ * Treatment with a difficult to acquire item
 
 # Powers
 
@@ -316,6 +343,6 @@ Most foes should be given `1` [wound slot](#wounds), and die upon taking a singl
 
 Large or important creatures may be given multiple wounds.
 
-# Pause
+# Passage of time
 
 // TODO
