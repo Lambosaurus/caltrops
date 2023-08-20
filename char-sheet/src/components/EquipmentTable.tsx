@@ -5,12 +5,11 @@ import { useState } from 'react'
 import PointEntryBox from './PointEntryBox'
 import IconButton from './IconButton'
 import EquipmentSelectModal from './EquipmentSelectModal'
-import TextEntryBox from './TextEntryBox'
 
 // Internal imports
 import { Equipment, Container, SheetEquipment, Sheet } from '../lib/rules'
 import caltrops from '../lib/caltrops'
-import { EditMode, modifyObject } from '../lib/util'
+import { EditMode, modifyObject, Modifier, keyModifier } from '../lib/util'
 
 /* 
  * Equipment table.
@@ -23,7 +22,7 @@ function EquipmentTable({equipment, container, items, setItems, editable=EditMod
     equipment: Equipment[],
     container: Container,
     items: SheetEquipment[],
-    setItems(items: SheetEquipment[]): void,
+    setItems(cb: Modifier<SheetEquipment[]>): void,
     editable?: EditMode
   }): JSX.Element {
 
@@ -41,19 +40,23 @@ function EquipmentTable({equipment, container, items, setItems, editable=EditMod
       item.count = 1
       item.stack = equipment.stack
     }
-    setItems([...items, item])
+    setItems(items => [...items, item])
   }
 
   function editItem(index: number, item: SheetEquipment) {
-    let new_items = [...items]
-    new_items[index] = item
-    setItems(new_items)
+    setItems(items => {
+      let new_items = [...items]
+      new_items[index] = item
+      return new_items
+    })
   }
 
   function removeItem(index: number) {
-    let new_items = [...items]
-    new_items.splice(index, 1)
-    setItems(new_items)
+    setItems(items => {
+      let new_items = [...items]
+      new_items.splice(index, 1)
+      return new_items
+    })
   }
 
   return (

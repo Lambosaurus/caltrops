@@ -3,7 +3,7 @@ import PointEntryBox from './PointEntryBox'
 
 // Internal imports
 import caltrops from '../lib/caltrops'
-import { modifyObject, EditMode } from '../lib/util'
+import { modifyObject, EditMode, Modifier, keyModifier } from '../lib/util'
 import { Attribute, Dictionary, RollInfo } from '../lib/rules'
 
 /* 
@@ -16,7 +16,7 @@ import { Attribute, Dictionary, RollInfo } from '../lib/rules'
 function AttributeTable({attributes, scores, setScores, aspectMax, editable=EditMode.Live, roll, setRoll}: {
     attributes: Attribute[],
     scores: Dictionary<number>,
-    setScores(scores: Dictionary<number>): void,
+    setScores(cb: Modifier<Dictionary<number>>): void,
     aspectMax: number,
     editable?: EditMode,
     roll: RollInfo,
@@ -58,7 +58,7 @@ function AttributeTable({attributes, scores, setScores, aspectMax, editable=Edit
                   <div className='text-center'>{attribute.name}</div>
                   <PointEntryBox
                     value={base}
-                    setValue={v => { setScores(caltrops.attributeModify(scores, attribute, v)) }}
+                    setValue={v => {setScores(scores => caltrops.attributeModify(scores, attribute, v)) }}
                     editable={editable >= EditMode.Full}
                     min={caltrops.attributeMin}
                     max={caltrops.attributeMax}
@@ -83,7 +83,7 @@ function AttributeTable({attributes, scores, setScores, aspectMax, editable=Edit
                         <td className={`w-24 ${bg}`}>{aspect.name}</td>
                         <td className={bg}><PointEntryBox
                           value={scores[aspect.name] ?? 0}
-                          setValue={v => setScores(modifyObject(scores, aspect.name, v))}
+                          setValue={v => setScores( keyModifier(aspect.name, name => v) )}
                           editable={editable >= EditMode.Full}
                           min={base}
                           max={caltrops.aspectMax(base)}

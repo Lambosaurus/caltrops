@@ -13,7 +13,7 @@ import NotesTable from './NotesTable'
 import CurrencyTable from './CurrencyTable'
 
 // Internal imports
-import { modifyObject, EditMode } from '../lib/util'
+import { EditMode, Modifier, keyModifier } from '../lib/util'
 import caltrops from '../lib/caltrops'
 import { RollInfo, Rules, Sheet } from '../lib/rules'
 
@@ -24,7 +24,7 @@ import { RollInfo, Rules, Sheet } from '../lib/rules'
 function SheetView( { rules, sheet, setSheet, editable=EditMode.Live }: {
     rules: Rules,
     sheet: Sheet,
-    setSheet(sheet: Sheet): void,
+    setSheet( cb: Modifier<Sheet> ): void,
     editable?: EditMode
   }): JSX.Element {
 
@@ -37,19 +37,19 @@ function SheetView( { rules, sheet, setSheet, editable=EditMode.Live }: {
         <section className='flex gap-4 flex-col'>
           <InfoTable
             info={sheet.info}
-            setInfo={info => {setSheet(modifyObject(sheet, 'info', info))}}
+            setInfo={cb => setSheet(keyModifier('info', cb))}
             editable={editable}
           />
           <CurrencyTable
             currencies={rules.currency}
             values={sheet.currency}
-            setValues={currency => {setSheet(modifyObject(sheet, 'currency', currency))}}
+            setValues={cb => setSheet(keyModifier('currency', cb))}
             editable={editable}
           />
           <AttributeTable
             attributes={rules.attributes}
             scores={sheet.attributes}
-            setScores={scores => {setSheet(modifyObject(sheet, 'attributes', scores))}}
+            setScores={cb => setSheet(keyModifier('attributes', cb))}
             aspectMax={caltrops.aspectTotalMax(rules, sheet.info.level)}
             editable={editable}
             roll={roll}
@@ -62,7 +62,7 @@ function SheetView( { rules, sheet, setSheet, editable=EditMode.Live }: {
           <SkillTable
             skills={rules.skills}
             scores={sheet.skills}
-            setScores={scores => {setSheet(modifyObject(sheet, 'skills', scores))}}
+            setScores={cb => setSheet(keyModifier('skills', cb))}
             maxCostTotal={caltrops.skillCostMax(rules, sheet.info.level)}
             editable={editable}
             roll={roll}
@@ -79,7 +79,7 @@ function SheetView( { rules, sheet, setSheet, editable=EditMode.Live }: {
               container={container}
               items={sheet.equipment[container.name] ?? []}
               editable={editable}
-              setItems={items => {setSheet(modifyObject(sheet, 'equipment', modifyObject(sheet.equipment, container.name, items)))}}
+              setItems={cb => {setSheet( keyModifier('equipment', keyModifier( container.name, cb )) )}}
               key={`equipment-${container.name}-table`}
           />
           } )
@@ -96,7 +96,7 @@ function SheetView( { rules, sheet, setSheet, editable=EditMode.Live }: {
                 powers={availablePowers}
                 powerDice={sheet.powers}
                 skillScores={sheet.skills}
-                setPowerDice={scores => {setSheet(modifyObject(sheet, 'powers', scores))}}
+                setPowerDice={cb => setSheet(keyModifier('powers', cb))}
                 editable={editable}
                 key='power-table'
               /> :
@@ -108,7 +108,7 @@ function SheetView( { rules, sheet, setSheet, editable=EditMode.Live }: {
             <WoundTable
               key={w.name}
               wounds={sheet.wounds[w.name] || []}
-              setWounds={wounds => {setSheet(modifyObject(sheet, 'wounds', modifyObject(sheet.wounds, w.name, wounds)))}}
+              setWounds={cb => {setSheet( keyModifier('wounds', keyModifier( w.name, cb )) )}}
               container={w}
               woundSizeLimit={rules.woundSizeLimit}
               editable={editable}
@@ -120,7 +120,7 @@ function SheetView( { rules, sheet, setSheet, editable=EditMode.Live }: {
         <section className='flex gap-4 flex-col'>
           <NotesTable
             notes={sheet.notes}
-            setNotes={notes => setSheet(modifyObject(sheet, 'notes', notes))}
+            setNotes={cb => setSheet(keyModifier('notes', cb))}
             editable={editable}
           />
         </section>

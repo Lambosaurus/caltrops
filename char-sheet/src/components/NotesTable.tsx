@@ -2,7 +2,7 @@
 import IconButton from './IconButton'
 
 // Internal imports
-import { EditMode, modifyObject } from '../lib/util'
+import { EditMode, Modifier } from '../lib/util'
 
 /* 
  * Power table.
@@ -12,22 +12,26 @@ import { EditMode, modifyObject } from '../lib/util'
 
 function NotesTable({notes, setNotes, editable=EditMode.Live}: {
     notes: string[],
-    setNotes(notes: string[]): void,
+    setNotes(cb: Modifier<string[]>): void,
     editable?: EditMode,
   }): JSX.Element {
 
+  console.log("rendering notes")
+
   function createNote() {
-    setNotes([...notes, ""])
+    setNotes(notes => [...notes, ""])
   }
 
   function editNote(index: number, content: string) {
-    let new_notes = [...notes]
-    new_notes[index] = content
-    setNotes(new_notes)
+    setNotes(notes => {
+      let new_notes = [...notes]
+      new_notes[index] = content
+      return new_notes
+    })
   }
 
   function deleteNote(index: number) {
-    setNotes(notes.filter( (_, i) => i !== index ))
+    setNotes(notes => notes.filter( (_, i) => i !== index ))
   }
 
   return (

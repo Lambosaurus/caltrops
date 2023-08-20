@@ -8,7 +8,7 @@ import SheetView from '../components/SheetView'
 import AlertGroup from '../components/AlertGroup'
 
 // Internal imports
-import { EditMode, setTheme } from '../lib/util'
+import { EditMode, setTheme, Modifier } from '../lib/util'
 import caltrops from '../lib/caltrops'
 import { Sheet, Rules } from '../lib/rules'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -119,7 +119,7 @@ function MainPage(): JSX.Element {
     setSheet(sheet)
   }
 
-  function editSheet(sheet: Sheet | null) {
+  function editSheet(sheet: Sheet) {
     if (SAVE_TIMEOUT_ID >= 0) {
       clearTimeout(SAVE_TIMEOUT_ID)
       SAVE_TIMEOUT_ID = -1;
@@ -157,7 +157,7 @@ function MainPage(): JSX.Element {
           <SheetView
             rules={rules}
             sheet={sheet}
-            setSheet={editSheet}
+            setSheet={cb => editSheet(cb(sheet)) }
             editable={editable}
           /> :
           <LoadingSpinner size={100}/>

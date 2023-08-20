@@ -2,7 +2,7 @@
 import PointEntryBox from './PointEntryBox'
 
 // Internal imports
-import { modifyObject, EditMode } from '../lib/util'
+import { EditMode, modifyObject, Modifier, keyModifier } from '../lib/util'
 import caltrops from '../lib/caltrops'
 import { Skill, Dictionary, RollInfo } from '../lib/rules'
 
@@ -17,7 +17,7 @@ import { Skill, Dictionary, RollInfo } from '../lib/rules'
 function SkillTable({skills, scores, setScores, maxCostTotal, editable = EditMode.Live, roll, setRoll}: {
     skills: Skill[],
     scores: Dictionary<number>,
-    setScores(scores: Dictionary<number>): void,
+    setScores(cb: Modifier<Dictionary<number>>): void,
     maxCostTotal: number,
     editable?: EditMode,
     roll: RollInfo,
@@ -58,7 +58,7 @@ function SkillTable({skills, scores, setScores, maxCostTotal, editable = EditMod
                 <td className='text-center'>
                   <PointEntryBox
                     value={value}
-                    setValue={(v) => {setScores(modifyObject(scores, s.name, v))}}
+                    setValue={(v) => {setScores( keyModifier(s.name, _ => v) )}}
                     editable={editable >= EditMode.Full}
                     isCapped={caltrops.skillIncrementCost(value) > sparePoints}
                     encourageUp={true}

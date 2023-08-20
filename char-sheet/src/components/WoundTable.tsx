@@ -10,7 +10,7 @@ import { ImHeartBroken, ImHeart } from 'react-icons/im'
 // Internal imports
 import caltrops from '../lib/caltrops'
 import { SheetWound, Container } from '../lib/rules'
-import { EditMode } from '../lib/util'
+import { EditMode, Modifier } from '../lib/util'
 
 
 /* 
@@ -22,7 +22,7 @@ import { EditMode } from '../lib/util'
  */
 function WoundTable( {wounds, setWounds, container, woundSizeLimit=2, editable=EditMode.Live}: {
     wounds: SheetWound[],
-    setWounds(wounds: SheetWound[]): void,
+    setWounds(wounds: Modifier<SheetWound[]>): void,
     container: Container,
     woundSizeLimit?: number,
     editable?: EditMode
@@ -32,20 +32,23 @@ function WoundTable( {wounds, setWounds, container, woundSizeLimit=2, editable=E
   const [selected, setSelected] = useState(-1)
 
   function addWound(wound: SheetWound) {
-    let new_wounds = [...wounds, wound]
-    setWounds(new_wounds)
+    setWounds(wounds => [...wounds, wound])
   }
 
   function removeWound(index: number) {
-    let new_wounds = [...wounds]
-    new_wounds.splice(index, 1)
-    setWounds(new_wounds)
+    setWounds( wounds => {
+      let new_wounds = [...wounds]
+      new_wounds.splice(index, 1)
+      return new_wounds
+    })
   }
 
   function editWound(index: number, wound: SheetWound) {
-    let new_wounds = [...wounds]
-    new_wounds[index] = wound
-    setWounds(new_wounds)
+    setWounds( wounds => {
+      let new_wounds = [...wounds]
+      new_wounds[index] = wound
+      return new_wounds
+    })
   }
 
   function treatWound(success: boolean) {

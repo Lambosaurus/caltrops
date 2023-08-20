@@ -12,6 +12,12 @@ export enum EditMode {
   Full = 2,
 }
 
+export type Modifier<T> = (input: T) => T;
+
+export function keyModifier<T, K extends keyof T>(key: K, modifier: Modifier<T[K]> ): (obj: T) => T {
+  return (obj) => { return { ...obj, [key]: modifier(obj[key]) }}
+}
+
 /*
  * Returns a new object by cloning the source object and then inserting the specified key
  */
