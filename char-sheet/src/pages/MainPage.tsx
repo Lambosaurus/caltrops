@@ -1,5 +1,5 @@
 // External imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // Components
 import FileUploader from '../components/FileUploader'
@@ -77,7 +77,7 @@ function MainPage(): JSX.Element {
 
   const [rules, setRules] = useState(loadRules)
   const [sheet, setSheet] = useState(loadSheet)
-  const [editable, setEditable] = useState(EditMode.Live);
+  const [editable, setEditable] = useState(EditMode.Live)
   const [token, setToken] = useState(recallToken)
 
   setTheme(rules.theme);
@@ -119,7 +119,7 @@ function MainPage(): JSX.Element {
     setSheet(sheet)
   }
 
-  function editSheet(sheet: Sheet) {
+  useEffect( () => {
     if (SAVE_TIMEOUT_ID >= 0) {
       clearTimeout(SAVE_TIMEOUT_ID)
       SAVE_TIMEOUT_ID = -1;
@@ -138,8 +138,7 @@ function MainPage(): JSX.Element {
         }
       }, AUTO_SAVE_TIMEOUT * 1000)
     }
-    setSheet(sheet)
-  }
+  }, [sheet])
 
   return (
     <FileUploader setFile={s => changeSheet(s)}>
@@ -157,7 +156,7 @@ function MainPage(): JSX.Element {
           <SheetView
             rules={rules}
             sheet={sheet}
-            setSheet={cb => editSheet(cb(sheet)) }
+            setSheet={setSheet as React.Dispatch<React.SetStateAction<Sheet>>}
             editable={editable}
           /> :
           <LoadingSpinner size={100}/>
