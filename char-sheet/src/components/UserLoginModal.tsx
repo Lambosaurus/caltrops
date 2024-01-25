@@ -115,6 +115,7 @@ function RequestTokenModal({open, close}:{
     <input
       className={`input w-full max-w-xs input-bordered input-sm ${email && !isEmail(email) ? 'input-error' : ''}`}
       value={email}
+      type='email'
       onChange={e => setEmail(e.target.value)}
       placeholder="example@email.com"
     />
