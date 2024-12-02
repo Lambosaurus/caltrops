@@ -1,16 +1,24 @@
 // Components
-import IconButton from './IconButton'
+import React, { useEffect, useRef } from 'react';
+import IconButton from './IconButton';
 
 // Internal imports
-import { EditMode } from '../lib/util'
-import ObjectService from '../lib/objectservice'
+import { EditMode } from '../lib/util';
+import ObjectService from '../lib/objectservice';
 
 function NotesTable({service, editable=EditMode.Live}: {
     service: ObjectService,
     editable?: EditMode,
   }): JSX.Element {
 
-  const notes: string[] = service.subscribe()
+  const notes: string[] = service.subscribe();
+
+  const adjustHeight = (textarea: HTMLTextAreaElement | null) => {
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  };
 
   return (
     <div>
@@ -30,8 +38,20 @@ function NotesTable({service, editable=EditMode.Live}: {
                   className='textarea textarea-bordered leading-tight w-full scrollbar scrollbar-neutral p-2'
                   placeholder='Enter notes here'
                   value={note}
-                  onChange={ evt => service.set_index(i, evt.target.value) }
+                  onChange={ evt => {
+                    service.set_index(i, evt.target.value);
+                    adjustHeight(evt.target);
+                  }}
+                  wrap='soft'
+                  style={{
+                    overflow: 'hidden',
+                    resize: 'none',
+                    minHeight: '1em',
+                    maxHeight: '100%'
+                  }}
                   disabled={!(editable >= EditMode.Live)}
+                  ref={(textarea) => adjustHeight(textarea)}
+                  rows={1}
                 />
               </td>
               <td>
@@ -52,7 +72,7 @@ function NotesTable({service, editable=EditMode.Live}: {
               <div className='flex justify-center'>
               <IconButton
                 icon='plus'
-                onClick={() => {service.append_index("")}}
+                onClick={() => {service.append_index('')}}
                 enabled={editable >= EditMode.Live}
               />
               </div>
@@ -64,4 +84,4 @@ function NotesTable({service, editable=EditMode.Live}: {
   )
 }
 
-export default NotesTable
+export default NotesTable;
