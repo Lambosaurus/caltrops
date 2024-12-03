@@ -23,6 +23,7 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
   const items: SheetEquipment[] = service.subscribe([])
   const freeCapacity = container.size ? (container.size - items.length) : 1
   const [modalOpen, setModalOpen] = useState(false)
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
   function addItem(equipment: Equipment) {
     let item: SheetEquipment = {
@@ -60,7 +61,25 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
           items.map((item, i) => {
             return <tr className='hover tooltip tooltip-left w-full' data-tip={lookupDescription(item.name)} key={i}>
               <td className='w-full text-left'>
-                { item.name }
+                {item.custom ? (
+                  editingIndex === i ? (
+                    <input
+                      type='text'
+                      className='input input-bordered w-full'
+                      value={item.name}
+                      onChange={(evt) => {
+                        service.set_index(i, { ...item, name: evt.target.value });
+                      }}
+                      onBlur={() => setEditingIndex(null)}
+                      disabled={!(editable >= EditMode.Live)}
+                      autoFocus
+                    />
+                  ) : (
+                    <span onClick={() => setEditingIndex(i)} className='cursor-pointer'>
+                      {item.name}
+                    </span>
+                  )
+                ) : (item.name)}
               </td>
               <td>
                 <PointEntryBox
