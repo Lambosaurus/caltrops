@@ -1,16 +1,16 @@
 // External imports
-import { useState } from 'react';
+import { useState } from 'react'
 
 // Components
-import PointEntryBox from './PointEntryBox';
-import IconButton from './IconButton';
-import EquipmentSelectModal from './EquipmentSelectModal';
+import PointEntryBox from './PointEntryBox'
+import IconButton from './IconButton'
+import EquipmentSelectModal from './EquipmentSelectModal'
 
 // Internal imports
-import { Equipment, Container, SheetEquipment } from '../lib/rules';
-import caltrops from '../lib/caltrops';
-import { EditMode } from '../lib/util';
-import ObjectService from '../lib/objectservice';
+import { Equipment, Container, SheetEquipment } from '../lib/rules'
+import caltrops from '../lib/caltrops'
+import { EditMode } from '../lib/util'
+import ObjectService from '../lib/objectservice'
 
 function EquipmentTable({ equipment, container, service, editable = EditMode.Live }: {
     equipment: Equipment[],
@@ -19,32 +19,32 @@ function EquipmentTable({ equipment, container, service, editable = EditMode.Liv
     editable?: EditMode
   }): JSX.Element {
 
-  const items: SheetEquipment[] = service.subscribe([]);
-  const freeCapacity = container.size ? (container.size - items.length) : 1;
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const items: SheetEquipment[] = service.subscribe([])
+  const freeCapacity = container.size ? (container.size - items.length) : 1
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
   function addItem(equipment: Equipment) {
     let item: SheetEquipment = {
       name: equipment.name,
     };
     if (equipment.custom) {
-      item.custom = true;
+      item.custom = true
     }
     if (equipment.stack) {
-      item.count = 1;
-      item.stack = equipment.stack;
+      item.count = 1
+      item.stack = equipment.stack
     }
-    service.append_index(item);
+    service.append_index(item)
   }
 
   function lookupDescription(name: string): string {
     for (let item of equipment) {
       if (item.name === name) {
-        return item.description ?? name;
+        return item.description ?? name
       }
     }
-    return name;
+    return name
   }
 
   return (
@@ -128,7 +128,7 @@ function EquipmentTable({ equipment, container, service, editable = EditMode.Liv
         addEquipment={addItem}
       />
     </div>
-  );
+  )
 }
 
 export default EquipmentTable;

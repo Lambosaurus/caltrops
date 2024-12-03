@@ -1,22 +1,22 @@
 // Components
-import React, { useEffect, useRef } from 'react';
-import IconButton from './IconButton';
+import React, { useEffect, useRef } from 'react'
+import IconButton from './IconButton'
 
 // Internal imports
-import { EditMode } from '../lib/util';
-import ObjectService from '../lib/objectservice';
+import { EditMode } from '../lib/util'
+import ObjectService from '../lib/objectservice'
 
 function NotesTable({service, editable=EditMode.Live}: {
     service: ObjectService,
     editable?: EditMode,
   }): JSX.Element {
 
-  const notes: string[] = service.subscribe();
+  const notes: string[] = service.subscribe()
 
   const adjustHeight = (textarea: HTMLTextAreaElement | null) => {
     if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
+      textarea.style.height = 'auto'
+      textarea.style.height = `${textarea.scrollHeight}px`
     }
   };
 
@@ -39,13 +39,12 @@ function NotesTable({service, editable=EditMode.Live}: {
                   placeholder='Enter notes here'
                   value={note}
                   onChange={ evt => {
-                    service.set_index(i, evt.target.value);
-                    adjustHeight(evt.target);
+                    service.set_index(i, evt.target.value)
+                    adjustHeight(evt.target)
                   }}
                   wrap='soft'
                   style={{
                     overflow: 'hidden',
-                    resize: 'none',
                     minHeight: '1em',
                     maxHeight: '100%'
                   }}
@@ -84,4 +83,4 @@ function NotesTable({service, editable=EditMode.Live}: {
   )
 }
 
-export default NotesTable;
+export default NotesTable
