@@ -11,6 +11,7 @@ import { Equipment, Container, SheetEquipment } from '../lib/rules'
 import caltrops from '../lib/caltrops'
 import { EditMode } from '../lib/util'
 import ObjectService from '../lib/objectservice'
+import TextEntryBox from './TextEntryBox'
 
 
 function EquipmentTable({equipment, container, service, editable=EditMode.Live}: {
@@ -59,13 +60,23 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
         {
           items.map((item, i) => {
             return <tr className='hover tooltip tooltip-left w-full' data-tip={lookupDescription(item.name)} key={i}>
-              <td className='w-full text-left'>
-                { item.name }
-              </td>
+              {
+                editable >= EditMode.Full && item.custom ?
+                <td className='w-full text-left py-0 px-0'>
+                  <TextEntryBox
+                    value={item.name}
+                    setValue={ v => service.set_index(i, {...item, name: v} ) }
+                    placeholder='item name'
+                  />
+                </td> :
+                <td className='w-full text-left'>
+                  { item.name }
+                </td>
+              }
               <td>
                 <PointEntryBox
                   value={item.count ?? 0}
-                  setValue={ v => { service.set_index(i, {...item, count: v}) } }
+                  setValue={ v => service.set_index(i, {...item, count: v}) }
                   max={item.stack ?? 1}
                   visible={(item.stack ?? 1) > 1}
                   editable={editable >= EditMode.Live}
