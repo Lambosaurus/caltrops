@@ -61,13 +61,12 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
           items.map((item, i) => {
             return <tr className='hover tooltip tooltip-left w-full' data-tip={lookupDescription(item.name)} key={i}>
               {
-                item.custom ?
+                editable >= EditMode.Full && item.custom ?
                 <td className='w-full text-left py-0 px-0'>
                   <TextEntryBox
                     value={item.name}
                     setValue={ v => service.set_index(i, {...item, name: v} ) }
                     placeholder='item name'
-                    editable={editable >= EditMode.Live}
                   />
                 </td> :
                 <td className='w-full text-left'>
