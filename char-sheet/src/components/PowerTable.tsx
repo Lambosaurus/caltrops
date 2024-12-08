@@ -39,7 +39,7 @@ function PowerTable({powers, skillScores, service, editable=EditMode.Live}: {
         {
           powers.map(power => {
             let diceMax = caltrops.powerDiceMax(power, skillScores)
-            return <tr>
+            return <tr key={power.name}>
               <td>{power.name}</td>
               <td>{skillScores[power.source ?? power.name] ?? 0}</td>
               <td> <PointEntryBox
