@@ -3,8 +3,8 @@ import { useDrop } from 'react-dnd';
 
 export function DropTarget({onDrop, accept = 'item', enabled = true, children}: {
   onDrop(item: any): void,
-  accept: string,
-  enabled: boolean,
+  accept?: string,
+  enabled?: boolean,
   children: ReactNode,
 }): JSX.Element  {
 

@@ -2,9 +2,9 @@ import { useDrag } from 'react-dnd';
 import { ReactNode } from 'react';
 
 export function DragSource({type = 'item', item = null, enabled = true, children}: {
-  type: string,
-  item: any,
-  enabled: boolean,
+  type?: string,
+  item?: any,
+  enabled?: boolean,
   children: ReactNode,
 }): JSX.Element  {
 

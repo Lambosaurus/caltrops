@@ -7,7 +7,7 @@ import IconButton from './IconButton'
 import EquipmentSelectModal from './EquipmentSelectModal'
 
 // Internal imports
-import { Equipment, Container, SheetEquipment } from '../lib/rules'
+import { Equipment, Container, SheetEquipment, Dictionary } from '../lib/rules'
 import caltrops from '../lib/caltrops'
 import { EditMode } from '../lib/util'
 import ObjectService from '../lib/objectservice'
@@ -50,11 +50,24 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
     return name;
   }
 
+  function onDropEquipment(item: any) {
+    const source = item.container
+    const index = item.index
+    const dest = container.name
+
+    const parent = service.parent()
+    let containers: Dictionary<SheetEquipment[]> = parent.subscribe()
+    const moved_item = containers[source].splice(index, 1)[0]
+    if (!(dest in containers)) { containers[dest] = [] }
+    containers[dest].push(moved_item)
+    parent.publish(containers)
+  }
+
   return (
     <DropTarget
       accept='equipment'
       enabled={ editable >= EditMode.Live && freeCapacity > 0 }
-      onDrop={ (item) => {console.log(item)} }
+      onDrop={onDropEquipment}
     >
       <table className="table table-compact w-64">
         <thead>
@@ -78,7 +91,7 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
                 <td className='w-full text-left'>
                   <DragSource
                     type='equipment'
-                    item={ `item: ${item.count} ${item.name}` }
+                    item={ {container: container.name, index: i} }
                     enabled={editable >= EditMode.Live}
                   >
                     { item.name }
