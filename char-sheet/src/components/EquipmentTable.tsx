@@ -12,6 +12,8 @@ import caltrops from '../lib/caltrops'
 import { EditMode } from '../lib/util'
 import ObjectService from '../lib/objectservice'
 import TextEntryBox from './TextEntryBox'
+import { DropTarget } from './dnd/DropTarget'
+import { DragSource } from './dnd/DragSource'
 
 
 function EquipmentTable({equipment, container, service, editable=EditMode.Live}: {
@@ -49,7 +51,11 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
   }
 
   return (
-    <div>
+    <DropTarget
+      accept='equipment'
+      enabled={ editable >= EditMode.Live && freeCapacity > 0 }
+      onDrop={ (item) => {console.log(item)} }
+    >
       <table className="table table-compact w-64">
         <thead>
           <tr>
@@ -70,7 +76,13 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
                   />
                 </td> :
                 <td className='w-full text-left'>
-                  { item.name }
+                  <DragSource
+                    type='equipment'
+                    item={ `item: ${item.count} ${item.name}` }
+                    enabled={editable >= EditMode.Live}
+                  >
+                    { item.name }
+                  </DragSource>
                 </td>
               }
               <td>
@@ -116,7 +128,7 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
         equipment={modalOpen ? caltrops.equipmentFilter(equipment, container.tags) : []}
         addEquipment={addItem}
       />
-    </div>
+    </DropTarget>
   )
 }
 
