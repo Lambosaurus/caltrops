@@ -295,14 +295,14 @@ const lancerRuleset: Rules = {
         },
         {
             name: 'Coilgun',
-            stack: 24,
-            description: 'Dex-Gunnary. Long range. One charge per shot (5u). Must be overcharged. Precise.',
+            stack: 8,
+            description: 'Dex-Gunnary. Long range. Overcharge powered. Powerful vs armored.',
             tag: 'lancer',
         },
         {
             name: 'Railgun',
-            stack: 12,
-            description: 'Dex-Gunnary. Extremely Long range. One charge per shot (25u). Must be overcharged. Precise.',
+            stack: 1,
+            description: 'Dex-Gunnary. Extremely Long range. Overcharge powered. Powerful. Ignores armor and size penalties.',
             tag: 'lancer',
         },
         {
@@ -326,7 +326,7 @@ const lancerRuleset: Rules = {
         {
             name: 'Stiletto missile',
             stack: 1,
-            description: 'Dex-Gunnary. Extremely long range. Indirect fire. +2 in zero gravity. +3 successes if target locked.',
+            description: 'Dex-Gunnary. Extremely long range. Indirect fire. +4 successes if target locked.',
             tag: 'lancer',
         },
         {
@@ -351,7 +351,7 @@ const lancerRuleset: Rules = {
         },
         {
             name: 'Flamethrower',
-            description: 'Control-Gunnary. Short range. One charge per shot (10u). Powerful vs flesh. -2 vs machine.',
+            description: 'Control-Gunnary. Short range. One charge per shot (10u). AOE: 1. Powerful vs flesh. -2 vs machine.',
             stack: 4,
             tag: 'lancer',
         },
@@ -369,14 +369,14 @@ const lancerRuleset: Rules = {
         },
         {
             name: 'Mortar',
-            description: 'Dex-Gunnary. Long range. -4 in short range. Indirect fire. Radius 2. One charge per shot (15u)',
-            stack: 8,
+            description: 'Dex-Gunnary. Long range. -4 in short range. Indirect fire. AOE: 3. One charge per shot (20u)',
+            stack: 6,
             tag: 'lancer',
         },
         {
             name: 'Ballistic cannon',
-            description: 'Dex-Gunnary. Long range. -2 in short range. Indirect fire. Radius 2. Powerful. One charge per shot (25u)',
-            stack: 8,
+            description: 'Dex-Gunnary. Long range. -2 in short range. Indirect fire. AOE: 2. Powerful. One charge per shot (50u)',
+            stack: 4,
             tag: 'lancer',
         },
 

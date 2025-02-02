@@ -103,7 +103,7 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
                   value={item.count ?? 0}
                   setValue={ v => service.set_index(i, {...item, count: v}) }
                   max={item.stack ?? 1}
-                  visible={item.stack != undefined}
+                  visible={item.stack !== undefined}
                   editable={editable >= EditMode.Live}
                 />
               </td>
