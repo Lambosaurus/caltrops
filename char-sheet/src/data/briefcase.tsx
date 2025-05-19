@@ -86,7 +86,7 @@ const briefcaseRuleset: Rules = {
         },
         {
             name: 'Gold Hairpin',
-            description: "Unessicarily sharp.",
+            description: "Unnecessarily sharp.",
         },
         {
             name: 'Brightly colored tie',
