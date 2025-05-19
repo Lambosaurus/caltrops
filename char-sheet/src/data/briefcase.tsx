@@ -73,11 +73,10 @@ const briefcaseRuleset: Rules = {
         {
             name: 'Jeweled broach',
             description: "Either a family heirloom, or a pawn shop bargain.",
-            stack: 3,
         },
         {
             name: 'Rolex watch',
-            description: "Almost certainly fake.",
+            description: "Almost certainly fake. The time is incorrect.",
         },
         {
             name: 'Three piece suit',
@@ -105,6 +104,11 @@ const briefcaseRuleset: Rules = {
         },
         {
             name: 'Clipboard',
+        },
+        {
+            name: 'Box of tissues',
+            description: "Nothing makes crying worse than being noticed.",
+            stack: 10,
         },
         {
             name: 'Stapler',
@@ -155,6 +159,7 @@ const briefcaseRuleset: Rules = {
         },
         {
             name: 'Packed lunch',
+            description: "This probably needs to be microwaved.",
         },
         {
             name: 'Box of donuts',
@@ -210,8 +215,12 @@ const briefcaseRuleset: Rules = {
         },
         {
             name: "Briefcase",
+            size: 4,
+        },
+        {
+            name: "Desk",
             size: 5,
-        }
+        },
     ],
     powers: [
         {
