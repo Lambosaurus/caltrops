@@ -4,6 +4,7 @@ import felfuturesRuleset from "./felfutures";
 import turnipRuleset from "./turnip28";
 import lancerRuleset from "./lancer"
 import vermisRuleset from "./vermis";
+import briefcaseRuleset from "./briefcase";
 
 // List additional rules here
 const RULESETS = [
@@ -13,6 +14,7 @@ const RULESETS = [
     turnipRuleset,
     felfuturesRuleset,
     vermisRuleset,
+    briefcaseRuleset,
 ];
 
 RULESETS.forEach(r => {
