@@ -80,7 +80,7 @@ const briefcaseRuleset: Rules = {
             description: "Red #6. Bold. Provocative. Adheres to a surprising number of surfaces.",
         },
         {
-            name: 'Jeweled broach',
+            name: 'Jeweled brooch',
             description: "Either a family heirloom, or a pawn shop bargain.",
         },
         {
@@ -154,7 +154,7 @@ const briefcaseRuleset: Rules = {
         },
         {
             name: 'Business card',
-            description: "Look at that subtle off while coloring. The tasteful thickness of it. It even has a watermark.",
+            description: "Look at that subtle off white coloring. The tasteful thickness of it. It even has a watermark.",
             stack: 10,
         },
         {
@@ -270,6 +270,10 @@ const briefcaseRuleset: Rules = {
         {
             name: 'Strange key',
             description: "The tag reads: 'removing this key is a firable offense.'",
+        },
+        {
+            name: 'Glasses',
+            description: "Heavy rimmed black plastic frames.",
         },
         ...DEFAULT_RULES.equipment,
     ],
