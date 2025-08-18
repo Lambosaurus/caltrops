@@ -272,6 +272,12 @@ const lancerRuleset: Rules = {
             description: 'Assorted vials of white or clear liquids. Grant effective pain relief. Highly addictive.',
             tag: 'handheld',
         },
+        {
+            name: 'Surge',
+            stack: 4,
+            description: 'Grants +1 action. Pouch of a vibrant yellow fluid. This significantly enhances the speed of the user.',
+            tag: 'handheld',
+        },
 
         {
             name: 'Scrap',
@@ -332,6 +338,16 @@ const lancerRuleset: Rules = {
         {
             name: 'Hydraulic claw',
             description: 'Control-Melee.',
+            tag: 'lancer',
+        },
+        {
+            name: 'Breaching Hammer',
+            description: 'Control-Melee. May be overchanged for to make powerful.',
+            tag: 'lancer',
+        },
+        {
+            name: 'Monofilament whip',
+            description: 'Dex-Melee. Slices through armor like butter. Ignores kinetic based armor.',
             tag: 'lancer',
         },
         {
@@ -405,7 +421,7 @@ const lancerRuleset: Rules = {
         {
             name: 'Chaff dispenser',
             stack: 4,
-            description: 'Thwarts a target lock per charge.',
+            description: 'Thwarts a target lock per charge. 10u per charge.',
             tag: 'lancer',
         },
         {
@@ -431,6 +447,12 @@ const lancerRuleset: Rules = {
             tag: 'lancer',
         },
         {
+            name: 'Prototype crystal reactor',
+            stack: 3,
+            description: 'Provides extra power, which may be used like overcharge. Recharges slowly when fed by matter. Unstable.',
+            tag: 'lancer',
+        },
+        {
             name: 'Heat sink',
             stack: 1,
             description: 'Dissapates heat, which may be used like overcharge. Cools after combat.',
@@ -446,6 +468,12 @@ const lancerRuleset: Rules = {
             name: 'Composite plating',
             stack: 2,
             description: 'Thwarts an attacking success per charge (15u). DM may determine when armor is applicable.',
+            tag: 'lancer',
+        },
+        {
+            name: 'Ablative plating',
+            stack: 1,
+            description: 'Thwarts an attacking success per charge (15u). Until spent, this provides armored vs thermal.',
             tag: 'lancer',
         },
         {
