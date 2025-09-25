@@ -5,10 +5,12 @@ import turnipRuleset from "./turnip28";
 import lancerRuleset from "./lancer"
 import vermisRuleset from "./vermis";
 import briefcaseRuleset from "./briefcase";
+import driftersRuleset from "./drifters";
 
 // List additional rules here
 const RULESETS = [
     bludgeonRuleset,
+    driftersRuleset,
     lancerRuleset,
     airlockRuleset,
     turnipRuleset,
