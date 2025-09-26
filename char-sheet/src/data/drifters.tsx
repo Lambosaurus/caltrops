@@ -11,13 +11,13 @@ const driftersRuleset: Rules = {
             name: 'Athletics',
         },
         {
+            name: 'Apothecary',
+        },
+        {
             name: 'Craftsmanship',
         },
         {
             name: 'Diplomacy',
-        },
-        {
-            name: 'Herbalism',
         },
         {
             name: 'Lore',
@@ -26,7 +26,7 @@ const driftersRuleset: Rules = {
             name: 'Marksmanship',
         },
         {
-            name: 'Medicine',
+            name: 'Chirurgery',
         },
         {
             name: 'Melee',
@@ -36,9 +36,6 @@ const driftersRuleset: Rules = {
         },
         {
             name: 'Stealth',
-        },
-        {
-            name: 'Thievery',
         },
         {
             name: 'Endurance',
