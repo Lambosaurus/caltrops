@@ -85,7 +85,7 @@ const driftersRuleset: Rules = {
         },
         {
             name: 'Bronze Dagger',
-            description: "Brittle. May substitute reflex for violence.",
+            description: "Brittle. Reflexive.",
         },
         {
             name: 'Iron Sword',
@@ -113,7 +113,7 @@ const driftersRuleset: Rules = {
         },
         {
             name: 'Iron Dagger',
-            description: "May substitute reflex for violence.",
+            description: "Reflexive.",
         },
         {
             name: 'Shield',
@@ -124,6 +124,10 @@ const driftersRuleset: Rules = {
         },
         {
             name: 'Bow',
+        },
+        {
+            name: 'Whip',
+            description: "Reflexive. +1 when attempting to maneuver or grapple. -2 otherwise."
         },
         {
             name: 'Crossbow',
@@ -236,6 +240,10 @@ const driftersRuleset: Rules = {
         {
             name: 'Drum',
             description: "A simple hide drum."
+        },
+        {
+            name: 'Horn',
+            description: "The horn from an unknown creature, bound with bronze rings. Audible from a long distance when blown."
         },
 
         {
