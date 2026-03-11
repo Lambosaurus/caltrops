@@ -52,7 +52,7 @@ function WoundTable( {service, container, woundSizeLimit=2, editable=EditMode.Li
         : null
       }
 
-      <table className="table table-compact w-64">
+      <table className="table table-compact w-80">
         <thead>
           <tr>
             <th colSpan={4}>Wounds: {container.name}</th>

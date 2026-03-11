@@ -69,7 +69,7 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
       enabled={ editable >= EditMode.Live && freeCapacity > 0 }
       onDrop={onDropEquipment}
     >
-      <table className="table table-compact w-64">
+      <table className="table table-compact w-80">
         <thead>
           <tr>
             <th colSpan={4}>Items: {container.name}</th>

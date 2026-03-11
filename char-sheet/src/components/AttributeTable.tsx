@@ -38,7 +38,7 @@ function AspectTable({rules, level, service, editable, rollService}: {
 
   return (
     <div>
-      <table className="table table-compact">
+      <table className="table table-compact w-80">
         <thead>
           <tr>
             <th>Attributes</th>

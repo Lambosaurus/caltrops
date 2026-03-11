@@ -26,7 +26,7 @@ function PowerTable({powers, skillScores, service, editable=EditMode.Live}: {
 
   return (
     <div>
-      <table className="table table-compact">
+      <table className="table table-compact w-80">
         <thead>
           <tr>
             <th>Power</th>

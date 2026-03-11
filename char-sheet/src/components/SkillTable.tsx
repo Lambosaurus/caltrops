@@ -33,7 +33,7 @@ function SkillTable({skills, service, maxCostTotal, editable = EditMode.Live, ro
 
   return (
     <div>
-      <table className="table table-compact">
+      <table className="table table-compact w-80">
         <thead>
           <tr className='px-2'>
             <th>Skills</th>

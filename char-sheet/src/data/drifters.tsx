@@ -117,7 +117,7 @@ const driftersRuleset: Rules = {
         },
         {
             name: 'Shield',
-            description: "May spend successes for shielded (control melee). You must move at half speed to remain shielded. Armored vs piercing weapons while shielded. Shield tokens reduce to 1 at the start of your next turn.",
+            description: "May spend successes for shielded (control melee). You must move at half speed to remain shielded. Armored vs piercing weapons while shielded.",
         },
         {
             name: 'Staff',
