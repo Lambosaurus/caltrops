@@ -39,8 +39,8 @@ function NotesTable({service, editable=EditMode.Live}: {
             return <tr key={i}>
               <td className='p-1 pb-0 w-full'>
                 {editingIndex !== i ? (
-                  <div onClick={() => setEditingIndex(i)} className='markdown textarea textarea-bordered leading-tight w-full overflow-hidden resize-none p-2 pb-0 mt-2 mb-2'>
-                    { note ? <Markdown remarkPlugins={[remarkGfm]}>{note.replaceAll(/([^\n])\n([^\n])/g, '$1\n\n$2')}</Markdown> : (
+                  <div onClick={() => editable >= EditMode.Live ? setEditingIndex(i) : null} className='markdown textarea textarea-bordered leading-tight w-full overflow-hidden resize-none p-2 pb-0 mt-2 mb-2'>
+                    { note ? <Markdown remarkPlugins={[remarkGfm]}>{note}</Markdown> : (
                       <em>Click to add notes...</em>
                     ) }
                   </div>
