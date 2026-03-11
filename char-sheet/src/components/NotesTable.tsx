@@ -8,6 +8,7 @@ import ObjectService from '../lib/objectservice'
 import { useState } from 'react'
 import remarkGfm from 'remark-gfm'
 import remarkBreaks  from 'remark-breaks'
+import { Checkbox } from 'react-daisyui'
 
 
 function NotesTable({service, editable=EditMode.Live}: {
@@ -22,6 +23,39 @@ function NotesTable({service, editable=EditMode.Live}: {
     if (textarea) {
       textarea.style.height = 'auto'
       textarea.style.height = `${textarea.scrollHeight}px`
+    }
+  }
+
+  function handleEditClick(event: React.MouseEvent<HTMLDivElement>, index: number) {
+    if (editable >= EditMode.Live) {
+      setEditingIndex(index);
+    }
+  }
+
+  function handleCheckboxClick(event: React.MouseEvent<HTMLInputElement>, index: number) {
+    event.stopPropagation();
+    const checkbox = event.currentTarget;
+    const checked = checkbox.checked; // new state after the click
+
+    // Find the ordinal position of this checkbox among all checkboxes in the note
+    const allCheckboxes = checkbox.closest('td')?.querySelectorAll('input[type="checkbox"]') || [];
+    const checkboxIndex = Array.from(allCheckboxes).indexOf(checkbox);
+
+    const currentValue = notes[index] || "";
+
+    // Match GFM task-list items: "- [ ]", "- [x]", "* [X]", "+ [ ]", etc.
+    const checkboxRegex = /[-*+] \[[ xX]\]/g;
+    let match;
+    let matchCount = 0;
+    while ((match = checkboxRegex.exec(currentValue)) !== null) {
+      if (matchCount === checkboxIndex) {
+        const prefix = match[0][0]; // list marker: -, *, or +
+        const replacement = `${prefix} [${checked ? 'x' : ' '}]`;
+        const newValue = currentValue.substring(0, match.index) + replacement + currentValue.substring(match.index + match[0].length);
+        service.set_index(index, newValue);
+        return;
+      }
+      matchCount++;
     }
   }
 
@@ -40,8 +74,15 @@ function NotesTable({service, editable=EditMode.Live}: {
             return <tr key={i}>
               <td className='p-1 pb-0 w-full'>
                 {editingIndex !== i ? (
-                  <div onClick={() => editable >= EditMode.Live ? setEditingIndex(i) : null} className='markdown textarea textarea-bordered leading-tight w-full overflow-hidden resize-none p-2 pb-0 mt-2 mb-2'>
-                    { note ? <Markdown remarkPlugins={[remarkGfm, remarkBreaks]}>{note}</Markdown> : (
+                  <div onClick={(event) => handleEditClick(event, i)} className='markdown textarea textarea-bordered leading-tight w-full overflow-hidden resize-none p-2 pb-0 mt-2 mb-2'>
+                    { note ? <Markdown remarkPlugins={[remarkGfm, remarkBreaks]} components={{
+                      input(props) {
+                        const {type, checked} = props
+                        if (type !== 'checkbox') return <input {...props} />;
+
+                        return <input type="checkbox" onClick={(event) => handleCheckboxClick(event, i)} checked={checked} />
+                      }
+                    }}>{note}</Markdown> : (
                       <em>Click to add notes...</em>
                     ) }
                   </div>
