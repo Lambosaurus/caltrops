@@ -8,7 +8,6 @@ import ObjectService from '../lib/objectservice'
 import { useState } from 'react'
 import remarkGfm from 'remark-gfm'
 import remarkBreaks  from 'remark-breaks'
-import { Checkbox } from 'react-daisyui'
 
 
 function NotesTable({service, editable=EditMode.Live}: {
@@ -53,6 +52,7 @@ function NotesTable({service, editable=EditMode.Live}: {
         const replacement = `${prefix} [${checked ? 'x' : ' '}]`;
         const newValue = currentValue.substring(0, match.index) + replacement + currentValue.substring(match.index + match[0].length);
         service.set_index(index, newValue);
+        setEditingIndex(null);
         return;
       }
       matchCount++;
