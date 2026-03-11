@@ -7,6 +7,7 @@ import { EditMode } from '../lib/util'
 import ObjectService from '../lib/objectservice'
 import { useState } from 'react'
 import remarkGfm from 'remark-gfm'
+import remarkBreaks  from 'remark-breaks'
 
 
 function NotesTable({service, editable=EditMode.Live}: {
@@ -40,7 +41,7 @@ function NotesTable({service, editable=EditMode.Live}: {
               <td className='p-1 pb-0 w-full'>
                 {editingIndex !== i ? (
                   <div onClick={() => editable >= EditMode.Live ? setEditingIndex(i) : null} className='markdown textarea textarea-bordered leading-tight w-full overflow-hidden resize-none p-2 pb-0 mt-2 mb-2'>
-                    { note ? <Markdown remarkPlugins={[remarkGfm]}>{note}</Markdown> : (
+                    { note ? <Markdown remarkPlugins={[remarkGfm, remarkBreaks]}>{note}</Markdown> : (
                       <em>Click to add notes...</em>
                     ) }
                   </div>

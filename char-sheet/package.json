@@ -19,6 +19,7 @@
     "react-icons": "^4.4.0",
     "react-markdown": "^10.1.0",
     "react-scripts": "5.0.1",
+    "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
     "sass": "^1.98.0",
     "typescript": "^4.8.3",
