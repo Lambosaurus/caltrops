@@ -1,0 +1,314 @@
+
+.markdown {
+  html {
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
+
+  /* --------------------------------------------------------
+    Headings
+    -------------------------------------------------------- */
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-weight: 700;
+    line-height: 1.2;
+    color: inherit;
+    text-wrap: balance;
+  }
+
+  h1 { font-size: 2.25rem;  /* 36px */ }
+  h2 { font-size: 1.875rem; /* 30px */ }
+  h3 { font-size: 1.5rem;   /* 24px */ }
+  h4 { font-size: 1.25rem;  /* 20px */ }
+  h5 { font-size: 1.125rem; /* 18px */ }
+  h6 { font-size: 1rem;     /* 16px */ }
+
+  /* --------------------------------------------------------
+    Paragraphs & body copy
+    -------------------------------------------------------- */
+  p {
+    margin-top: 0;
+    margin-bottom: 1em;
+    line-height: 1.625;
+  }
+
+  /* --------------------------------------------------------
+    Links
+    -------------------------------------------------------- */
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 0.15s ease;
+  }
+
+  a:hover {
+    opacity: 0.8;
+  }
+
+  /* --------------------------------------------------------
+    Lists
+    -------------------------------------------------------- */
+  ul, ol {
+    margin-top: 0;
+    margin-bottom: 1em;
+    padding-left: 1.5em;
+  }
+
+  ul { list-style-type: disc; }
+  ol { list-style-type: decimal; }
+
+  li {
+    margin-bottom: 0.25em;
+    line-height: 1.625;
+  }
+
+  li > ul,
+  li > ol {
+    margin-top: 0.25em;
+    margin-bottom: 0;
+  }
+
+  dl {
+    margin-top: 0;
+    margin-bottom: 1em;
+  }
+
+  dt {
+    font-weight: 700;
+  }
+
+  dd {
+    margin-left: 1.5em;
+    margin-bottom: 0.5em;
+  }
+
+  /* --------------------------------------------------------
+    Inline semantics
+    -------------------------------------------------------- */
+  strong, b {
+    font-weight: 700;
+  }
+
+  em, i {
+    font-style: italic;
+  }
+
+  small {
+    font-size: 0.875rem; /* 14px */
+  }
+
+  s, del {
+    text-decoration: line-through;
+  }
+
+  ins {
+    text-decoration: underline;
+  }
+
+  u {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  mark {
+    padding: 0.125em 0.25em;
+    border-radius: 0.125rem;
+    background-color: hsl(50 100% 80%);
+    color: #000;
+  }
+
+  /* --------------------------------------------------------
+    Abbreviations & acronyms
+    -------------------------------------------------------- */
+  abbr[title] {
+    cursor: help;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+  }
+
+  /* --------------------------------------------------------
+    Superscript & subscript
+    -------------------------------------------------------- */
+  sub, sup {
+    font-size: 0.75em;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+
+  sup { top: -0.5em; }
+  sub { bottom: -0.25em; }
+
+  /* --------------------------------------------------------
+    Quotations
+    -------------------------------------------------------- */
+  blockquote {
+    margin: 0 0 1em;
+    padding: 0.5em 1em;
+    border-left: 4px solid currentColor;
+    opacity: 0.85;
+    font-style: italic;
+  }
+
+  blockquote > p:last-child {
+    margin-bottom: 0;
+  }
+
+  q {
+    quotes: "\201C" "\201D" "\2018" "\2019"; /* " " ' ' */
+  }
+
+  cite {
+    font-style: italic;
+  }
+
+  /* --------------------------------------------------------
+    Code & preformatted text
+    -------------------------------------------------------- */
+  code, kbd, samp, var {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco,
+      Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.875em;
+  }
+
+  code {
+    padding: 0.125em 0.375em;
+    border-radius: 0.25rem;
+    background-color: hsl(0 0% 50% / 0.15);
+  }
+
+  pre {
+    margin-top: 0;
+    margin-bottom: 1em;
+    padding: 1em;
+    overflow-x: auto;
+    border-radius: 0.25rem;
+    background-color: hsl(0 0% 50% / 0.1);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco,
+      Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    white-space: pre;
+  }
+
+  /* Inline code inside a pre should reset its own styling */
+  pre code {
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent;
+    font-size: inherit;
+  }
+
+  kbd {
+    padding: 0.125em 0.375em;
+    border: 1px solid currentColor;
+    border-radius: 0.25rem;
+    opacity: 0.8;
+  }
+
+  var {
+    font-style: italic;
+  }
+
+  /* --------------------------------------------------------
+    Horizontal rules
+    -------------------------------------------------------- */
+  hr {
+    margin: 1.5em 0;
+    border: none;
+    border-top: 1px solid currentColor;
+    opacity: 0.25;
+  }
+
+  /* --------------------------------------------------------
+    Tables
+    -------------------------------------------------------- */
+  table {
+    width: 100%;
+    margin-bottom: 1em;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid hsl(0 0% 50% / 0.25);
+    font-variant-numeric: tabular-nums;
+  }
+
+  caption {
+    padding-bottom: 0.5em;
+    font-weight: 700;
+    text-align: left;
+    caption-side: top;
+  }
+
+  thead {
+    border-bottom: 2px solid currentColor;
+  }
+
+  th {
+    font-weight: 700;
+    text-align: left;
+  }
+
+  td, th {
+    padding: 0.5em 0.75em;
+    vertical-align: top;
+    border: 1px solid hsl(0 0% 50% / 0.2);
+  }
+
+  tbody tr:hover {
+    background-color: hsl(0 0% 50% / 0.05);
+  }
+
+  /* --------------------------------------------------------
+    Address
+    -------------------------------------------------------- */
+  address {
+    font-style: normal;
+    line-height: inherit;
+    margin-bottom: 1em;
+  }
+
+  /* --------------------------------------------------------
+    Details / Summary (disclosure widget)
+    -------------------------------------------------------- */
+  details {
+    margin-bottom: 1em;
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* --------------------------------------------------------
+    Figure & figcaption
+    -------------------------------------------------------- */
+  figure {
+    margin: 0 0 1em;
+  }
+
+  figcaption {
+    margin-top: 0.5em;
+    font-size: 0.875rem;
+    opacity: 0.7;
+  }
+
+  /* --------------------------------------------------------
+    Selection highlight
+    -------------------------------------------------------- */
+  ::selection {
+    background-color: hsl(210 100% 60% / 0.3);
+  }
+
+}
