@@ -52,7 +52,6 @@ function NotesTable({service, editable=EditMode.Live}: {
         const replacement = `${prefix} [${checked ? 'x' : ' '}]`;
         const newValue = currentValue.substring(0, match.index) + replacement + currentValue.substring(match.index + match[0].length);
         service.set_index(index, newValue);
-        setEditingIndex(null);
         return;
       }
       matchCount++;
