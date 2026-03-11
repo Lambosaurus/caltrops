@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './styles/markdown.scss';
 
 .scrollbar-neutral {
     --scrollbar-thumb: hsl(var(--n)) !important;
