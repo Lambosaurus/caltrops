@@ -12,6 +12,11 @@ const HEADERS = {
     'Content-Type': 'application/json',
 };
 
+const OPTIONS_HEADERS = {
+    "Access-Control-Allow-Methods": "POST,OPTIONS",
+    "Access-Control-Allow-Headers": "*",
+};
+
 async function writeContent(uid, title, user, content) {
     const item = {
         "id": uid,
@@ -134,6 +139,17 @@ async function registrationRequest(recipient) {
 }
 
 exports.handler = async (event) => {
+
+    let method = event.requestContext.http.method;
+    if (method === "OPTIONS") {
+        return {
+            statusCode: 200,
+            headers: OPTIONS_HEADERS
+        };
+    }
+    else if (method !== "POST" ) {
+        return errorResponse(405, `${method} not permitted`);
+    }
 
     let body = null;
     try {
