@@ -1,4 +1,4 @@
-const SERVER_URI = 'https://nad7hr2keheheljlwvlkiyjtq40mwgzl.lambda-url.ap-southeast-2.on.aws/'
+const SERVER_URI = 'https://caltrops.tlembedded.com/api/'
 
 export interface ServerItem {
     owner: string,
