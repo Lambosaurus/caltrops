@@ -17,15 +17,13 @@ import server, { ServerItem } from '../lib/server'
 import UserLoginModal from './UserLoginModal';
 import { alertError, alertInfo, alertSuccess } from '../lib/alerts';
 import caltrops from '../lib/caltrops';
+import { View, useListener } from "../lib/objectservice"
 
 
-function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, children}: {
+function MenuRibbon( {editable, setEditable, view, children}: {
     editable: EditMode,
     setEditable(editable: EditMode): void,
-    sheet: Sheet | null,
-    setSheet(sheet: Sheet | null): void,
-    token: string | null,
-    setToken(token: string | null): void,
+    view: View,
     children?: React.ReactNode,
   }): JSX.Element {
 
@@ -33,6 +31,9 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isLoadSheetOpen, setIsLoadSheetOpen] = useState(false)
   const [sheetList, setSheetList] = useState(null as ServerItem[] | null)
+
+  const token = useListener(view, "token")
+  const sheetId = useListener(view, "sheet/id")
 
   const menuItems = [
   <li key='new'>
@@ -66,6 +67,7 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
     <button
       className='btn btn-ghost'
       onClick={() => {
+        const sheet = view.read('sheet')
         if (token && sheet) {
           const username = server.parseToken(token)
           if (username && sheet.owner !== username) {
@@ -76,7 +78,7 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
             .catch(e => alertError(`Error saving sheet: ${e.message}`))
         }
       }}
-      disabled={!(sheet && token && editable > EditMode.None)}
+      disabled={!(sheetId && token && editable > EditMode.None)}
     >
       <BsCloudArrowUp size={27}/>
       Save
@@ -86,11 +88,11 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
     <button
       className='btn btn-ghost'
       onClick={() => {
-        if (sheet) {
-          setSheet(caltrops.cloneSheet(sheet))
+        if (sheetId) {
+          view.publish('sheet', caltrops.cloneSheet(view.read('sheet')))
         }
       }}
-      disabled={!sheet}
+      disabled={!sheetId}
     >
     <BsCopy size={25}/>
     Clone

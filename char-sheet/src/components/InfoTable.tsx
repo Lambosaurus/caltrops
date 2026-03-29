@@ -5,16 +5,16 @@ import TextEntryBox from './TextEntryBox'
 // Internal imports
 import { EditMode } from '../lib/util'
 import { SheetInfo } from '../lib/rules'
-import ObjectService from '../lib/objectservice'
+import { View, useListener } from '../lib/objectservice'
 
 
 
-function InfoTable({service, editable=EditMode.Live}: {
-    service: ObjectService
+function InfoTable({view, editable=EditMode.Live}: {
+    view: View
     editable?:EditMode
   }): JSX.Element {
 
-  const info: SheetInfo = service.subscribe()
+  const info: SheetInfo = useListener(view)
 
   return (
     <div>
@@ -30,7 +30,7 @@ function InfoTable({service, editable=EditMode.Live}: {
             <td>Name</td>
             <td className='py-0'><TextEntryBox
               value={info.name}
-              setValue={v => { service.set_key('name', v) }}
+              setValue={v => view.publish('name', v) }
               editable={editable >= EditMode.Full}
               placeholder='enter name'
               />
@@ -40,7 +40,7 @@ function InfoTable({service, editable=EditMode.Live}: {
             <td>Level</td>
             <td><PointEntryBox
               value={info.level}
-              setValue={v => { service.set_key('level', v) }}
+              setValue={v => view.publish('level', v)}
               editable={editable >= EditMode.Full}
             /></td>
           </tr>
@@ -48,7 +48,7 @@ function InfoTable({service, editable=EditMode.Live}: {
             <td>Background</td>
             <td className='py-0'><TextEntryBox
               value={info.background}
-              setValue={v => { service.set_key('background', v) }}
+              setValue={v => view.publish('background', v)}
               editable={editable >= EditMode.Full}
               placeholder='enter background'
               />

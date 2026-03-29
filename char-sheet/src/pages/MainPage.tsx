@@ -14,7 +14,7 @@ import { Sheet, Rules } from '../lib/rules'
 import LoadingSpinner from '../components/LoadingSpinner'
 import server from '../lib/server'
 import { alertSuccess, alertError, alertWarning } from '../lib/alerts'
-import ObjectService from '../lib/objectservice'
+import { ObjectService, useListener } from '../lib/objectservice'
 
 const AUTO_SAVE_TIMEOUT = 5.0
 let SAVE_TIMEOUT_ID: any = -1
@@ -28,8 +28,7 @@ let SAVE_TIMEOUT_ID: any = -1
 */
 function MainPage(): JSX.Element {
 
-  function recallToken(): string | null {
-
+  function loadToken(): string | null {
     let token = new URLSearchParams(window.location.search).get("token")
     if (token && server.parseToken(token)) {
       // Token supplied via URI. Save it.
@@ -47,6 +46,7 @@ function MainPage(): JSX.Element {
     return null;
   }
 
+  /*
   function changeToken(token: string | null) {
     if (token) {
       localStorage.setItem('caltrops-token', token)
@@ -55,6 +55,7 @@ function MainPage(): JSX.Element {
     }
     setToken(token);
   }
+  */
 
   function loadRules(): Rules {
     const last_rules = localStorage.getItem('caltrops-rules')
@@ -68,20 +69,13 @@ function MainPage(): JSX.Element {
     }
     if (sheet_id) {
       server.read(sheet_id).then( sheet => {
-          changeSheet( caltrops.importSheet(sheet.content) )
+          view.publish("sheet", caltrops.importSheet(sheet.content))
         }
       ).catch(e => alertError(`Error reading sheet: ${e.message}`))
-      return null
+      return null;
     }
-    return caltrops.newSheet(rules)
+    return caltrops.newSheet(view.read('rules'))
   }
-
-  const [rules, setRules] = useState(loadRules)
-  const [sheet, setSheet] = useState(loadSheet)
-  const [editable, setEditable] = useState(EditMode.Live);
-  const [token, setToken] = useState(recallToken)
-
-  setTheme(rules.theme);
 
   function setTitle(title: string | undefined) {
     if (!title) {
@@ -92,6 +86,7 @@ function MainPage(): JSX.Element {
     }
   }
 
+  /*
   function changeSheet(sheet: Sheet | null, remember: boolean = false) {
     // Check if sheet.rules were changed, and load the new rules if so.
     if (sheet && sheet.rules !== rules.name) {
@@ -119,7 +114,9 @@ function MainPage(): JSX.Element {
     setTitle(sheet?.info.name)
     setSheet(sheet)
   }
+  */
 
+  /*
   function editSheet(sheet: Sheet | null) {
     if (SAVE_TIMEOUT_ID >= 0) {
       clearTimeout(SAVE_TIMEOUT_ID)
@@ -139,25 +136,39 @@ function MainPage(): JSX.Element {
         }
       }, AUTO_SAVE_TIMEOUT * 1000)
     }
-    setSheet(sheet)
   }
+  */
+
+  const [editable, setEditable] = useState(EditMode.Live);
+
+  const [view, _] = useState( () => {
+    const service = new ObjectService({
+      sheet: loadSheet(),
+      rules: loadRules(),
+      token: loadToken(),
+    })
+
+    //service.subscribe("rules/theme", () => setTheme(service.read("rules/theme")))
+    //service.subscribe("token")
+    //service.subscribe("sheet/info/name" () => setTitle(view.read("sheet/info/name")))
+
+    return service.view('');
+  })
+
+  const sheetId = useListener(view, "sheet/id")
 
   return (
-    <FileUploader setFile={s => changeSheet(s)}>
+    <FileUploader setFile={s => view.publish("sheet", s)}>
 
       <MenuRibbon
         editable={editable}
         setEditable={setEditable}
-        sheet={sheet}
-        setSheet={s => changeSheet(s, true)}
-        token={token}
-        setToken={changeToken}
+        view={view}
       >
         {
-          sheet ?
+          sheetId !== undefined ?
           <SheetView
-            rules={rules}
-            sheetService={new ObjectService(sheet, editSheet)}
+            view={view}
             editable={editable}
           /> :
           <LoadingSpinner size={100}/>

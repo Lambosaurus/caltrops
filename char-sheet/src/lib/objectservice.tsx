@@ -1,112 +1,166 @@
+import { useSyncExternalStore } from "react"
+
+type Listener = () => void
 
 class ObjectService {
 
-    root_obj: any
-    path: string[]
-    setter: (obj: any) => void
+    private obj: any
+    private listeners: Map<string, Set<Listener>>
+    private views: Map<string, View>
 
-    constructor(obj: any, setter: (obj: any) => void, path: string[] = []) {
-        this.root_obj = obj
-        this.path = path
-        this.setter = setter
+    constructor(obj: any) {
+        this.obj = obj
+        this.listeners = new Map()
+        this.views = new Map()
     }
 
-    // Returns a service that represents a child item
-    child(path: string): ObjectService {
-        return new ObjectService(this.root_obj, this.setter, [...this.path, path])
-    }
-
-    // Returns a service that represents the parent object
-    parent(): ObjectService {
-        return new ObjectService(this.root_obj, this.setter, this.path.slice(0, -1))
-    }
-
-    // Returns a service for a relative object
-    // The tree is traversed up 'descend' number of nodes to a parent node
-    // Then down the path specified by 'path'
-    navigate(path: string[], descend: number = 0): ObjectService {
-        let base_path = descend === 0 ? this.path : this.path.slice(0, -descend )
-        return new ObjectService(this.root_obj, this.setter, base_path.concat(path))
-    }
-
-    // Returns the object described by the service
-    subscribe(default_item: any = undefined): any {
-        let obj = this.root_obj
-        for (let p of this.path) {
-            obj = obj[p]
-            if (obj === undefined) { return default_item }
+    view(path: string) {
+        // Cache these. This provides reliable identities
+        let view = this.views.get(path)
+        if (view === undefined) {
+            view = new View(this, path)
+            this.views.set(path, view)
         }
-        return obj
+        return view;
     }
 
-    // Note: If we plant to rely on memoization, then we should replace all modified objects - treating them as immutable.
-    // Replaces the referenced object with a new object, then invokes the setter (republishing the root)
-    publish(obj: any) {
-        const path_length = this.path.length
-        if (path_length)
-        {
-            // Traverse the object
-            let node = this.root_obj
-            for (let i = 0; i < path_length - 1; i++) {
-                let child = node[this.path[i]]
-                // We may be referencing a branch that doesnt exist. Build it as we go.
-                if (child === undefined) {
-                    child = {}
-                    node[this.path[i]] = child
-                }
-                node = child
+    read(path: string): any {
+        let node = this.obj
+        for (let key of this.splitPath(path)) {
+            node = node[key]
+            if (node === undefined)
+                break
+        }
+        return node
+    }
+
+    publish(path: string, value: any) {
+        this.mutate(path, value)
+        this.notify(path)
+    }
+
+    delete(path: string) {
+        this.mutate(path, undefined)
+        this.notify(path)
+    }
+
+    subscribe(path: string, cb: Listener): () => void {
+        let listeners = this.listeners.get(path)
+        if (listeners === undefined) {
+            listeners = new Set();
+            this.listeners.set(path,listeners)
+        }
+        listeners.add(cb)
+        return () => this.listeners.get(path)?.delete(cb)
+    }
+
+    notify(path: string) {
+        // TODO: we could store the listeners in a tree for performant listener invocation
+
+        // Add on a trailing '/' to prevent partial matches on the last node
+        let a = path + '/'
+        for (const [listener_path, listeners] of this.listeners) {
+            let b = listener_path + '/'
+            // We want to notify parents or children, but not siblings.
+            // changing "a/" does notify "a/b/"
+            // changing "a/b/" does notify "a/"
+            // changing "a/b1/" does not notify "a/b2/"
+            if (a.startsWith(b) || b.startsWith(a)) {
+                for (let listener of listeners)
+                    listener()
             }
-            // Set the final item
-            node[this.path[path_length - 1]] = obj
-            // Notify subscribers. The object must be regenerated, otherwise react ignores the change.
-            this.setter( { ...this.root_obj } )
-        }
-        else {
-            this.setter( { ...obj} )
         }
     }
 
-    // Sets a key in the targeted object
-    set_key(key: string, value: any) {
-        let obj = this.subscribe({})
-        obj[key] = value
-        this.publish(obj)
+    private splitPath(path: string): string[] {
+        if (path === "")
+            return []
+        return path.split("/")
     }
 
-    // Deletes a key from the targeted object
-    remove_key(key: string) {
-        let obj = this.subscribe({})
-        delete obj[key]
-        this.publish(obj)
-    }
+    private mutate(path: string, value: any) {
+        // Modify an object, replacing all objects with affected children
 
-    // Sets an item in the targeted array
-    set_index(index: number, item: any) {
-        let obj = this.subscribe([])
-        obj[index] = item
-        this.publish(obj)
-    }
+        const keys = this.splitPath(path);
 
-    // Deletes an item from the targeted array
-    remove_index(index: number) {
-        let obj = this.subscribe([])
-        obj.splice(index, 1)
-        this.publish(obj)
-    }
+        if (keys.length === 0) {
+            this.obj = value
+        } else {
+            let new_obj = { ...this.obj };
+            let node = new_obj;
 
-    // Inserts an item into the targeted array
-    insert_index(index: number, item: any) {
-        let obj = this.subscribe([])
-        obj.splice(index, 0, item)
-        this.publish(obj)
-    }
-
-    // Appends an item into the targeted array
-    append_index(item: any) {
-        let obj = this.subscribe([])
-        obj.push(item)
-        this.publish(obj)
+            for (let i = 0; i < keys.length - 1; i++) {
+                const child = node[keys[i]];
+                const new_child = child === undefined ? {} : { ...child };
+                node[keys[i]] = new_child;
+                node = new_child;
+            }
+            if (value === undefined)
+                delete node[keys.length - 1]
+            else
+                node[keys[keys.length - 1]] = value;
+            this.obj = new_obj // I guess we do this last in case of an error
+        }
     }
 }
 
-export default ObjectService;
+class View {
+    private service: ObjectService
+    path: string
+    
+    constructor(service: ObjectService, path: string = "") {
+        this.service = service
+        this.path = path
+        Object.freeze(this)
+    }
+
+    read(path: string) {
+        return this.service.read(this.appendPath(path))
+    }
+
+    publish(path: string, value: any) {
+        this.service.publish(this.appendPath(path), value)
+    }
+
+    delete(path: string) {
+        this.service.delete(this.appendPath(path))
+    }
+
+    subscribe(path: string, cb: Listener): () => void {
+        return this.service.subscribe(this.appendPath(path), cb)
+    }
+
+    view (path: string): View {
+        return this.service.view(this.appendPath(path))
+    }
+
+    stableRead = () => this.service.read(this.path)
+    stableSubscribe = (cb: Listener) => this.service.subscribe(this.path, cb)
+
+    private appendPath(path: string): string {
+        return resolvePath(`${this.path}/${path}`)
+    }
+}
+
+function resolvePath(path: string): string {
+    let stack: string[] = []
+    for (const key of path.split("/")) {
+        if (key === "..")
+            stack.pop()
+        else if (key === "")
+            continue
+        else
+            stack.push(key)
+        
+    }
+    return stack.join("/")
+}
+
+function useListener(view: View, path: string = '') {
+    if (path !== '') {
+        view = view.view(path)
+    }
+    return useSyncExternalStore(view.stableSubscribe, view.stableRead)
+}
+
+export { ObjectService, View, useListener };
