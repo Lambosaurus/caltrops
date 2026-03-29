@@ -1,6 +1,7 @@
 export interface Dictionary<T> { [key: string]: T }
 
 export function setTheme(theme: string) {
+    if (theme === undefined ) { return }
     if (document.documentElement.getAttribute("data-theme") !== theme ) {
         document.documentElement.setAttribute("data-theme", theme);
     }

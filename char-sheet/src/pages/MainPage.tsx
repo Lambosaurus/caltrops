@@ -14,7 +14,7 @@ import { Sheet, Rules } from '../lib/rules'
 import LoadingSpinner from '../components/LoadingSpinner'
 import server from '../lib/server'
 import { alertSuccess, alertError, alertWarning } from '../lib/alerts'
-import { ObjectService, useListener } from '../lib/objectservice'
+import { ObjectService, View, useListener } from '../lib/objectservice'
 
 const AUTO_SAVE_TIMEOUT = 5.0
 let SAVE_TIMEOUT_ID: any = -1
@@ -46,23 +46,20 @@ function MainPage(): JSX.Element {
     return null;
   }
 
-  /*
-  function changeToken(token: string | null) {
+  function saveToken(token: string | null) {
     if (token) {
       localStorage.setItem('caltrops-token', token)
     } else {
       localStorage.removeItem('caltrops-token')
     }
-    setToken(token);
   }
-  */
 
   function loadRules(): Rules {
     const last_rules = localStorage.getItem('caltrops-rules')
     return caltrops.loadRules(last_rules ?? undefined)
   }
 
-  function loadSheet(): Sheet | null {
+  function loadSheet(view: View): Sheet | null {
     let sheet_id = new URLSearchParams(window.location.search).get("sheet")
     if (!sheet_id) {
       sheet_id = localStorage.getItem('caltrops-sheet')
@@ -77,6 +74,12 @@ function MainPage(): JSX.Element {
     return caltrops.newSheet(view.read('rules'))
   }
 
+  function saveSheet(id: string | undefined) {
+    if (id) {
+      localStorage.setItem('caltrops-sheet',id)
+    }
+  }
+
   function setTitle(title: string | undefined) {
     if (!title) {
       title = "Caltrops"
@@ -86,44 +89,35 @@ function MainPage(): JSX.Element {
     }
   }
 
-  /*
-  function changeSheet(sheet: Sheet | null, remember: boolean = false) {
-    // Check if sheet.rules were changed, and load the new rules if so.
-    if (sheet && sheet.rules !== rules.name) {
-      const newRules = caltrops.loadRules(sheet.rules)
-      setRules(newRules)
-      localStorage.setItem('caltrops-rules', newRules.name)
-      if (sheet.rules !== newRules.name) {
-        alertWarning(`Ruleset ${sheet.rules} was not loaded. ${newRules.name} loaded instead.`)
-        sheet.rules = newRules.name
-      }
-    }
-    if (sheet) {
-      sheet = caltrops.updateSheet(rules, sheet)
-    }
-    if (sheet && remember) {
-      localStorage.setItem('caltrops-sheet', sheet.id)
-    }
+  function onSheetChange(view: View) {
+    const sheet = view.read('sheet')
+    const token = view.read('token')
     if (sheet && sheet.owner && (!token || sheet.owner !== server.parseToken(token))) {
       alertWarning(`Sheet opened in read only mode. Owner: ${sheet.owner}.`)
       setEditable(EditMode.None)
-    }
-    else {
+    } else {
       setEditable(EditMode.Live)
     }
-    setTitle(sheet?.info.name)
-    setSheet(sheet)
+    // Ok, so this is a filthy wretched hack.
+    // We want to cancel out the triggered autosave.
+    // We guarantee onSheetChange is registered after onSheetEdit.
+    if (SAVE_TIMEOUT_ID) {
+      clearTimeout(SAVE_TIMEOUT_ID)
+      SAVE_TIMEOUT_ID = -1
+    }
+    saveSheet(sheet.id)
   }
-  */
 
-  /*
-  function editSheet(sheet: Sheet | null) {
+  function onSheetEdit(view: View) {
     if (SAVE_TIMEOUT_ID >= 0) {
       clearTimeout(SAVE_TIMEOUT_ID)
       SAVE_TIMEOUT_ID = -1;
     }
+
+    const token = view.read('token')
     if (token) {
       SAVE_TIMEOUT_ID = setTimeout(() => {
+        const sheet = view.read('sheet')
         if (token && sheet) {
           setTitle(sheet?.info.name)
           const username = server.parseToken(token)
@@ -137,22 +131,24 @@ function MainPage(): JSX.Element {
       }, AUTO_SAVE_TIMEOUT * 1000)
     }
   }
-  */
 
   const [editable, setEditable] = useState(EditMode.Live);
 
   const [view, _] = useState( () => {
-    const service = new ObjectService({
-      sheet: loadSheet(),
-      rules: loadRules(),
-      token: loadToken(),
-    })
+    const view = new ObjectService().view('')
 
-    //service.subscribe("rules/theme", () => setTheme(service.read("rules/theme")))
-    //service.subscribe("token")
-    //service.subscribe("sheet/info/name" () => setTitle(view.read("sheet/info/name")))
+    view.subscribe("sheet/info/name", () => setTitle(view.read("sheet/info/name")))
+    view.subscribe("rules/theme", () => setTheme(view.read("rules/theme")))
 
-    return service.view('');
+    view.publish('token', loadToken())
+    view.publish('rules', loadRules())
+    view.publish('sheet', loadSheet(view))
+
+    view.subscribe('token', () => saveToken(view.read('token')))
+    view.subscribe('sheet', () => onSheetEdit(view))
+    view.subscribe('sheet/id', () => onSheetChange(view))
+
+    return view;
   })
 
   const sheetId = useListener(view, "sheet/id")

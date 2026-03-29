@@ -1,6 +1,3 @@
-// External imports
-import { useState, useSyncExternalStore } from 'react'
-
 // Components
 import InfoTable from './InfoTable'
 import AttributeTable from './AttributeTable'
@@ -10,20 +7,20 @@ import CurrencyTable from './CurrencyTable'
 import { View, useListener } from '../lib/objectservice'
 import { EditMode } from '../lib/util'
 import caltrops from '../lib/caltrops'
-import { RollInfo, Rules, Sheet } from '../lib/rules'
+import { Rules } from '../lib/rules'
 
 /* 
  * Sheet view. Contains all other sheet displaying components.
  */
 
-function SheetView( { rules, view, editable=EditMode.Live }: {
-    rules: Rules,
+function SheetView( { view, editable=EditMode.Live }: {
     view: View,
     editable?: EditMode
   }): JSX.Element {
   
   // This will trigger a re-render if the level changes. This is probably fine.
   let level: number = useListener(view, 'sheet/info/level') ?? 0
+  let rules: Rules = useListener(view, 'rules')
 
   return (
     <div className='flex flex-wrap justify-center flex-row gap-4 basis-full p-4 scrollbar scrollbar-neutral'>

@@ -14,9 +14,9 @@ function CurrencyTable({currencies, view, editable = EditMode.Live}: {
     editable?: EditMode,
   }): JSX.Element | null {
 
-  if (!currencies.length) { return null; }
-
   const values: Dictionary<number> = useListener(view)
+
+  if (!currencies.length) { return null; }
 
   return (
     <div>

@@ -8,7 +8,7 @@ class ObjectService {
     private listeners: Map<string, Set<Listener>>
     private views: Map<string, View>
 
-    constructor(obj: any) {
+    constructor(obj: any = {}) {
         this.obj = obj
         this.listeners = new Map()
         this.views = new Map()
@@ -17,7 +17,7 @@ class ObjectService {
     view(path: string) {
         // Cache these. This provides reliable identities
         let view = this.views.get(path)
-        if (view === undefined) {
+        if (!view) {
             view = new View(this, path)
             this.views.set(path, view)
         }
@@ -28,8 +28,8 @@ class ObjectService {
         let node = this.obj
         for (let key of this.splitPath(path)) {
             node = node[key]
-            if (node === undefined)
-                break
+            if (!node)
+                return undefined
         }
         return node
     }
