@@ -9,26 +9,27 @@ import { Attribute, RollInfo, Dictionary } from '../lib/rules'
 import PointEntryBox from './PointEntryBox';
 import caltrops from '../lib/caltrops';
 import { chunkArray } from '../lib/util';
-import ObjectService from '../lib/objectservice';
+import { View, useListener } from '../lib/objectservice';
 import foundry from '../lib/foundry';
 
 
-function RollCreateModal({attributes, scores, useAspects, rollService}: {
+function RollCreateModal({scoreView, attributes, useAspects, rollView}: {
+    scoreView: View,
     attributes: Attribute[],
-    scores: Dictionary<number>,
     useAspects: boolean,
-    rollService: ObjectService,
+    rollView: View,
   }): JSX.Element | null {
 
   const [result, setResult] = useState(null as number[] | null)
 
-  const roll: RollInfo = rollService.subscribe()
-  if (!roll.skill) {
+  const roll: RollInfo = useListener(rollView)
+  const scores: Dictionary<number> = useListener(scoreView)
+  if (!roll || !roll.skill) {
     return null
   }
 
   function closeModal() {
-    rollService.publish({})
+    rollView.delete('')
     setResult(null)
   }
 
@@ -82,7 +83,7 @@ function RollCreateModal({attributes, scores, useAspects, rollService}: {
   } else {
 
     function setAttribute(name: string, score: number): void {
-      rollService.set_key('attribute', {
+      rollView.publish('attribute', {
         name: name,
         score: score,
       })
@@ -165,7 +166,7 @@ function RollCreateModal({attributes, scores, useAspects, rollService}: {
       </label>
       <PointEntryBox
         value={roll.bonus ?? 0}
-        setValue={v => rollService.set_key('bonus', v)}
+        setValue={v => rollView.publish('bonus', v)}
         min={-9}
         max={9}
       />

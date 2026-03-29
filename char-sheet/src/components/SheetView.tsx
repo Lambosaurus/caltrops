@@ -1,36 +1,34 @@
-// External imports
-import { useState } from 'react'
-
 // Components
-import SkillTable from './SkillTable'
 import InfoTable from './InfoTable'
 import AttributeTable from './AttributeTable'
-import PowerTable from './PowerTable'
-import EquipmentTable from './EquipmentTable'
-import WoundTable from './WoundTable'
-import RollCreateModal from './RollModal'
-import NotesTable from './NotesTable'
 import CurrencyTable from './CurrencyTable'
+import SkillTable from './SkillTable'
+import RollCreateModal from './RollModal'
+import PowerTable from './PowerTable'
+import WoundTable from './WoundTable'
+import EquipmentTable from './EquipmentTable'
+import NotesTable from './NotesTable'
 
 // Internal imports
-import ObjectService from '../lib/objectservice'
+import { View, useListener } from '../lib/objectservice'
 import { EditMode } from '../lib/util'
 import caltrops from '../lib/caltrops'
-import { RollInfo, Rules, Sheet } from '../lib/rules'
+import { Rules } from '../lib/rules'
+
+
 
 /* 
  * Sheet view. Contains all other sheet displaying components.
  */
 
-function SheetView( { rules, sheetService, editable=EditMode.Live }: {
-    rules: Rules,
-    sheetService: ObjectService,
+function SheetView( { view, editable=EditMode.Live }: {
+    view: View,
     editable?: EditMode
   }): JSX.Element {
-
-  const [roll, setRoll] = useState({} as RollInfo)
-  const rollService = new ObjectService(roll, setRoll)
-  const sheet: Sheet = sheetService.subscribe()
+  
+  // This will trigger a re-render if the level changes. This is probably fine.
+  let level: number = useListener(view, 'sheet/info/level') ?? 0
+  let rules: Rules = useListener(view, 'rules')
 
   return (
     <div className='flex flex-wrap justify-center flex-row gap-4 basis-full p-4 scrollbar scrollbar-neutral'>
@@ -38,20 +36,20 @@ function SheetView( { rules, sheetService, editable=EditMode.Live }: {
         {/* Info & Attributes */}
         <section className='flex gap-4 flex-col'>
           <InfoTable
-            service={sheetService.child('info')}
+            view={view.view('sheet/info')}
             editable={editable}
           />
           <CurrencyTable
             currencies={rules.currency}
-            service={sheetService.child('currency')}
+            view={view.view('sheet/currency')}
             editable={editable}
           />
           <AttributeTable
             rules={rules}
-            level={sheet.info.level}
-            service={sheetService.child('attributes')}
+            level={level}
+            scoreView={view.view('sheet/attributes')}
+            rollView={view.view('roll')}
             editable={editable}
-            rollService={rollService}
           />
         </section>
 
@@ -59,69 +57,62 @@ function SheetView( { rules, sheetService, editable=EditMode.Live }: {
         <section className='flex gap-4 flex-col'>
           <SkillTable
             skills={rules.skills}
-            service={sheetService.child('skills')}
-            maxCostTotal={caltrops.skillCostMax(rules, sheet.info.level)}
+            skillView={view.view('sheet/skills')}
+            rollView={view.view('roll')}
+            maxCostTotal={caltrops.skillCostMax(rules, level)}
             editable={editable}
-            rollService={rollService}
           />
         </section>
-        
+
         {/* Equipment column */}
         <section className='flex gap-4 flex-col'>
         {
           rules.containers.map( container => {
             return <EquipmentTable
+              key={`equipment-${container.name}-table`}
               equipment={rules.equipment}
               container={container}
-              service={sheetService.navigate(['equipment', container.name])}
+              view={view.view( `sheet/equipment/${container.name}`)}
               editable={editable}
-              key={`equipment-${container.name}-table`}
           />
           } )
         }
         </section>
 
-        {/* Powers & wounds */}
+        {/* Powers & Wounds */}
         <section className='flex gap-4 flex-col'>
-          {(() => {
-            // This feels like a crime. This element is only included if powers are available
-            const availablePowers = rules.powers.filter(p => caltrops.powerIsAvailable(p, sheet.skills));
-            return availablePowers.length ?
-              <PowerTable
-                powers={availablePowers}
-                skillScores={sheet.skills}
-                service={sheetService.child('powers')}
-                editable={editable}
-                key='power-table'
-              /> :
-               null
-          })()}
+          <PowerTable
+            powers={rules.powers}
+            skillView={view.view('sheet/skills')}
+            powerView={view.view('sheet/powers')}
+            editable={editable}
+          />
 
           {(() => {
             return rules.wounds.map( w =>
             <WoundTable
-              key={w.name}
-              service={sheetService.navigate(['wounds', w.name])}
+              key={`wound-${w.name}-table`}
+              view={ view.view(`sheet/wounds/${w.name}`)}
               container={w}
               woundSizeLimit={rules.woundSizeLimit}
               editable={editable}
             />
           )})()}
         </section>
-        
+
         {/* Notes */}
         <section className='flex gap-4 flex-col'>
           <NotesTable
-            service={sheetService.child('notes')}
+            view={view.view('sheet/notes')}
             editable={editable}
           />
         </section>
 
         <RollCreateModal
-          rollService={rollService}
+          rollView={view.view('roll')}
+          scoreView={view.view('sheet/attributes')}
           useAspects={rules.useAspects}
           attributes={rules.attributes}
-          scores={sheet.attributes}
         />
     </div>
   )

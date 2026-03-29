@@ -5,23 +5,23 @@ import PointEntryBox from './PointEntryBox'
 import { EditMode } from '../lib/util'
 import caltrops from '../lib/caltrops'
 import { Skill, Dictionary } from '../lib/rules'
-import ObjectService from '../lib/objectservice'
+import { View, useListener } from '../lib/objectservice'
 
 
-function SkillTable({skills, service, maxCostTotal, editable = EditMode.Live, rollService}: {
+function SkillTable({skills, skillView, maxCostTotal, editable = EditMode.Live, rollView}: {
     skills: Skill[],
-    service: ObjectService,
+    skillView: View,
     maxCostTotal: number,
     editable?: EditMode,
-    rollService: ObjectService,
+    rollView: View,
   }): JSX.Element {
 
-  const scores: Dictionary<number> = service.subscribe()
+  const scores: Dictionary<number> = useListener(skillView) ?? {}
   const totalCost = caltrops.skillCostTotal(scores)
   const sparePoints = maxCostTotal - totalCost;
 
   function startRoll(skill: string): void {
-    rollService.set_key("skill", {
+    rollView.publish("skill", {
       name: skill,
       score: scores[skill] ?? 0,
     })
@@ -52,7 +52,7 @@ function SkillTable({skills, service, maxCostTotal, editable = EditMode.Live, ro
                 <td className='text-center'>
                   <PointEntryBox
                     value={value}
-                    setValue={(v) => { service.set_key(s.name, v) }}
+                    setValue={(v) => { skillView.publish(s.name, v) }}
                     editable={editable >= EditMode.Full}
                     isCapped={caltrops.skillIncrementCost(value) > sparePoints}
                     encourageUp={true}

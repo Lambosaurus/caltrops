@@ -11,12 +11,12 @@ import { PiSkullFill, PiWarningFill } from 'react-icons/pi'
 // Internal imports
 import caltrops from '../lib/caltrops'
 import { SheetWound, Container } from '../lib/rules'
-import { EditMode } from '../lib/util'
-import ObjectService from '../lib/objectservice'
+import { EditMode, listUtil } from '../lib/util'
+import { View, useListener } from '../lib/objectservice'
 
 
-function WoundTable( {service, container, woundSizeLimit=2, editable=EditMode.Live}: {
-    service: ObjectService,
+function WoundTable( {view, container, woundSizeLimit=2, editable=EditMode.Live}: {
+    view: View,
     container: Container,
     woundSizeLimit?: number,
     editable?: EditMode,
@@ -24,17 +24,14 @@ function WoundTable( {service, container, woundSizeLimit=2, editable=EditMode.Li
 
   const [newWoundOpen, setNewWoundOpen] = useState(false)
   const [selected, setSelected] = useState(-1)
-  const wounds: SheetWound[] = service.subscribe([])
+  const wounds: SheetWound[] = useListener(view) ?? []
 
   function treatWound(success: boolean) {
     let index = selected
     let wound = caltrops.woundTreat(wounds[index], success)
-    if (wound === null) {
-      service.remove_index(index)
-    }
-    else{
-      service.set_index(index, wound)
-    }
+    view.publish('',
+      wound ? listUtil.set(wounds, index, wound) : listUtil.delete(wounds, index)
+    )
   }
 
   const status = caltrops.woundStatus(wounds, container)
@@ -83,7 +80,7 @@ function WoundTable( {service, container, woundSizeLimit=2, editable=EditMode.Li
                   editable >= EditMode.Full ? 
                 <IconButton
                   icon='cross'
-                  onClick={() => service.remove_index(n)}
+                  onClick={() => view.publish('', listUtil.delete(wounds, n))}
                   btnStyle='btn-outline btn-error'
                 /> :
                 <IconButton
@@ -115,7 +112,7 @@ function WoundTable( {service, container, woundSizeLimit=2, editable=EditMode.Li
       <NewWoundModal
         open={newWoundOpen}
         close={() => setNewWoundOpen(false)}
-        addWound={wound => service.append_index(wound)}
+        addWound={wound => view.publish('', listUtil.add(wounds, wound))}
         maxSize={woundSizeLimit}
       />
 

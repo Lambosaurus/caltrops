@@ -9,21 +9,21 @@ import EquipmentSelectModal from './EquipmentSelectModal'
 // Internal imports
 import { Equipment, Container, SheetEquipment, Dictionary } from '../lib/rules'
 import caltrops from '../lib/caltrops'
-import { EditMode } from '../lib/util'
-import ObjectService from '../lib/objectservice'
+import { EditMode, listUtil } from '../lib/util'
+import { View, useListener } from '../lib/objectservice'
 import TextEntryBox from './TextEntryBox'
 import { DropTarget } from './dnd/DropTarget'
 import { DragSource } from './dnd/DragSource'
 
 
-function EquipmentTable({equipment, container, service, editable=EditMode.Live}: {
+function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
     equipment: Equipment[],
     container: Container,
-    service: ObjectService,
+    view: View,
     editable?: EditMode
   }): JSX.Element {
   
-  const items: SheetEquipment[] = service.subscribe([])
+  const items: SheetEquipment[] = useListener(view) ?? []
   const freeCapacity = container.size ? (container.size - items.length) : 1
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -38,7 +38,7 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
       item.count = 1
       item.stack = equipment.stack
     }
-    service.append_index(item)
+    view.publish('', listUtil.add(items, item))
   }
 
   function lookupDescription(name: string): string {
@@ -55,12 +55,13 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
     const index = item.index
     const dest = container.name
 
-    const parent = service.parent()
-    let containers: Dictionary<SheetEquipment[]> = parent.subscribe()
-    const moved_item = containers[source].splice(index, 1)[0]
-    if (!(dest in containers)) { containers[dest] = [] }
-    containers[dest].push(moved_item)
-    parent.publish(containers)
+    const root = view.view("../")
+
+    const sourceItems = root.read(source)
+    const destItems = root.read(dest) ?? []
+
+    root.publish(source, listUtil.delete(sourceItems, index))
+    root.publish(dest, listUtil.add(destItems, sourceItems[index]))
   }
 
   return (
@@ -84,7 +85,7 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
                 <td className='w-full text-left py-0 px-0'>
                   <TextEntryBox
                     value={item.name}
-                    setValue={ v => service.set_index(i, {...item, name: v} ) }
+                    setValue={ v => view.publish('', listUtil.set(items, i, {...item, name: v} )) }
                     placeholder='item name'
                   />
                 </td> :
@@ -101,7 +102,7 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
               <td>
                 <PointEntryBox
                   value={item.count ?? 0}
-                  setValue={ v => service.set_index(i, {...item, count: v}) }
+                  setValue={ v => view.publish('', listUtil.set(items, i, {...item, count: v})) }
                   max={item.stack ?? 1}
                   visible={item.stack !== undefined}
                   editable={editable >= EditMode.Live}
@@ -110,7 +111,7 @@ function EquipmentTable({equipment, container, service, editable=EditMode.Live}:
               <td>
                 <IconButton
                   icon='cross'
-                  onClick={() => { service.remove_index(i) }}
+                  onClick={() => { view.publish('', listUtil.delete(items, i)) }}
                   btnStyle='btn-outline btn-error'
                   enabled={editable >= EditMode.Live}
                 />

@@ -5,7 +5,7 @@ import PointEntryBox from './PointEntryBox'
 import { EditMode } from '../lib/util'
 import caltrops from '../lib/caltrops'
 import { Power, Dictionary } from '../lib/rules'
-import ObjectService from '../lib/objectservice'
+import { View, useListener } from '../lib/objectservice'
 
 /* 
  * Power table.
@@ -15,14 +15,21 @@ import ObjectService from '../lib/objectservice'
  *   out: setPowerDice -> sheet.powers
  */
 
-function PowerTable({powers, skillScores, service, editable=EditMode.Live}: {
+function PowerTable({powers, skillView, powerView, editable=EditMode.Live}: {
     powers: Power[],
-    skillScores: Dictionary<number>,
-    service: ObjectService,
+    skillView: View,
+    powerView: View,
     editable?: EditMode,
-  }): JSX.Element {
+  }): JSX.Element | null {
 
-  const powerDice: Dictionary<number> = service.subscribe()
+  
+  const powerDice: Dictionary<number> = useListener(powerView)
+  const skillScores: Dictionary<number> = useListener(skillView)
+
+  powers = powers.filter( p => caltrops.powerIsAvailable(p, skillScores) )
+
+  if (!powers.length)
+    return null;
 
   return (
     <div>
@@ -44,7 +51,7 @@ function PowerTable({powers, skillScores, service, editable=EditMode.Live}: {
               <td>{skillScores[power.source ?? power.name] ?? 0}</td>
               <td> <PointEntryBox
                 value={powerDice[power.name] ?? 0}
-                setValue={v => { service.set_key(power.name, v) }}
+                setValue={v => { powerView.publish(power.name, v) }}
                 max={diceMax}
                 editable={editable >= EditMode.Live}
                 />

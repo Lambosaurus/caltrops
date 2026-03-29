@@ -2,21 +2,21 @@
 import { NumberEntryBox } from './EntryBox'
 
 // Internal imports
-import ObjectService from '../lib/objectservice';
+import { View, useListener } from '../lib/objectservice';
 import { EditMode } from '../lib/util'
 import { Currency, Dictionary } from '../lib/rules'
 
 
 
-function CurrencyTable({currencies, service, editable = EditMode.Live}: {
+function CurrencyTable({currencies, view, editable = EditMode.Live}: {
     currencies: Currency[],
-    service: ObjectService,
+    view: View,
     editable?: EditMode,
   }): JSX.Element | null {
 
-  if (!currencies.length) { return null; }
+  const values: Dictionary<number> = useListener(view)
 
-  const values: Dictionary<number> = service.subscribe()
+  if (!currencies.length) { return null; }
 
   return (
     <div>
@@ -35,7 +35,7 @@ function CurrencyTable({currencies, service, editable = EditMode.Live}: {
                 <td className='py-0'>
                   <NumberEntryBox
                     value={values[currency.name] ?? 0}
-                    setValue={v => service.set_key(currency.name, v) }
+                    setValue={v => view.publish(currency.name, v) }
                     precision={currency.precision ?? 0}
                     editable={editable >= EditMode.Live}
                   />

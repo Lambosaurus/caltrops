@@ -15,17 +15,15 @@ import { downloadObject, copyToClipboard, EditMode } from '../lib/util'
 import { Sheet } from '../lib/rules'
 import server, { ServerItem } from '../lib/server'
 import UserLoginModal from './UserLoginModal';
-import { alertError, alertInfo, alertSuccess } from '../lib/alerts';
+import { alertError, alertInfo, alertSuccess, alertWarning } from '../lib/alerts';
 import caltrops from '../lib/caltrops';
+import { View, useListener } from "../lib/objectservice"
 
 
-function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, children}: {
+function MenuRibbon( {editable, setEditable, view, children}: {
     editable: EditMode,
     setEditable(editable: EditMode): void,
-    sheet: Sheet | null,
-    setSheet(sheet: Sheet | null): void,
-    token: string | null,
-    setToken(token: string | null): void,
+    view: View,
     children?: React.ReactNode,
   }): JSX.Element {
 
@@ -34,6 +32,27 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
   const [isLoadSheetOpen, setIsLoadSheetOpen] = useState(false)
   const [sheetList, setSheetList] = useState(null as ServerItem[] | null)
 
+  const token = useListener(view, "token")
+  const sheetId = useListener(view, "sheet/id")
+
+  function setSheet(sheet: Sheet | null) {
+    const rules = view.read("rules")
+    if (sheet && sheet.rules !== rules.name) {
+      const newRules = caltrops.loadRules(sheet.rules)
+      view.publish("rules", newRules)
+      localStorage.setItem('caltrops-rules', newRules.name)
+      if (sheet.rules !== newRules.name) {
+        alertWarning(`Ruleset ${sheet.rules} was not loaded. ${newRules.name} loaded instead.`)
+        sheet.rules = newRules.name
+      }
+    }
+    if (sheet) {
+      view.publish("sheet", caltrops.updateSheet(rules, sheet))
+    } else {
+      view.delete("sheet")
+    }
+  }
+  
   const menuItems = [
   <li key='new'>
     <button
@@ -66,6 +85,7 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
     <button
       className='btn btn-ghost'
       onClick={() => {
+        const sheet = view.read('sheet')
         if (token && sheet) {
           const username = server.parseToken(token)
           if (username && sheet.owner !== username) {
@@ -76,7 +96,7 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
             .catch(e => alertError(`Error saving sheet: ${e.message}`))
         }
       }}
-      disabled={!(sheet && token && editable > EditMode.None)}
+      disabled={!(sheetId && token && editable > EditMode.None)}
     >
       <BsCloudArrowUp size={27}/>
       Save
@@ -86,11 +106,11 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
     <button
       className='btn btn-ghost'
       onClick={() => {
-        if (sheet) {
-          setSheet(caltrops.cloneSheet(sheet))
+        if (sheetId) {
+          view.publish('sheet', caltrops.cloneSheet(view.read('sheet')))
         }
       }}
-      disabled={!sheet}
+      disabled={!sheetId}
     >
     <BsCopy size={25}/>
     Clone
@@ -100,14 +120,15 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
     <button
       className='btn btn-ghost'
       onClick={() => {
-          if (sheet) {
+        if (sheetId) {
+          let sheet = view.read("sheet")
           downloadObject(sheet,
             `caltrops-${sheet.info.name.replace(' ', '-').toLowerCase()}.json`,
             true
           )
         }
       }}
-      disabled={!sheet}
+      disabled={!sheetId}
     >
       <BsDownload size={25}/>
       Download
@@ -117,12 +138,12 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
     <button
       className='btn btn-ghost'
       onClick={ () => {
-        if (sheet) {
-          copyToClipboard( `${window.location.href.split('?')[0]}?sheet=${sheet.id}` )
+        if (sheetId) {
+          copyToClipboard( `${window.location.href.split('?')[0]}?sheet=${sheetId}` )
           alertInfo("Share URL copied to clipboard")
         }
         }}
-      disabled={ !sheet }
+      disabled={ !sheetId }
     >
       <BsShare size={25}/>
       Share
@@ -198,7 +219,7 @@ function MenuRibbon( {editable, setEditable, sheet, setSheet, token, setToken, c
     <UserLoginModal
       open={isLoginOpen}
       close={() => setIsLoginOpen(false)}
-      setUser={u => setToken(u)}
+      setUser={u => view.publish('token', u)}
       isLoggedIn={!!token}
       />
 

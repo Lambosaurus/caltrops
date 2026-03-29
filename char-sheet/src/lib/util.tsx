@@ -1,6 +1,7 @@
 export interface Dictionary<T> { [key: string]: T }
 
 export function setTheme(theme: string) {
+    if (theme === undefined ) { return }
     if (document.documentElement.getAttribute("data-theme") !== theme ) {
         document.documentElement.setAttribute("data-theme", theme);
     }
@@ -56,46 +57,73 @@ export function filterObject<T>(obj: Dictionary<T> | undefined, predicate: (key:
 }
 
 export function timeSince(date: Date): string {
-    var seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  var seconds = Math.floor((Date.now() - date.getTime()) / 1000);
 
-    function formatInterval(interval: number, name: string): string {
-      interval = Math.floor(interval)
-      if (interval > 1) {
-        return `${interval} ${name}s`
-      }
-      return `1 ${name}` 
-    }
-  
-    var interval = seconds / 31536000;
-  
+  function formatInterval(interval: number, name: string): string {
+    interval = Math.floor(interval)
     if (interval > 1) {
-      return formatInterval(interval, "year");
+      return `${interval} ${name}s`
     }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      return formatInterval(interval, "month");
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      return formatInterval(interval, "day");
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      return formatInterval(interval, "hour");
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      return formatInterval(interval, "minute");
-    }
-    return formatInterval(seconds, "second");
+    return `1 ${name}` 
   }
 
-  export function setPrecision(n: number, precision: number): number {
-    const p = Math.pow(10, precision)
-    return Math.floor(n * p) / p
-  }
+  var interval = seconds / 31536000;
 
-  export function isEmail(email: string): boolean {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
+  if (interval > 1) {
+    return formatInterval(interval, "year");
   }
+  interval = seconds / 2592000;
+  if (interval > 1) {
+    return formatInterval(interval, "month");
+  }
+  interval = seconds / 86400;
+  if (interval > 1) {
+    return formatInterval(interval, "day");
+  }
+  interval = seconds / 3600;
+  if (interval > 1) {
+    return formatInterval(interval, "hour");
+  }
+  interval = seconds / 60;
+  if (interval > 1) {
+    return formatInterval(interval, "minute");
+  }
+  return formatInterval(seconds, "second");
+}
+
+export function setPrecision(n: number, precision: number): number {
+  const p = Math.pow(10, precision)
+  return Math.floor(n * p) / p
+}
+
+export function isEmail(email: string): boolean {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return re.test(email)
+}
+
+function listAdd<T>(items: Array<T>, item: T): Array<T> {
+  return [...items, item]
+}
+
+function listDelete<T>(items: Array<T>, index: number): Array<T> {
+  return [ ...items.slice(0, index), ...items.slice(index + 1)]
+}
+
+function listSet<T>(items: Array<T>, index: number, item: T): Array<T> {
+  let new_items = items.slice()
+  new_items[index] = item
+  return new_items;
+}
+
+function listInsert<T>(items: Array<T>, index: number, item: T): Array<T> {
+  const next = items.slice();
+  next.splice(index, 0, item);
+  return next;
+}
+
+export const listUtil = {
+  add: listAdd,
+  delete: listDelete,
+  set: listSet,
+  insert: listInsert,
+}

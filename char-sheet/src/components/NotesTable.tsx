@@ -3,19 +3,19 @@ import IconButton from './IconButton'
 import Markdown from 'react-markdown'
 
 // Internal imports
-import { EditMode } from '../lib/util'
-import ObjectService from '../lib/objectservice'
+import { EditMode, listUtil } from '../lib/util'
+import { View, useListener } from '../lib/objectservice'
 import { useState } from 'react'
 import remarkGfm from 'remark-gfm'
 import remarkBreaks  from 'remark-breaks'
 
 
-function NotesTable({service, editable=EditMode.Live}: {
-    service: ObjectService,
+function NotesTable({view, editable=EditMode.Live}: {
+    view: View,
     editable?: EditMode,
   }): JSX.Element {
 
-  const notes: string[] = service.subscribe()
+  const notes: string[] = useListener(view)
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   function adjustHeight(textarea: HTMLTextAreaElement | null) {
@@ -51,7 +51,7 @@ function NotesTable({service, editable=EditMode.Live}: {
         const prefix = match[0][0]; // list marker: -, *, or +
         const replacement = `${prefix} [${checked ? 'x' : ' '}]`;
         const newValue = currentValue.substring(0, match.index) + replacement + currentValue.substring(match.index + match[0].length);
-        service.set_index(index, newValue);
+        view.publish('', listUtil.set(notes, index, newValue))
         return;
       }
       matchCount++;
@@ -92,7 +92,7 @@ function NotesTable({service, editable=EditMode.Live}: {
                   placeholder='Enter notes here'
                   autoFocus={true}
                   value={note}
-                  onChange={ evt => service.set_index(i, evt.target.value) }
+                  onChange={ evt => view.publish('', listUtil.set(notes, i, evt.target.value)) }
                   ref={(textarea) => adjustHeight(textarea)}
                   disabled={!(editable >= EditMode.Live)}
                 />
@@ -102,7 +102,7 @@ function NotesTable({service, editable=EditMode.Live}: {
                 <IconButton
                   icon="cross"
                   btnStyle="btn-outline btn-error"
-                  onClick={() => service.remove_index(i)}
+                  onClick={() => view.publish('', listUtil.delete(notes, i))}
                   enabled={editable >= EditMode.Live}
                 />
               </td>
@@ -116,7 +116,7 @@ function NotesTable({service, editable=EditMode.Live}: {
               <div className='flex justify-center'>
               <IconButton
                 icon='plus'
-                onClick={() => {service.append_index("")}}
+                onClick={() => view.publish('', listUtil.add(notes, ""))}
                 enabled={editable >= EditMode.Live}
               />
               </div>
