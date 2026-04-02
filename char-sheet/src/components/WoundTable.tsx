@@ -5,7 +5,7 @@ import { useState } from 'react'
 import IconButton from './IconButton'
 import NewWoundModal from './NewWoundModal'
 import ActionModal from './ActionModal'
-import { ImHeartBroken, ImHeart, ImCross } from 'react-icons/im'
+import { ImHeartBroken, ImHeart } from 'react-icons/im'
 import { PiSkullFill, PiWarningFill } from 'react-icons/pi'
 
 // Internal imports
