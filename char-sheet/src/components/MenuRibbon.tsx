@@ -36,18 +36,8 @@ function MenuRibbon( {editable, setEditable, view, children}: {
   const sheetId = useListener(view, "sheet/id")
 
   function setSheet(sheet: Sheet | null) {
-    const rules = view.read("rules")
-    if (sheet && sheet.rules !== rules.name) {
-      const newRules = caltrops.loadRules(sheet.rules)
-      view.publish("rules", newRules)
-      localStorage.setItem('caltrops-rules', newRules.name)
-      if (sheet.rules !== newRules.name) {
-        alertWarning(`Ruleset ${sheet.rules} was not loaded. ${newRules.name} loaded instead.`)
-        sheet.rules = newRules.name
-      }
-    }
     if (sheet) {
-      view.publish("sheet", caltrops.updateSheet(rules, sheet))
+      view.publish("sheet", sheet)
     } else {
       view.delete("sheet")
     }

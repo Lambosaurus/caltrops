@@ -14,7 +14,6 @@ export interface Skill {
     name: string,
     description?: string,
     trained?: boolean, // If true, this skill can not be used without at least 1 point.
-    aka?: string, // Used for migrating old skill names
 }
 
 export interface Currency {

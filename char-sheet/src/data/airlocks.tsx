@@ -30,7 +30,6 @@ const airlockRuleset: Rules = {
         },
         {
             name: 'Melee',
-            aka: 'Bludgeoning',
         },
         {
             name: 'Explosives',

@@ -208,16 +208,6 @@ function importSheet(obj: any): Sheet {
     return loadSheet(obj);
 }
 
-function updateSheet(rules: Rules, sheet: Sheet): Sheet {
-    for (let skill of rules.skills) {
-        if (skill.aka && sheet.skills[skill.aka]) {
-            sheet.skills[skill.name] = sheet.skills[skill.aka]
-            delete sheet.skills[skill.aka]
-        }
-    }
-    return sheet
-}
-
 function cleanSheet(sheet: Sheet): Sheet {
     return loadSheet(sheet)
 }
@@ -306,7 +296,6 @@ const caltrops = {
     equipmentFilter: equipmentFilter,
     newSheet: newSheet,
     importSheet: importSheet,
-    updateSheet: updateSheet,
     cleanSheet: cleanSheet,
     woundCreate: woundCreate,
     woundTotal: woundTotal,

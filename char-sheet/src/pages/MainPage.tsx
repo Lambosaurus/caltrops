@@ -74,12 +74,6 @@ function MainPage(): JSX.Element {
     return caltrops.newSheet(view.read('rules'))
   }
 
-  function saveSheet(id: string | undefined) {
-    if (id) {
-      localStorage.setItem('caltrops-sheet',id)
-    }
-  }
-
   function setTitle(title: string | undefined) {
     if (!title) {
       title = "Caltrops"
@@ -90,17 +84,7 @@ function MainPage(): JSX.Element {
   }
 
   function onSheetChange(view: View) {
-    const sheet = view.read('sheet')
-    const token = view.read('token')
-    if (sheet && sheet.owner && (!token || sheet.owner !== server.parseToken(token))) {
-      alertWarning(`Sheet opened in read only mode. Owner: ${sheet.owner}.`)
-      setEditable(EditMode.None)
-    } else {
-      setEditable(EditMode.Live)
 
-      if (sheet)
-        saveSheet(sheet.id)
-    }
     // Ok, so this is a filthy wretched hack.
     // We want to cancel out the triggered autosave.
     // We guarantee onSheetChange is registered after onSheetEdit.
@@ -108,6 +92,32 @@ function MainPage(): JSX.Element {
       clearTimeout(SAVE_TIMEOUT_ID)
       SAVE_TIMEOUT_ID = -1
     }
+
+    const sheet = view.read('sheet')
+    if (!sheet)
+      return
+    const token = view.read('token')
+    const rules = view.read('rules')
+
+    // This could be done on its own subscription, but rules should only ever change with a sheet change.
+    if (rules.name !== sheet.rules) {
+      const new_rules = caltrops.loadRules(sheet.rules)
+      view.publish("rules", new_rules)
+      if (new_rules.name !== sheet.rules) {
+        alertWarning(`Ruleset ${sheet.rules} was not loaded. ${new_rules.name} loaded instead.`)
+        sheet.rules = new_rules.name
+      }
+    }
+
+    if (sheet.owner && (!token || sheet.owner !== server.parseToken(token))) {
+      alertWarning(`Sheet opened in read only mode. Owner: ${sheet.owner}.`)
+      setEditable(EditMode.None)
+    } else {
+      setEditable(EditMode.Live)
+      localStorage.setItem('caltrops-sheet',sheet.id)
+      localStorage.setItem('caltrops-rules',sheet.rules)
+    }
+
   }
 
   function onSheetEdit(view: View) {
