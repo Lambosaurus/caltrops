@@ -1,5 +1,5 @@
 // External imports
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 // Components
 import PointEntryBox from './PointEntryBox'
@@ -15,6 +15,10 @@ import TextEntryBox from './TextEntryBox'
 import { DropTarget } from './dnd/DropTarget'
 import { DragSource } from './dnd/DragSource'
 
+type DragItem = {
+  container: string,
+  index: number,
+}
 
 function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
     equipment: Equipment[],
@@ -22,9 +26,10 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
     view: View,
     editable?: EditMode
   }): JSX.Element {
-  
+
   const items: SheetEquipment[] = useListener(view) ?? []
   const freeCapacity = container.size ? (container.size - items.length) : 1
+  const empty = items.length === 0
   const [modalOpen, setModalOpen] = useState(false)
 
   function addItem(equipment: Equipment) {
@@ -50,29 +55,33 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
     return name;
   }
 
-  function onDropEquipment(item: any) {
-    const source = item.container
-    const index = item.index
-    const dest = container.name
+  function dropHandlerFactory(dropIdx = 0) {
+    return (item: DragItem) => {
+      const source = item.container
+      const index = item.index
+      const dest = container.name
 
-    const root = view.view("../")
+      const root = view.view("../")
 
-    const sourceItems = root.read(source)
-    const destItems = root.read(dest) ?? []
+      const sourceItems = root.read(source)
+      const destItems = root.read(dest) ?? []
 
-    if (sourceItems === destItems) {
-      root.publish(source, listUtil.move(sourceItems, index, sourceItems.length-1))
-    } else {
-      root.publish(source, listUtil.delete(sourceItems, index))
-      root.publish(dest, listUtil.add(destItems, sourceItems[index]))
+      if (sourceItems === destItems) {
+        root.publish(source, listUtil.move(sourceItems, index, dropIdx))
+      } else {
+        root.publish(source, listUtil.delete(sourceItems, index))
+        root.publish(dest, listUtil.insert(destItems, dropIdx, sourceItems[index]))
+      }
     }
   }
+
+  const previewRef = useRef(null)
 
   return (
     <DropTarget
       accept='equipment'
-      enabled={ editable >= EditMode.Live && freeCapacity > 0 }
-      onDrop={onDropEquipment}
+      enabled={ editable >= EditMode.Live && freeCapacity > 0 && empty } // Only use if empty
+      onDrop={dropHandlerFactory()}
     >
       <table className="table table-compact w-80">
         <thead>
@@ -83,7 +92,14 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
         <tbody>
         {
           items.map((item, i) => {
-            return <tr className='hover tooltip tooltip-left w-full' data-tip={lookupDescription(item.name)} key={i}>
+            return <DropTarget
+                key={i}
+                accept='equipment'
+                hoverClass='drop-hover'
+                enabled={ editable >= EditMode.Live && freeCapacity > 0 }
+                wrappingElement={<tr className='hover tooltip tooltip-left w-full border-t-2 border-transparent' data-tip={lookupDescription(item.name)}></tr>}
+                onDrop={dropHandlerFactory(i)}
+              >
               {
                 editable >= EditMode.Full && item.custom ?
                 <td className='w-full text-left py-0 px-0'>
@@ -95,12 +111,12 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
                 </td> :
                 <td className='w-full text-left'>
                   <DragSource
-                    type='equipment'
-                    item={ {container: container.name, index: i} }
-                    enabled={editable >= EditMode.Live}
-                  >
-                    { item.name }
-                  </DragSource>
+                      type='equipment'
+                      item={ {container: container.name, index: i} }
+                      enabled={editable >= EditMode.Live}
+                    >
+                      { item.name }
+                    </DragSource>
                 </td>
               }
               <td>
@@ -120,7 +136,7 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
                   enabled={editable >= EditMode.Live}
                 />
               </td>
-            </tr>
+            </DropTarget>
           })
         }
         </tbody>
