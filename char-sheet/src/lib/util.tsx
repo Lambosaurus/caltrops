@@ -122,9 +122,17 @@ function listInsert<T>(items: Array<T>, index: number, item: T): Array<T> {
   return next;
 }
 
+function listMove<T>(items: Array<T>, srcindex: number, dstindex: number): Array<T> {
+  const item = items[srcindex];
+  const next = listDelete(items, srcindex);
+  next.splice(dstindex, 0, item)
+  return next;
+}
+
 export const listUtil = {
   add: listAdd,
   delete: listDelete,
   set: listSet,
   insert: listInsert,
+  move: listMove,
 }

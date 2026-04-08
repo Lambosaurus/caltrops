@@ -60,8 +60,12 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
     const sourceItems = root.read(source)
     const destItems = root.read(dest) ?? []
 
-    root.publish(source, listUtil.delete(sourceItems, index))
-    root.publish(dest, listUtil.add(destItems, sourceItems[index]))
+    if (sourceItems === destItems) {
+      root.publish(source, listUtil.move(sourceItems, index, sourceItems.length-1))
+    } else {
+      root.publish(source, listUtil.delete(sourceItems, index))
+      root.publish(dest, listUtil.add(destItems, sourceItems[index]))
+    }
   }
 
   return (
