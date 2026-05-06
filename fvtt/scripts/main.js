@@ -10,7 +10,7 @@ async function caltrops_recieve(data) {
   
   let rollstring = `${data.dice}d4cs=4`
 
-  let roll = await new Roll(rollstring).evaluate({async: true});
+  let roll = await new Roll(rollstring).evaluate();
   //game.dice3d?.showForRoll(roll);
 
   await roll.toMessage( { flavor: data.text } )
