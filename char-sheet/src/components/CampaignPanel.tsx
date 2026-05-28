@@ -30,6 +30,7 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
     const [modalOpen, setModalOpen] = useState(false)
     const [notFound, setNotFound] = useState(false)
     const selfWriting = useRef(false)
+    const metaRef = useRef<{ title: string, owner: string } | null>(null)
 
     const canEdit = !!(token && campaign)
 
@@ -43,7 +44,8 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
                     if (item?.content?.type === 'campaign') {
                         const c: Campaign = { ...item.content, members: item.content.members ?? [], items: item.content.items ?? [] }
                         setCampaign(c)
-                        setMeta({ title: item.title, owner: item.owner })
+                        metaRef.current = { title: item.title, owner: item.owner }
+                        setMeta(metaRef.current)
                         setNotFound(false)
                         selfWriting.current = true
                         equipmentView.publish('communal', c.items)
@@ -65,7 +67,7 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
                 if (!prev) return prev
                 const updated = { ...prev, items }
                 if (token) {
-                    server.writeCampaign(token, campaignId, meta?.title ?? '', updated)
+                    server.writeCampaign(token, campaignId, metaRef.current?.title ?? '', updated)
                         .catch(e => alertError(`Error syncing campaign: ${e.message}`))
                 }
                 return updated
@@ -94,7 +96,7 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
         selfWriting.current = true
         equipmentView.publish('communal', updated.items)
         if (token) {
-            server.writeCampaign(token, campaignId, meta?.title ?? '', updated)
+            server.writeCampaign(token, campaignId, metaRef.current?.title ?? '', updated)
                 .catch(e => alertError(`Error updating campaign: ${e.message}`))
         }
     }

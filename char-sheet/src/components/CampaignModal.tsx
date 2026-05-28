@@ -194,10 +194,10 @@ function CampaignModal({ open, close, token, sheetId, rules, setActiveCampaignId
                     callback: openCreate,
                     stayOpen: true,
                 },
-                {
+                ...(sheetId && campaigns?.some(c => (c.content as Campaign)?.members?.includes(sheetId)) ? [{
                     name: 'Leave Campaign',
                     callback: deactivateCampaign,
-                },
+                }] : []),
             ] : []}
         >
             {campaigns === null ? (
