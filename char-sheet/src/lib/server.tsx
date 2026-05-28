@@ -1,3 +1,5 @@
+import { Campaign } from './rules'
+
 const SERVER_URI = 'https://caltrops.tlembedded.com/api/'
 
 export interface ServerItem {
@@ -67,6 +69,29 @@ async function deleteContent(token: string, id: string): Promise<ServerItem[]> {
     return result.list
 }
 
+async function listCampaigns(): Promise<ServerItem[]> {
+    const result = await post({
+        listCampaigns: "*",
+    })
+    return result.listCampaigns ?? [];
+}
+
+async function writeCampaign(token: string, id: string, title: string, content: Campaign): Promise<boolean> {
+    await post({
+        token: token,
+        write: [{ id, title, content }]
+    })
+    return true;
+}
+
+async function joinCampaign(token: string, campaignId: string, sheetId: string): Promise<boolean> {
+    await post({
+        token: token,
+        joinCampaign: { campaignId, sheetId },
+    })
+    return true;
+}
+
 async function requestToken(email: string): Promise<boolean> {
     const result = await post({
         register: email
@@ -94,6 +119,9 @@ const server = {
     read: readContent,
     write: writeContent,
     delete: deleteContent,
+    listCampaigns: listCampaigns,
+    writeCampaign: writeCampaign,
+    joinCampaign: joinCampaign,
     parseToken: parseToken,
     requestToken: requestToken,
 }

@@ -8,6 +8,7 @@ import PowerTable from './PowerTable'
 import WoundTable from './WoundTable'
 import EquipmentTable from './EquipmentTable'
 import NotesTable from './NotesTable'
+import CampaignPanel from './CampaignPanel'
 
 // Internal imports
 import { View, useListener } from '../lib/objectservice'
@@ -21,14 +22,17 @@ import { Rules } from '../lib/rules'
  * Sheet view. Contains all other sheet displaying components.
  */
 
-function SheetView( { view, editable=EditMode.Live }: {
+function SheetView( { view, editable=EditMode.Live, campaignId=null, token=null }: {
     view: View,
-    editable?: EditMode
+    editable?: EditMode,
+    campaignId?: string | null,
+    token?: string | null,
   }): JSX.Element {
   
   // This will trigger a re-render if the level changes. This is probably fine.
   let level: number = useListener(view, 'sheet/info/level') ?? 0
   let rules: Rules = useListener(view, 'rules')
+  let sheetId: string | null = useListener(view, 'sheet/id') ?? null
 
   return (
     <div className='flex flex-wrap justify-center flex-row gap-4 basis-full p-4 scrollbar scrollbar-neutral'>
@@ -77,6 +81,15 @@ function SheetView( { view, editable=EditMode.Live }: {
           />
           } )
         }
+        {campaignId && (
+          <CampaignPanel
+            campaignId={campaignId}
+            sheetId={sheetId}
+            token={token}
+            rules={rules}
+            equipmentView={view.view('sheet/equipment')}
+          />
+        )}
         </section>
 
         {/* Powers & Wounds */}

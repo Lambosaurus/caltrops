@@ -164,6 +164,8 @@ function MainPage(): JSX.Element {
   })
 
   const sheetId = useListener(view, "sheet/id")
+  const token = useListener(view, "token")
+  const activeCampaignId: string | null = useListener(view, "sheet/campaignId") ?? null
 
   return (
     <FileUploader setFile={s => view.publish("sheet", s)}>
@@ -178,6 +180,8 @@ function MainPage(): JSX.Element {
           <SheetView
             view={view}
             editable={editable}
+            campaignId={activeCampaignId}
+            token={token}
           /> :
           <LoadingSpinner size={100}/>
         }
