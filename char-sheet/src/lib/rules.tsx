@@ -79,6 +79,7 @@ export interface SheetEquipment {
 export interface Campaign {
     type: 'campaign',
     members: string[],  // sheet IDs
+    stashName?: string,
     items: SheetEquipment[],
 }
 

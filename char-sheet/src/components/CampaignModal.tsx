@@ -142,6 +142,12 @@ function CampaignModal({ open, close, token, sheetId, rules, setActiveCampaignId
                         onChange={e => setEditTitle(e.target.value)}
                         placeholder='Campaign name'
                     />
+                    <input
+                        className='input input-bordered w-full'
+                        value={editCampaign.stashName ?? ''}
+                        onChange={e => setEditCampaign({ ...editCampaign, stashName: e.target.value })}
+                        placeholder='Communal stash name (default: Communal)'
+                    />
 
                     <div>
                         <h3 className='font-bold mb-1'>Shared Items</h3>

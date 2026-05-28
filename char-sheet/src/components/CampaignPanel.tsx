@@ -127,12 +127,12 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
         saveUpdated({ ...campaign, items: [...campaign.items, { ...dropped }] })
     }
 
-    const title = 'Communal'
+    const title = campaign?.stashName?.trim() || 'Communal'
 
     if (notFound) {
         return (
             <table className="table table-compact w-80">
-                <thead><tr><th>Items: {title}</th></tr></thead>
+                <thead><tr><th>Items: Communal</th></tr></thead>
                 <tbody><tr><td className='text-error'>Campaign not found.</td></tr></tbody>
             </table>
         )
@@ -141,7 +141,7 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
     if (!campaign) {
         return (
             <table className="table table-compact w-80">
-                <thead><tr><th>Items: {title}</th></tr></thead>
+                <thead><tr><th>Items: Communal</th></tr></thead>
                 <tbody><tr><td>Loading...</td></tr></tbody>
             </table>
         )
