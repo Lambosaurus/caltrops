@@ -98,7 +98,7 @@ function CampaignModal({ open, close, token, sheetId, rules, setActiveCampaignId
 
     function addItem(equipment: Equipment) {
         if (!editCampaign) return
-        const item: SheetEquipment = { name: equipment.name }
+        const item: SheetEquipment = { name: equipment.name, uid: uuidv4() }
         if (equipment.custom) item.custom = true
         if (equipment.stack) { item.count = 1; item.stack = equipment.stack }
         setEditCampaign({ ...editCampaign, items: [...editCampaign.items, item] })

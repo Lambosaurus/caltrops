@@ -93,6 +93,25 @@ async function joinCampaign(token: string, campaignId: string, sheetId: string):
     return true;
 }
 
+async function patchCampaign(
+    token: string,
+    campaignId: string,
+    patch: (current: Campaign) => Campaign,
+): Promise<Campaign> {
+    const item = await readContent(campaignId)
+    if (!item || item.content?.type !== 'campaign') {
+        throw new Error('Campaign not found')
+    }
+    const current: Campaign = {
+        ...item.content,
+        members: item.content.members ?? [],
+        items: item.content.items ?? [],
+    }
+    const updated = patch(current)
+    await writeContent(token, campaignId, item.title, updated)
+    return updated
+}
+
 async function requestToken(email: string): Promise<boolean> {
     const result = await post({
         register: email
@@ -123,6 +142,7 @@ const server = {
     listCampaigns: listCampaigns,
     writeCampaign: writeCampaign,
     joinCampaign: joinCampaign,
+    patchCampaign: patchCampaign,
     parseToken: parseToken,
     requestToken: requestToken,
 }

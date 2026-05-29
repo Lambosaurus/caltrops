@@ -29,12 +29,16 @@ let SAVE_TIMEOUT_ID: any = -1
 function MainPage(): JSX.Element {
 
   function loadToken(): string | null {
-    let token = new URLSearchParams(window.location.search).get("token")
+    const params = new URLSearchParams(window.location.search)
+    let token = params.get("token")
     if (token && server.parseToken(token)) {
-      // Token supplied via URI. Save it.
       localStorage.setItem('caltrops-token', token)
-      // Reload without query params
-      window.location.href = window.location.href.split('?')[0]
+      // Preserve ?campaign= if present so loadSheet can pick it up
+      const campaignParam = params.get("campaign")
+      const next = campaignParam
+        ? `${window.location.pathname}?campaign=${encodeURIComponent(campaignParam)}`
+        : window.location.pathname
+      window.location.href = window.location.origin + next
     }
     else {
       token = localStorage.getItem('caltrops-token');
@@ -78,27 +82,35 @@ function MainPage(): JSX.Element {
       server.read(sheet_id).then(sheet => {
           const imported = caltrops.importSheet(sheet.content)
           view.publish("sheet", imported)
-
-          const pendingCampaign = sessionStorage.getItem('caltrops-pending-campaign')
-          if (pendingCampaign) {
-            sessionStorage.removeItem('caltrops-pending-campaign')
-            const token = view.read('token')
-            if (token && imported.id) {
-              server.joinCampaign(token, pendingCampaign, imported.id)
-                .then(() => {
-                  view.publish('sheet/campaignId', pendingCampaign)
-                  alertSuccess('Joined campaign')
-                })
-                .catch(e => alertError(`Error joining campaign: ${e.message}`))
-            } else {
-              alertWarning('Log in and load a character sheet to join the campaign.')
-            }
-          }
+          tryJoinPendingCampaign(view, imported.id)
         }
       ).catch(e => alertError(`Error reading sheet: ${e.message}`))
       return null;
     }
+
+    // No saved sheet — warn if an invite link was followed
+    if (sessionStorage.getItem('caltrops-pending-campaign')) {
+      alertWarning('Open your character sheet first, then follow the campaign invite link.')
+    }
+
     return caltrops.newSheet(view.read('rules'))
+  }
+
+  function tryJoinPendingCampaign(view: View, sheetId: string) {
+    const pendingCampaign = sessionStorage.getItem('caltrops-pending-campaign')
+    if (!pendingCampaign) return
+    sessionStorage.removeItem('caltrops-pending-campaign')
+    const token = view.read('token')
+    if (!token) {
+      alertWarning('Log in to join the campaign.')
+      return
+    }
+    server.joinCampaign(token, pendingCampaign, sheetId)
+      .then(() => {
+        view.publish('sheet/campaignId', pendingCampaign)
+        alertSuccess('Joined campaign')
+      })
+      .catch(e => alertError(`Error joining campaign: ${e.message}`))
   }
 
   function setTitle(title: string | undefined) {

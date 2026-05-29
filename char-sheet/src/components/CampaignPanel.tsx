@@ -14,6 +14,7 @@ import server, { ServerItem } from '../lib/server'
 import { alertError } from '../lib/alerts'
 import { View } from '../lib/objectservice'
 import { listUtil } from '../lib/util'
+import { v4 as uuidv4 } from 'uuid'
 
 const POLL_INTERVAL_MS = 5000
 
@@ -62,15 +63,41 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
         const unsub = equipmentView.view('communal').subscribe('', () => {
             if (selfWriting.current) { selfWriting.current = false; return }
             if (cancelled) return
-            const items: SheetEquipment[] = (equipmentView.read('communal') ?? []).filter(Boolean)
+            const remaining: SheetEquipment[] = (equipmentView.read('communal') ?? []).filter(Boolean)
             setCampaign(prev => {
                 if (!prev) return prev
-                const updated = { ...prev, items }
-                if (token) {
-                    server.writeCampaign(token, campaignId, metaRef.current?.title ?? '', updated)
-                        .catch(e => alertError(`Error syncing campaign: ${e.message}`))
+                if (!token) return { ...prev, items: remaining }
+                // Find the removed item by uid if available, else by name
+                const remainingUids = new Set(remaining.map(r => r.uid).filter(Boolean))
+                const remainingNames = [...remaining]
+                let removedUid: string | null = null
+                let removedName: string | null = null
+                for (const item of prev.items) {
+                    if (item.uid) {
+                        if (!remainingUids.has(item.uid)) { removedUid = item.uid; break }
+                    } else {
+                        const idx = remainingNames.findIndex(r => r.name === item.name)
+                        if (idx === -1) { removedName = item.name; break }
+                        remainingNames.splice(idx, 1)
+                    }
                 }
-                return updated
+                if (!removedUid && !removedName) return prev
+                const uidToRemove = removedUid
+                const nameToRemove = removedName
+                server.patchCampaign(token, campaignId, current => {
+                    if (uidToRemove) {
+                        return { ...current, items: current.items.filter(item => item.uid !== uidToRemove) }
+                    }
+                    const i = current.items.findIndex(item => item.name === nameToRemove)
+                    if (i === -1) return current
+                    return { ...current, items: current.items.filter((_, idx) => idx !== i) }
+                }).then(patched => {
+                    if (cancelled) return
+                    selfWriting.current = true
+                    setCampaign(patched)
+                    equipmentView.publish('communal', patched.items)
+                }).catch(e => alertError(`Error syncing campaign: ${e.message}`))
+                return { ...prev, items: remaining }
             })
         })
 
@@ -91,32 +118,58 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
         return name
     }
 
-    function saveUpdated(updated: Campaign) {
-        setCampaign(updated)
+    function applyPatch(
+        optimistic: Campaign,
+        patch: (c: Campaign) => Campaign,
+    ) {
+        setCampaign(optimistic)
         selfWriting.current = true
-        equipmentView.publish('communal', updated.items)
-        if (token) {
-            server.writeCampaign(token, campaignId, metaRef.current?.title ?? '', updated)
-                .catch(e => alertError(`Error updating campaign: ${e.message}`))
-        }
+        equipmentView.publish('communal', optimistic.items)
+        if (!token) return
+        server.patchCampaign(token, campaignId, patch)
+            .then(patched => {
+                // Reconcile: server state may differ if another user wrote concurrently
+                if (JSON.stringify(patched.items) !== JSON.stringify(optimistic.items)) {
+                    selfWriting.current = true
+                    setCampaign(patched)
+                    equipmentView.publish('communal', patched.items)
+                }
+            })
+            .catch(e => alertError(`Error updating campaign: ${e.message}`))
     }
 
     function addItem(equipment: Equipment) {
         if (!campaign) return
-        const item: SheetEquipment = { name: equipment.name }
-        if (equipment.custom) item.custom = true
-        if (equipment.stack) { item.count = 1; item.stack = equipment.stack }
-        saveUpdated({ ...campaign, items: [...campaign.items, item] })
+        const newItem: SheetEquipment = { name: equipment.name, uid: uuidv4() }
+        if (equipment.custom) newItem.custom = true
+        if (equipment.stack) { newItem.count = 1; newItem.stack = equipment.stack }
+        applyPatch(
+            { ...campaign, items: [...campaign.items, newItem] },
+            c => ({ ...c, items: [...c.items, newItem] }),
+        )
     }
 
     function removeItem(index: number) {
         if (!campaign) return
-        saveUpdated({ ...campaign, items: campaign.items.filter((_, i) => i !== index) })
+        const uid = campaign.items[index]?.uid
+        applyPatch(
+            { ...campaign, items: campaign.items.filter((_, i) => i !== index) },
+            c => ({ ...c, items: uid ? c.items.filter(item => item.uid !== uid) : c.items.filter((_, i) => i !== index) }),
+        )
     }
 
     function setItemCount(index: number, count: number) {
         if (!campaign) return
-        saveUpdated({ ...campaign, items: campaign.items.map((item, i) => i === index ? { ...item, count } : item) })
+        const uid = campaign.items[index]?.uid
+        applyPatch(
+            { ...campaign, items: campaign.items.map((item, i) => i === index ? { ...item, count } : item) },
+            c => ({
+                ...c,
+                items: uid
+                    ? c.items.map(item => item.uid === uid ? { ...item, count } : item)
+                    : c.items.map((item, i) => i === index ? { ...item, count } : item),
+            }),
+        )
     }
 
     // Drop from local equipment container into communal
@@ -126,7 +179,12 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
         const dropped = sourceItems[dragItem.index]
         if (!dropped) return
         equipmentView.publish(dragItem.container, listUtil.delete(sourceItems, dragItem.index))
-        saveUpdated({ ...campaign, items: [...campaign.items, { ...dropped }] })
+        // Assign a uid if the item doesn't have one (came from local sheet which predates uid)
+        const droppedCopy = { ...dropped, uid: dropped.uid ?? uuidv4() }
+        applyPatch(
+            { ...campaign, items: [...campaign.items, droppedCopy] },
+            c => ({ ...c, items: [...c.items, droppedCopy] }),
+        )
     }
 
     const title = campaign?.stashName?.trim() || 'Communal'
@@ -160,7 +218,7 @@ function CampaignPanel({ campaignId, sheetId, token, rules, equipmentView }: {
                         <tr
                             className='hover tooltip tooltip-left w-full'
                             data-tip={lookupDescription(item.name)}
-                            key={i}
+                            key={item.uid ?? i}
                         >
                             <td className='w-full text-left'>
                                 <DragSource type='communal' item={{ index: i }} enabled={canEdit}>

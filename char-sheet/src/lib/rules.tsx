@@ -71,6 +71,7 @@ export interface Rules {
 
 export interface SheetEquipment {
     name: string,
+    uid?: string,
     count?: number,
     stack?: number,
     custom?: boolean,
