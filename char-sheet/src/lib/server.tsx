@@ -1,3 +1,5 @@
+import { Campaign } from './rules'
+
 const SERVER_URI = 'https://caltrops.tlembedded.com/api/'
 
 export interface ServerItem {
@@ -67,6 +69,49 @@ async function deleteContent(token: string, id: string): Promise<ServerItem[]> {
     return result.list
 }
 
+async function listCampaigns(token: string): Promise<ServerItem[]> {
+    const result = await post({
+        token: token,
+        listCampaigns: "*",
+    })
+    return result.listCampaigns ?? [];
+}
+
+async function writeCampaign(token: string, id: string, title: string, content: Campaign): Promise<boolean> {
+    await post({
+        token: token,
+        write: [{ id, title, content }]
+    })
+    return true;
+}
+
+async function joinCampaign(token: string, campaignId: string, sheetId: string): Promise<boolean> {
+    await post({
+        token: token,
+        joinCampaign: { campaignId, sheetId },
+    })
+    return true;
+}
+
+async function patchCampaign(
+    token: string,
+    campaignId: string,
+    patch: (current: Campaign) => Campaign,
+): Promise<Campaign> {
+    const item = await readContent(campaignId)
+    if (!item || item.content?.type !== 'campaign') {
+        throw new Error('Campaign not found')
+    }
+    const current: Campaign = {
+        ...item.content,
+        members: item.content.members ?? [],
+        items: item.content.items ?? [],
+    }
+    const updated = patch(current)
+    await writeContent(token, campaignId, item.title, updated)
+    return updated
+}
+
 async function requestToken(email: string): Promise<boolean> {
     const result = await post({
         register: email
@@ -94,6 +139,10 @@ const server = {
     read: readContent,
     write: writeContent,
     delete: deleteContent,
+    listCampaigns: listCampaigns,
+    writeCampaign: writeCampaign,
+    joinCampaign: joinCampaign,
+    patchCampaign: patchCampaign,
     parseToken: parseToken,
     requestToken: requestToken,
 }

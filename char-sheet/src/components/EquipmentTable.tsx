@@ -20,9 +20,9 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
     equipment: Equipment[],
     container: Container,
     view: View,
-    editable?: EditMode
+    editable?: EditMode,
   }): JSX.Element {
-  
+
   const items: SheetEquipment[] = useListener(view) ?? []
   const freeCapacity = container.size ? (container.size - items.length) : 1
   const [modalOpen, setModalOpen] = useState(false)
@@ -51,26 +51,29 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
   }
 
   function onDropEquipment(item: any) {
-    const source = item.container
-    const index = item.index
+    const source: string = item.container ?? 'communal'
+    const index: number = item.index
     const dest = container.name
 
     const root = view.view("../")
 
-    const sourceItems = root.read(source)
-    const destItems = root.read(dest) ?? []
+    const sourceItems: SheetEquipment[] = (root.read(source) ?? []).filter(Boolean)
+    const destItems: SheetEquipment[] = (root.read(dest) ?? []).filter(Boolean)
+    const dragged = sourceItems[index]
 
-    if (sourceItems === destItems) {
+    if (!dragged) return
+
+    if (source === dest) {
       root.publish(source, listUtil.move(sourceItems, index, sourceItems.length-1))
     } else {
       root.publish(source, listUtil.delete(sourceItems, index))
-      root.publish(dest, listUtil.add(destItems, sourceItems[index]))
+      root.publish(dest, listUtil.add(destItems, dragged))
     }
   }
 
   return (
     <DropTarget
-      accept='equipment'
+      accept={['equipment', 'communal']}
       enabled={ editable >= EditMode.Live && freeCapacity > 0 }
       onDrop={onDropEquipment}
     >
@@ -83,6 +86,7 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
         <tbody>
         {
           items.map((item, i) => {
+            if (!item) return null
             return <tr className='hover tooltip tooltip-left w-full' data-tip={lookupDescription(item.name)} key={i}>
               {
                 editable >= EditMode.Full && item.custom ?

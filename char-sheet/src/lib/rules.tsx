@@ -71,9 +71,17 @@ export interface Rules {
 
 export interface SheetEquipment {
     name: string,
+    uid?: string,
     count?: number,
     stack?: number,
     custom?: boolean,
+}
+
+export interface Campaign {
+    type: 'campaign',
+    members: string[],  // sheet IDs
+    stashName?: string,
+    items: SheetEquipment[],
 }
 
 export interface SheetWound {
@@ -94,6 +102,7 @@ export interface Sheet {
     rules: string,
     id: string,
     owner: string | null,
+    campaignId?: string,
     info: SheetInfo,
     currency: Dictionary<number>,
     equipment: Dictionary<SheetEquipment[]>,

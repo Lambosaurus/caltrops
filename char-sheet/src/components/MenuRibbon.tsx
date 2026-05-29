@@ -4,15 +4,16 @@ import React, { useState } from 'react'
 // Components
 import NewSheetModal from './NewSheetModal';
 import LoadSheetModal from './LoadSheetModal'
+import CampaignModal from './CampaignModal'
 import { BsPerson, BsShare, BsCloudArrowDown,
   BsCloudArrowUp, BsFileEarmarkPlus, BsDownload,
-  BsJournalText, BsCopy,
+  BsJournalText, BsCopy, BsPeopleFill,
  } from 'react-icons/bs'
 import { ImCheckmark, ImPencil } from 'react-icons/im';
 
 // Internal imports
 import { downloadObject, copyToClipboard, EditMode } from '../lib/util'
-import { Sheet } from '../lib/rules'
+import { Rules, Sheet } from '../lib/rules'
 import server, { ServerItem } from '../lib/server'
 import UserLoginModal from './UserLoginModal';
 import { alertError, alertInfo, alertSuccess, alertWarning } from '../lib/alerts';
@@ -30,10 +31,21 @@ function MenuRibbon( {editable, setEditable, view, children}: {
   const [isNewSheetOpen, setIsNewSheetOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isLoadSheetOpen, setIsLoadSheetOpen] = useState(false)
+  const [isCampaignOpen, setIsCampaignOpen] = useState(false)
   const [sheetList, setSheetList] = useState(null as ServerItem[] | null)
 
   const token = useListener(view, "token")
   const sheetId = useListener(view, "sheet/id")
+  const activeCampaignId: string | null = useListener(view, "sheet/campaignId") ?? null
+  const rules: Rules = useListener(view, "rules")
+
+  function setActiveCampaignId(id: string | null) {
+    if (id) {
+      view.publish('sheet/campaignId', id)
+    } else {
+      view.delete('sheet/campaignId')
+    }
+  }
 
   function setSheet(sheet: Sheet | null) {
     if (sheet) {
@@ -139,6 +151,16 @@ function MenuRibbon( {editable, setEditable, view, children}: {
       Share
     </button>
   </li>,
+  <li key='campaign'>
+    <button
+      className={`btn btn-ghost ${activeCampaignId ? 'btn-active' : ''}`}
+      onClick={() => setIsCampaignOpen(true)}
+      disabled={!token}
+    >
+      <BsPeopleFill size={25}/>
+      Campaign
+    </button>
+  </li>,
   <li key='rules'>
   <button
     className='btn btn-ghost'
@@ -220,6 +242,15 @@ function MenuRibbon( {editable, setEditable, view, children}: {
       setSheets={setSheetList}
       sheets={sheetList}
       token={token}
+    /> : null }
+
+    { rules ? <CampaignModal
+      open={isCampaignOpen}
+      close={() => setIsCampaignOpen(false)}
+      token={token}
+      sheetId={sheetId ?? null}
+      rules={rules}
+      setActiveCampaignId={setActiveCampaignId}
     /> : null }
   </div>
   )

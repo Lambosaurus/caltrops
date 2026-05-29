@@ -29,12 +29,16 @@ let SAVE_TIMEOUT_ID: any = -1
 function MainPage(): JSX.Element {
 
   function loadToken(): string | null {
-    let token = new URLSearchParams(window.location.search).get("token")
+    const params = new URLSearchParams(window.location.search)
+    let token = params.get("token")
     if (token && server.parseToken(token)) {
-      // Token supplied via URI. Save it.
       localStorage.setItem('caltrops-token', token)
-      // Reload without query params
-      window.location.href = window.location.href.split('?')[0]
+      // Preserve ?campaign= if present so loadSheet can pick it up
+      const campaignParam = params.get("campaign")
+      const next = campaignParam
+        ? `${window.location.pathname}?campaign=${encodeURIComponent(campaignParam)}`
+        : window.location.pathname
+      window.location.href = window.location.origin + next
     }
     else {
       token = localStorage.getItem('caltrops-token');
@@ -60,18 +64,53 @@ function MainPage(): JSX.Element {
   }
 
   function loadSheet(view: View): Sheet | null {
-    let sheet_id = new URLSearchParams(window.location.search).get("sheet")
+    const params = new URLSearchParams(window.location.search)
+    let sheet_id = params.get("sheet")
     if (!sheet_id) {
       sheet_id = localStorage.getItem('caltrops-sheet')
     }
+
+    const campaignParam = params.get("campaign")
+    if (campaignParam) {
+      // Store pending campaign join; handled after sheet loads
+      sessionStorage.setItem('caltrops-pending-campaign', campaignParam)
+      // Strip query params without full reload
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+
     if (sheet_id) {
-      server.read(sheet_id).then( sheet => {
-          view.publish("sheet", caltrops.importSheet(sheet.content))
+      server.read(sheet_id).then(sheet => {
+          const imported = caltrops.importSheet(sheet.content)
+          view.publish("sheet", imported)
+          tryJoinPendingCampaign(view, imported.id)
         }
       ).catch(e => alertError(`Error reading sheet: ${e.message}`))
       return null;
     }
+
+    // No saved sheet — warn if an invite link was followed
+    if (sessionStorage.getItem('caltrops-pending-campaign')) {
+      alertWarning('Open your character sheet first, then follow the campaign invite link.')
+    }
+
     return caltrops.newSheet(view.read('rules'))
+  }
+
+  function tryJoinPendingCampaign(view: View, sheetId: string) {
+    const pendingCampaign = sessionStorage.getItem('caltrops-pending-campaign')
+    if (!pendingCampaign) return
+    sessionStorage.removeItem('caltrops-pending-campaign')
+    const token = view.read('token')
+    if (!token) {
+      alertWarning('Log in to join the campaign.')
+      return
+    }
+    server.joinCampaign(token, pendingCampaign, sheetId)
+      .then(() => {
+        view.publish('sheet/campaignId', pendingCampaign)
+        alertSuccess('Joined campaign')
+      })
+      .catch(e => alertError(`Error joining campaign: ${e.message}`))
   }
 
   function setTitle(title: string | undefined) {
@@ -164,6 +203,8 @@ function MainPage(): JSX.Element {
   })
 
   const sheetId = useListener(view, "sheet/id")
+  const token = useListener(view, "token")
+  const activeCampaignId: string | null = useListener(view, "sheet/campaignId") ?? null
 
   return (
     <FileUploader setFile={s => view.publish("sheet", s)}>
@@ -178,6 +219,8 @@ function MainPage(): JSX.Element {
           <SheetView
             view={view}
             editable={editable}
+            campaignId={activeCampaignId}
+            token={token}
           /> :
           <LoadingSpinner size={100}/>
         }

@@ -17,10 +17,10 @@ const OPTIONS_HEADERS = {
     "Access-Control-Allow-Headers": "*",
 };
 
-async function writeContent(uid, title, user, content) {
+async function writeContent(uid, title, user, content, existingOwner) {
     const item = {
         "id": uid,
-        "owner": user,
+        "owner": existingOwner ?? user,
         "title": title,
         "content": content,
         "time": (new Date()).toISOString()
@@ -49,7 +49,12 @@ async function canDelete(token, uid) {
 async function canWrite(token, uid) {
     if (!token) { return false; }
     let item = await readContent(uid);
-    return (item === null) || (item.owner === token.user);
+    if (item === null) { return true; }
+    if (item.owner === token.user) { return true; }
+    if (item.content?.type === 'campaign' &&
+        Array.isArray(item.content.members) &&
+        item.content.members.includes(token.user)) { return true; }
+    return false;
 }
 
 function canSign(token) {
@@ -82,6 +87,23 @@ async function listContent(user) {
         },
         Select: "ALL_PROJECTED_ATTRIBUTES"
     }).promise()).Items;
+}
+
+async function listAccessibleCampaigns(user) {
+    const owned = await listContent(user)
+    const ownedCampaigns = owned.filter(i => i.content?.type === 'campaign')
+    const memberCampaigns = (await db.scan({
+        TableName: TABLE_NAME,
+        FilterExpression: "content.#t = :campaign AND contains(content.members, :user)",
+        ExpressionAttributeNames: { "#t": "type" },
+        ExpressionAttributeValues: { ":campaign": "campaign", ":user": user },
+    }).promise()).Items;
+    const seen = new Set()
+    return [...ownedCampaigns, ...memberCampaigns].filter(c => {
+        if (seen.has(c.id)) return false
+        seen.add(c.id)
+        return true
+    })
 }
 
 async function readContent(uid) {
@@ -171,10 +193,18 @@ exports.handler = async (event) => {
     if (body.write) {
         try {
             for (const info of body.write) {
-                if (await canWrite(token, info.id)) {
-                    await writeContent(info.id, info.title, token.user, info.content);
+                const existing = await readContent(info.id);
+                if (existing !== null && existing.owner !== token?.user) {
+                    // Campaign member write — validate access then preserve original owner
+                    if (!await canWrite(token, info.id)) {
+                        return errorResponse(401, "Unauthorised");
+                    }
+                    await writeContent(info.id, info.title, token.user, info.content, existing.owner);
                 } else {
-                    return errorResponse(401, "Unauthorised");
+                    if (!await canWrite(token, info.id)) {
+                        return errorResponse(401, "Unauthorised");
+                    }
+                    await writeContent(info.id, info.title, token.user, info.content);
                 }
             }
         } catch (error) {
@@ -217,6 +247,40 @@ exports.handler = async (event) => {
             reply.list = items.sort( (a,b) => b.time.localeCompare(a.time) );
         } catch (error) {
             return errorResponse(500, "Error listing content", error);
+        }
+    }
+
+    if (body.listCampaigns) {
+        if (!token) {
+            return errorResponse(401, "Unauthorised");
+        }
+        try {
+            const all = await listAccessibleCampaigns(token.user);
+            reply.listCampaigns = all.sort((a, b) => b.time.localeCompare(a.time));
+        } catch (error) {
+            return errorResponse(500, "Error listing campaigns", error);
+        }
+    }
+
+    if (body.joinCampaign) {
+        if (!token) {
+            return errorResponse(401, "Unauthorised");
+        }
+        try {
+            const { campaignId, sheetId } = body.joinCampaign;
+            const existing = await readContent(campaignId);
+            if (!existing || existing.content?.type !== 'campaign') {
+                return errorResponse(404, "Campaign not found");
+            }
+            const members = existing.content.members ?? [];
+            if (!members.includes(sheetId)) {
+                members.push(sheetId);
+            }
+            const updated = { ...existing.content, members };
+            await writeContent(campaignId, existing.title, existing.owner, updated, existing.owner);
+            reply.joinCampaign = true;
+        } catch (error) {
+            return errorResponse(500, "Error joining campaign", error);
         }
     }
 
