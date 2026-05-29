@@ -45,11 +45,11 @@ function LoadSheetModal({open, close, setSheet, sheets, setSheets, token}:{
     {
       sheets == null ?
         <LoadingSpinner/> :
-      !sheets.length ?
+      !sheets.filter(s => s.content?.type !== 'campaign').length ?
         "No sheets found" :
       <div className='scrollbar scrollbar-neutral flex flex-col items-center gap-2 p-2'>
       {
-        sheets.map( s => 
+        sheets.filter(s => s.content?.type !== 'campaign').map( s =>
           <div className='flex flex-row gap-2 max-w-xl w-full' key={s.title}>
             <button
               className='btn btn-primary p-0 grow'
