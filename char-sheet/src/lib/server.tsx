@@ -69,8 +69,9 @@ async function deleteContent(token: string, id: string): Promise<ServerItem[]> {
     return result.list
 }
 
-async function listCampaigns(): Promise<ServerItem[]> {
+async function listCampaigns(token: string): Promise<ServerItem[]> {
     const result = await post({
+        token: token,
         listCampaigns: "*",
     })
     return result.listCampaigns ?? [];

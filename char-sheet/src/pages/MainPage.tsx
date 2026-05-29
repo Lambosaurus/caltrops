@@ -60,13 +60,40 @@ function MainPage(): JSX.Element {
   }
 
   function loadSheet(view: View): Sheet | null {
-    let sheet_id = new URLSearchParams(window.location.search).get("sheet")
+    const params = new URLSearchParams(window.location.search)
+    let sheet_id = params.get("sheet")
     if (!sheet_id) {
       sheet_id = localStorage.getItem('caltrops-sheet')
     }
+
+    const campaignParam = params.get("campaign")
+    if (campaignParam) {
+      // Store pending campaign join; handled after sheet loads
+      sessionStorage.setItem('caltrops-pending-campaign', campaignParam)
+      // Strip query params without full reload
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+
     if (sheet_id) {
-      server.read(sheet_id).then( sheet => {
-          view.publish("sheet", caltrops.importSheet(sheet.content))
+      server.read(sheet_id).then(sheet => {
+          const imported = caltrops.importSheet(sheet.content)
+          view.publish("sheet", imported)
+
+          const pendingCampaign = sessionStorage.getItem('caltrops-pending-campaign')
+          if (pendingCampaign) {
+            sessionStorage.removeItem('caltrops-pending-campaign')
+            const token = view.read('token')
+            if (token && imported.id) {
+              server.joinCampaign(token, pendingCampaign, imported.id)
+                .then(() => {
+                  view.publish('sheet/campaignId', pendingCampaign)
+                  alertSuccess('Joined campaign')
+                })
+                .catch(e => alertError(`Error joining campaign: ${e.message}`))
+            } else {
+              alertWarning('Log in and load a character sheet to join the campaign.')
+            }
+          }
         }
       ).catch(e => alertError(`Error reading sheet: ${e.message}`))
       return null;

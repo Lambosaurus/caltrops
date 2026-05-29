@@ -15,6 +15,10 @@ import { alertError, alertSuccess } from '../lib/alerts'
 import { timeSince } from '../lib/util'
 import { v4 as uuidv4 } from 'uuid'
 
+function campaignInviteUrl(campaignId: string): string {
+    return `${window.location.origin}${window.location.pathname}?campaign=${encodeURIComponent(campaignId)}`
+}
+
 type View = 'list' | 'edit'
 
 function CampaignModal({ open, close, token, sheetId, rules, setActiveCampaignId }: {
@@ -37,10 +41,10 @@ function CampaignModal({ open, close, token, sheetId, rules, setActiveCampaignId
     const userEmail = token ? server.parseToken(token) : null
 
     useEffect(() => {
-        if (open) {
+        if (open && token) {
             setCampaigns(null)
             setView('list')
-            server.listCampaigns()
+            server.listCampaigns(token)
                 .then(c => setCampaigns(c ?? []))
                 .catch(e => alertError(`Error loading campaigns: ${e.message}`))
         }
@@ -49,8 +53,9 @@ function CampaignModal({ open, close, token, sheetId, rules, setActiveCampaignId
     if (!open || !rules) return null
 
     function reloadList() {
+        if (!token) return
         setCampaigns(null)
-        server.listCampaigns()
+        server.listCampaigns(token)
             .then(c => setCampaigns(c ?? []))
             .catch(e => alertError(`Error reloading campaigns: ${e.message}`))
     }
@@ -225,7 +230,18 @@ function CampaignModal({ open, close, token, sheetId, rules, setActiveCampaignId
                                         </p>
                                     </div>
                                 </button>
-                                {isOwner && (
+                                {isOwner && (<>
+                                    <button
+                                        className='btn btn-outline btn-square'
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(campaignInviteUrl(c.id))
+                                                .then(() => alertSuccess('Invite link copied'))
+                                                .catch(() => alertError('Could not copy to clipboard'))
+                                        }}
+                                        title='Copy invite link'
+                                    >
+                                        ⎘
+                                    </button>
                                     <button
                                         className='btn btn-outline btn-square'
                                         onClick={() => openEdit(c)}
@@ -233,7 +249,7 @@ function CampaignModal({ open, close, token, sheetId, rules, setActiveCampaignId
                                     >
                                         ✎
                                     </button>
-                                )}
+                                </>)}
                             </div>
                         )
                     })}

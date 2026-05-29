@@ -89,13 +89,21 @@ async function listContent(user) {
     }).promise()).Items;
 }
 
-async function listAllCampaigns() {
-    return (await db.scan({
+async function listAccessibleCampaigns(user) {
+    const owned = await listContent(user)
+    const ownedCampaigns = owned.filter(i => i.content?.type === 'campaign')
+    const memberCampaigns = (await db.scan({
         TableName: TABLE_NAME,
-        FilterExpression: "content.#t = :campaign",
+        FilterExpression: "content.#t = :campaign AND contains(content.members, :user)",
         ExpressionAttributeNames: { "#t": "type" },
-        ExpressionAttributeValues: { ":campaign": "campaign" },
+        ExpressionAttributeValues: { ":campaign": "campaign", ":user": user },
     }).promise()).Items;
+    const seen = new Set()
+    return [...ownedCampaigns, ...memberCampaigns].filter(c => {
+        if (seen.has(c.id)) return false
+        seen.add(c.id)
+        return true
+    })
 }
 
 async function readContent(uid) {
@@ -243,8 +251,11 @@ exports.handler = async (event) => {
     }
 
     if (body.listCampaigns) {
+        if (!token) {
+            return errorResponse(401, "Unauthorised");
+        }
         try {
-            const all = await listAllCampaigns();
+            const all = await listAccessibleCampaigns(token.user);
             reply.listCampaigns = all.sort((a, b) => b.time.localeCompare(a.time));
         } catch (error) {
             return errorResponse(500, "Error listing campaigns", error);
