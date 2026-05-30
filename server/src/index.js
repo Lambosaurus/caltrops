@@ -23,6 +23,7 @@ async function writeContent(uid, title, user, content) {
         "owner": user,
         "title": title,
         "content": content,
+        "type": "sheet",
         "time": (new Date()).toISOString()
     };
     await db.put({
