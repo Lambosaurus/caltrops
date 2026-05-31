@@ -89,6 +89,7 @@ async function listAllItems(user) {
     return (await db.query({
         TableName: TABLE_NAME,
         IndexName: "owner-index",
+        ScanIndexForward: false,
         KeyConditionExpression: "#o = :o",
         ExpressionAttributeValues: {
             ":o": user
@@ -104,6 +105,7 @@ async function listTypedItems(user, type) {
     return (await db.query({
         TableName: TABLE_NAME,
         IndexName: "owner-index",
+        ScanIndexForward: false,
         KeyConditionExpression: "#o = :o",
         FilterExpression: "#t = :t",
         ExpressionAttributeValues: {
