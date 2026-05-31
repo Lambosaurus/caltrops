@@ -72,6 +72,10 @@ function validateToken(token) {
     }
 }
 
+function validType(type) {
+    return !!type && type != "*" && type != "user"
+}
+
 async function listItems(filter, token) {
     if (filter == "user") {
         if (!isAdmin(token)) {
@@ -219,6 +223,9 @@ exports.handler = async (event) => {
     if (body.write) {
         try {
             for (const info of body.write) {
+                if (!validType(info.type)) {
+                    return errorResponse(400, "Invalid type");
+                }
                 if (await canWrite(token, info.id)) {
                     await writeContent(info.id, info.type, info.title, token.user, info.content);
                 } else {
