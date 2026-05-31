@@ -17,13 +17,13 @@ const OPTIONS_HEADERS = {
     "Access-Control-Allow-Headers": "*",
 };
 
-async function writeContent(uid, title, user, content) {
+async function writeContent(uid, type, title, user, content) {
     const item = {
         "id": uid,
         "owner": user,
         "title": title,
         "content": content,
-        "type": "sheet",
+        "type": type,
         "time": (new Date()).toISOString()
     };
     await db.put({
@@ -220,7 +220,7 @@ exports.handler = async (event) => {
         try {
             for (const info of body.write) {
                 if (await canWrite(token, info.id)) {
-                    await writeContent(info.id, info.title, token.user, info.content);
+                    await writeContent(info.id, info.type, info.title, token.user, info.content);
                 } else {
                     return errorResponse(401, "Unauthorised");
                 }
