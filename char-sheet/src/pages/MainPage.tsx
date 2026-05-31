@@ -136,7 +136,7 @@ function MainPage(): JSX.Element {
           if (username && sheet.owner !== username) {
             sheet.owner = username
           }
-          server.write(token, sheet.id, sheet.info.name, caltrops.cleanSheet(sheet))
+          server.write(token, sheet.id, "sheet", sheet.info.name, caltrops.cleanSheet(sheet))
             .then( s => alertSuccess("Sheet auto saved") )
             .catch(e => alertError(`Error auto saving sheet: ${e.message}`))
         }

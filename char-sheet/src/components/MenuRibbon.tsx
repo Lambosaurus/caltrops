@@ -59,7 +59,7 @@ function MenuRibbon( {editable, setEditable, view, children}: {
       onClick={() => {
         if (token) {
           setSheetList(null)
-          server.list(token)
+          server.list(token, "sheet")
             .then( s => setSheetList(s))
             .catch(e => alertError(`Error listing sheets: ${e.message}`))
           setIsLoadSheetOpen(true)
@@ -81,7 +81,7 @@ function MenuRibbon( {editable, setEditable, view, children}: {
           if (username && sheet.owner !== username) {
             sheet.owner = username
           }
-          server.write(token, sheet.id, sheet.info.name, caltrops.cleanSheet(sheet))
+          server.write(token, sheet.id, "sheet", sheet.info.name, caltrops.cleanSheet(sheet))
             .then( s => alertSuccess("Sheet saved") )
             .catch(e => alertError(`Error saving sheet: ${e.message}`))
         }

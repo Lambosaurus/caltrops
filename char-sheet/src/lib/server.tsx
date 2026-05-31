@@ -5,6 +5,7 @@ export interface ServerItem {
     time: string,
     id: string,
     title: string,
+    type: string,
     content?: any,
 }
 
@@ -24,10 +25,10 @@ async function post(body: any): Promise<any> {
     return json;
 }
 
-async function listContent(token: string): Promise<ServerItem[]> {
+async function listContent(token: string, type: string): Promise<ServerItem[]> {
     const result = await post({
         token: token,
-        list: "*",
+        list: type,
     })
     return result.list;
 }
@@ -42,12 +43,13 @@ async function readContent(id: string): Promise<ServerItem> {
     return result.read[0]
 }
 
-async function writeContent(token: string, id: string, title: string, content: any): Promise<boolean> {
+async function writeContent(token: string, id: string, type: string, title: string, content: any): Promise<boolean> {
     const result = await post({
         token: token,
         write: [
             {
                 id: id,
+                type: type,
                 title: title,
                 content: content,
             }
