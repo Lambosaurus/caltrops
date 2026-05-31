@@ -65,7 +65,7 @@ export function timeSince(date: Date): string {
     if (interval > 1) {
       return `${interval} ${name}s`
     }
-    return `1 ${name}` 
+    return `1 ${name}`
   }
 
   var interval = seconds / 31536000;

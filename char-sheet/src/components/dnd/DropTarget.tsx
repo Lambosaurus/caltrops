@@ -1,10 +1,12 @@
-import { ReactNode } from 'react';
+import { cloneElement, ReactNode } from 'react';
 import { useDrop } from 'react-dnd';
 
-export function DropTarget({onDrop, accept = 'item', enabled = true, children}: {
+export function DropTarget({onDrop, accept = 'item', enabled = true, hoverClass = '', wrappingElement = <div></div>, children}: {
   onDrop(item: any): void,
   accept?: string,
   enabled?: boolean,
+  hoverClass?: string,
+  wrappingElement?: JSX.Element,
   children: ReactNode,
 }): JSX.Element  {
 
@@ -18,5 +20,8 @@ export function DropTarget({onDrop, accept = 'item', enabled = true, children}: 
     }),
   }, [enabled, accept, onDrop])
 
-  return <div ref={drop}>{children}</div>
+  return <>{cloneElement(wrappingElement, {
+    ref: drop,
+    className: `${wrappingElement.props.className ?? ''} drop-item ${(isOver && canDrop) ? hoverClass : ''}`,
+  }, children)}</>;
 }

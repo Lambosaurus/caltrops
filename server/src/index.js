@@ -17,12 +17,13 @@ const OPTIONS_HEADERS = {
     "Access-Control-Allow-Headers": "*",
 };
 
-async function writeContent(uid, title, user, content) {
+async function writeContent(uid, type, title, user, content) {
     const item = {
         "id": uid,
         "owner": user,
         "title": title,
         "content": content,
+        "type": type,
         "time": (new Date()).toISOString()
     };
     await db.put({
@@ -42,19 +43,21 @@ async function deleteContent(uid) {
 
 async function canDelete(token, uid) {
     if (!token) { return false; }
+    if (!!token.admin) { return true; }
     let item = await readContent(uid);
     return (item !== null) && (item.owner === token.user);
 }
 
 async function canWrite(token, uid) {
     if (!token) { return false; }
+    if (!!token.admin) { return true; }
     let item = await readContent(uid);
     return (item === null) || (item.owner === token.user);
 }
 
-function canSign(token) {
+function isAdmin(token) {
     if (!token) { return false; }
-    return !!token.signer;
+    return !!token.admin;
 }
 
 function validateToken(token) {
@@ -69,10 +72,24 @@ function validateToken(token) {
     }
 }
 
-async function listContent(user) {
+async function listItems(filter, token) {
+    if (filter == "user") {
+        if (!isAdmin(token)) {
+            return []
+        }
+        return await listUsers()
+    }
+    if (filter == "*") {
+        return await listAllItems(token.user)
+    }
+    return await listTypedItems(token.user, filter)
+}
+
+async function listAllItems(user) {
     return (await db.query({
         TableName: TABLE_NAME,
         IndexName: "owner-index",
+        ScanIndexForward: false,
         KeyConditionExpression: "#o = :o",
         ExpressionAttributeValues: {
             ":o": user
@@ -82,6 +99,37 @@ async function listContent(user) {
         },
         Select: "ALL_PROJECTED_ATTRIBUTES"
     }).promise()).Items;
+}
+
+async function listTypedItems(user, type) {
+    return (await db.query({
+        TableName: TABLE_NAME,
+        IndexName: "owner-index",
+        ScanIndexForward: false,
+        KeyConditionExpression: "#o = :o",
+        FilterExpression: "#t = :t",
+        ExpressionAttributeValues: {
+            ":o": user,
+            ":t": type
+        },
+        ExpressionAttributeNames: {
+            "#o": "owner",
+            "#t": "type",
+        },
+        Select: "ALL_PROJECTED_ATTRIBUTES"
+    }).promise()).Items;
+}
+
+async function listUsers() {
+    const items = (await db.scan({
+        TableName: TABLE_NAME,
+        IndexName: "owner-index",
+        ProjectionExpression: "#o",
+        ExpressionAttributeNames: {
+            "#o": "owner"
+        }
+    }).promise()).Items;
+    return [...new Set(items.map(i => i.owner))].sort();
 }
 
 async function readContent(uid) {
@@ -172,7 +220,7 @@ exports.handler = async (event) => {
         try {
             for (const info of body.write) {
                 if (await canWrite(token, info.id)) {
-                    await writeContent(info.id, info.title, token.user, info.content);
+                    await writeContent(info.id, info.type, info.title, token.user, info.content);
                 } else {
                     return errorResponse(401, "Unauthorised");
                 }
@@ -213,15 +261,14 @@ exports.handler = async (event) => {
             return errorResponse(401, "Unauthorised");
         }
         try {
-            let items = await listContent(token.user);
-            reply.list = items.sort( (a,b) => b.time.localeCompare(a.time) );
+            reply.list = await listItems(body.list, token)
         } catch (error) {
             return errorResponse(500, "Error listing content", error);
         }
     }
 
     if (body.sign) {
-        if (!canSign(token)) {
+        if (!isAdmin(token)) {
             return errorResponse(401, "Unauthorised");
         }
         let signed = [];
