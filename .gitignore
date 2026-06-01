@@ -4,3 +4,9 @@
 fvtt-caltrops.zip
 
 fvtt/module.zip
+
+server/dist/
+
+server/node_modules/
+
+server/dist.zip
