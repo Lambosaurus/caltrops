@@ -36,7 +36,7 @@ async function dispatch(method, path, token, body) {
     if (params != null)
       return await endpoint.handler(body, token, params)
   }
-  throw new HTTPError(404, "Not found", `Endpoint not found: ${method} '${path}'`)
+  throw new HTTPError(404, "Not found", `Endpoint invalid ${method} '${path}'`)
 }
 
 function parseToken(token) {

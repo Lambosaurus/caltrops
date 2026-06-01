@@ -5,7 +5,7 @@ class HTTPError extends Error {
         super(message);
         this.code = code;
         this.name = "HTTPError";
-        this.detail = detail
+        this.detail = detail ? String(detail) : undefined
     }
 }
 
