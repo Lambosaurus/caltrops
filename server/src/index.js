@@ -5,8 +5,6 @@ const { HTTPError } = require("./util");
 
 
 const CALTROPS_PSK = process.env.caltrops_psk;
-const SUPPORT_EMAIL = process.env.support_email;
-const CALTROPS_URL = process.env.caltrops_url;
 const URI_MOUNTPOINT = process.env.uri_mountpoint;
 
 
