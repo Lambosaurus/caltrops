@@ -1,4 +1,4 @@
-const SERVER_URI = 'https://caltrops.tlembedded.com/api/'
+const SERVER_URI = 'https://caltrops.tlembedded.com/api/v1/'
 
 export interface ServerItem {
     owner: string,

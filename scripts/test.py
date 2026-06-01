@@ -1,7 +1,7 @@
 import requests
 
 
-CALTROPS_URI = "https://caltrops.tlembedded.com/api/"
+CALTROPS_URI = "https://caltrops.tlembedded.com/api/v1/"
 
 
 class CaltropsApi():
