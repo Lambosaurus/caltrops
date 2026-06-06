@@ -70,19 +70,30 @@ async function putDocument(id, owner, title, type, content) {
     }
 }
 
-async function updateDocument(id, owner, content) {
+async function updateDocument(id, owner, content, path = undefined) {
+    
+    const segments = path ? path.split("/") : []
+    let path_names = []
+    let path_expr = ""
+    for (let i = 0; i < segments.length; i++) {
+        let alias = `#p${i}`
+        path_names[alias] = segments[i]
+        path_expr += "." + alias
+    }
+    
     try {
         await db.send( new UpdateCommand({
             TableName: TABLE_NAME,
             Key: {
                 id: id
             },
-            UpdateExpression: "SET #c = :c, #t = :t",
+            UpdateExpression: `SET #c${path_expr} = :c, #t = :t`,
             ConditionExpression: "#o = :o",
             ExpressionAttributeNames: {
                 "#o": "owner",
                 "#c": "content",
-                "#t": "time"
+                "#t": "time",
+                ...path_names
             },
             ExpressionAttributeValues: {
                 ":o": owner,
@@ -90,6 +101,7 @@ async function updateDocument(id, owner, content) {
                 ":t": timestamp()
             }
         }))
+
         return true;
     } catch (error) {
         if (error.name === 'ConditionalCheckFailedException')

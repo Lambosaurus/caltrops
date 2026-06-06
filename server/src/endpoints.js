@@ -8,9 +8,10 @@ const CALTROPS_URL = process.env.caltrops_url
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+const CONTENT_PATH_REGEX = /^([a-zA-Z0-9_]+\/)*[a-zA-Z0-9_]+$/
 
 function isString(item) {
-  return typeof item === 'string' && item.length
+  return typeof item === 'string' && item.length > 0
 }
 
 function isAdmin(token) {
@@ -29,6 +30,23 @@ function isType(type) {
   return isString(type)
 }
 
+function isPattern(item, pattern) {
+  return typeof item === 'string' && pattern.test(item)
+}
+
+function getShareAuthority(token, user, id, path) {
+  token = Signature.decode(token, CALTROPS_PSK)
+  if ( token
+    && isString(token.from)
+    && token.to === user && token.document === id
+  ) {
+    path = path ?? ""
+    if (token.path === undefined || path === token.path || path.startsWith(token.path + "/"))
+      return token.from;
+  }
+  throw new HTTPError(401, "Unauthorised")
+}
+
 function testHandler(body, token, params) {
   return {
     message: "ok",
@@ -38,7 +56,11 @@ function testHandler(body, token, params) {
 }
 
 async function registerHandler(body, token, params) {
-  if (!body || !isString(body.user) || !EMAIL_REGEX.test(body.user))
+
+  if (!body)
+    throw new HTTPError(400, "No body")
+
+  if (!isPattern(body.user, EMAIL_REGEX))
     throw new HTTPError(400, "Invalid user")
 
   const new_token = Signature.encode({user: body.user}, CALTROPS_PSK)
@@ -68,9 +90,8 @@ function signHandler(body, token, params) {
   if (!isAdmin(token))
     throw new HTTPError(401, "Unauthorised")
 
-  const new_token = Signature.encode(body, CALTROPS_PSK)
   return {
-    token: new_token
+    token: Signature.encode(body, CALTROPS_PSK)
   }
 }
 
@@ -89,6 +110,9 @@ async function putDocumentHandler(body, token, params) {
   if (!isGUID(params.id))
     throw new HTTPError(400, "Bad ID format")
 
+  if (!body)
+    throw new HTTPError(400, "No body")
+
   if (!isType(body.type))
     throw new HTTPError(400, "Bad type")
 
@@ -101,7 +125,16 @@ async function patchDocumentHandler(body, token, params) {
   if (!isUser(token))
     throw new HTTPError(401, "Unauthorised")
 
-  let success = await Services.updateDocument(params.id, token.user, body.content)
+  if (!body)
+    throw new HTTPError(400, "No body")
+
+  let path = body.path
+  if (path !== undefined && !isPattern(path, CONTENT_PATH_REGEX))
+    throw new HTTPError(400, "Invalid path")
+
+  let user = body.token ? getShareAuthority(body.token, token.user, params.id, path) : token.user
+
+  let success = await Services.updateDocument(params.id, user, body.content, path)
   if (!success)
     throw new HTTPError(401, "Unauthorised")
 }
@@ -113,6 +146,31 @@ async function deleteDocumentHandler(body, token, params) {
   let success = await Services.deleteDocument(params.id, token.user)
   if (!success)
     throw new HTTPError(401, "Unauthorised")
+}
+
+async function shareDocumentHandler(body, token, params) {
+  if (!isUser(token))
+    throw new HTTPError(401, "Unauthorised")
+
+  if (!body)
+    throw new HTTPError(400, "No body")
+
+  if (body.path !== undefined && !isPattern(body.path, CONTENT_PATH_REGEX))
+    throw new HTTPError(400, "Invalid path")
+
+  if (!isString(body.user))
+    throw new HTTPError(400, "User not specified")
+
+  let token_body = {
+    to: body.user,
+    from: token.user,
+    document: params.id,
+    path: body.path,
+  }
+
+  return {
+    token: Signature.encode(token_body, CALTROPS_PSK)
+  }
 }
 
 async function listDocumentHandler(body, token, params) {
@@ -163,6 +221,11 @@ const endpoints = [
     method: "DELETE",
     pattern: "documents/{id}",
     handler: deleteDocumentHandler
+  },
+  {
+    method: "POST",
+    pattern: "documents/{id}/share",
+    handler: shareDocumentHandler
   },
   {
     method: "GET",
