@@ -97,6 +97,15 @@ async function putDocumentHandler(body, token, params) {
     throw new HTTPError(401, "Unauthorised")
 }
 
+async function patchDocumentHandler(body, token, params) {
+  if (!isUser(token))
+    throw new HTTPError(401, "Unauthorised")
+
+  let success = await Services.updateDocument(params.id, token.user, body.content)
+  if (!success)
+    throw new HTTPError(401, "Unauthorised")
+}
+
 async function deleteDocumentHandler(body, token, params) {
   if (!isUser(token))
     throw new HTTPError(401, "Unauthorised")
@@ -144,6 +153,11 @@ const endpoints = [
     method: "PUT",
     pattern: "documents/{id}",
     handler: putDocumentHandler
+  },
+  {
+    method: "PATCH",
+    pattern: "documents/{id}",
+    handler: patchDocumentHandler
   },
   {
     method: "DELETE",

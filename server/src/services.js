@@ -1,6 +1,6 @@
 
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { DynamoDBDocumentClient, GetCommand, ScanCommand, QueryCommand, PutCommand, DeleteCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocumentClient, GetCommand, ScanCommand, QueryCommand, PutCommand, DeleteCommand, UpdateCommand } = require("@aws-sdk/lib-dynamodb");
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 
 const ses = new SESClient({});
@@ -60,6 +60,34 @@ async function putDocument(id, owner, title, type, content) {
             },
             ExpressionAttributeValues: {
                 ":o": owner
+            }
+        }))
+        return true;
+    } catch (error) {
+        if (error.name === 'ConditionalCheckFailedException')
+            return false;
+        throw error;
+    }
+}
+
+async function updateDocument(id, owner, content) {
+    try {
+        await db.send( new UpdateCommand({
+            TableName: TABLE_NAME,
+            Key: {
+                id: id
+            },
+            UpdateExpression: "SET #c = :c, #t = :t",
+            ConditionExpression: "#o = :o",
+            ExpressionAttributeNames: {
+                "#o": "owner",
+                "#c": "content",
+                "#t": "time"
+            },
+            ExpressionAttributeValues: {
+                ":o": owner,
+                ":c": content,
+                ":t": timestamp()
             }
         }))
         return true;
@@ -138,4 +166,5 @@ exports.readDocument = readDocument
 exports.listUsers = listUsers
 exports.listDocuments = listDocuments
 exports.putDocument = putDocument
+exports.updateDocument = updateDocument
 exports.deleteDocument = deleteDocument
