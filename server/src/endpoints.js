@@ -7,13 +7,26 @@ const SUPPORT_EMAIL = process.env.support_email
 const CALTROPS_URL = process.env.caltrops_url
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+
+function isString(item) {
+  return typeof item === 'string' && item.length
+}
 
 function isAdmin(token) {
-  return token && token.role == "admin"
+  return token && token.role === "admin"
 }
 
 function isUser(token) {
-  return token && token.user
+  return token && isString(token.user)
+}
+
+function isGUID(id) {
+  return GUID_REGEX.test(id)
+}
+
+function isType(type) {
+  return isString(type)
 }
 
 function testHandler(body, token, params) {
@@ -25,7 +38,7 @@ function testHandler(body, token, params) {
 }
 
 async function registerHandler(body, token, params) {
-  if (!body || !body.user || !EMAIL_REGEX.test(body.user))
+  if (!body || !isString(body.user) || !EMAIL_REGEX.test(body.user))
     throw new HTTPError(400, "Invalid user")
 
   const new_token = Signature.encode({user: body.user}, CALTROPS_PSK)
@@ -62,26 +75,42 @@ function signHandler(body, token, params) {
 }
 
 async function getDocumentHandler(body, token, params) {
-  let content;
-  try {
-    content = await Services.readDocument(params.id)
-  } catch (error) {
-    throw new HTTPError(500, "DB Read error")
-  }
+  let content = await Services.readDocument(params.id)
+
   if (!content)
     throw new HTTPError(404, "Document not found")
   return content
+}
+
+async function putDocumentHandler(body, token, params) {
+  if (!isUser(token))
+    throw new HTTPError(401, "Unauthorised")
+
+  if (!isGUID(params.id))
+    throw new HTTPError(400, "Bad ID format")
+
+  if (!isType(body.type))
+    throw new HTTPError(400, "Bad type")
+
+  let success = await Services.putDocument(params.id, token.user, body.title, body.type, body.content)
+  if (!success)
+    throw new HTTPError(401, "Unauthorised")
+}
+
+async function deleteDocumentHandler(body, token, params) {
+  if (!isUser(token))
+    throw new HTTPError(401, "Unauthorised")
+
+  let success = await Services.deleteDocument(params.id, token.user)
+  if (!success)
+    throw new HTTPError(401, "Unauthorised")
 }
 
 async function listDocumentHandler(body, token, params) {
   if (!isUser(token))
     throw new HTTPError(401, "Unauthorised")
 
-  try {
-    return await Services.listDocuments(token.user)
-  } catch (error) {
-    throw new HTTPError(500, "DB Read error", error)
-  }
+  return await Services.listDocuments(token.user, params.type)
 }
 
 async function usersHandler(body, token, params) {
@@ -110,6 +139,16 @@ const endpoints = [
     method: "GET",
     pattern: "documents/{id}",
     handler: getDocumentHandler
+  },
+  {
+    method: "PUT",
+    pattern: "documents/{id}",
+    handler: putDocumentHandler
+  },
+  {
+    method: "DELETE",
+    pattern: "documents/{id}",
+    handler: deleteDocumentHandler
   },
   {
     method: "GET",

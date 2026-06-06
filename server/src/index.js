@@ -27,14 +27,16 @@ function matchPattern(pattern, components) {
   return params;
 }
 
-async function dispatch(method, path, token, body) {
+async function dispatch(method, path, token, body, params) {
   const components = path.split("/")
   for (let endpoint of Endpoints.endpoints) {
     if (method != endpoint.method)
       continue;
-    const params = matchPattern(endpoint.pattern, components)
-    if (params != null)
+    const path_params = matchPattern(endpoint.pattern, components)
+    if (path_params != null) {
+      Object.assign(params, path_params)
       return await endpoint.handler(body, token, params)
+    }
   }
   throw new HTTPError(404, "Not found", `Endpoint invalid ${method} '${path}'`)
 }
@@ -48,6 +50,17 @@ function parseToken(token) {
       return result
   }
   throw new HTTPError(401, "Unauthorised", "Token validation failed")
+}
+
+function parseBody(text) {
+  if (!text)
+    return null;
+  try {
+    return JSON.parse(text)
+  }
+  catch (error) {
+    throw new HTTPError(400, "JSON Parse failure", error)
+  }
 }
 
 export const handler = async (event) => {
@@ -64,12 +77,12 @@ export const handler = async (event) => {
   }
 
   try {
-
-    const json = event.body ? JSON.parse(event.body) : null
-    const path = event.rawPath.slice(URI_MOUNTPOINT.length);
+    const body = parseBody(event.body)
+    const path = event.rawPath.slice(URI_MOUNTPOINT.length)
+    const params = event.queryStringParameters ?? {}
     const token = parseToken(event.headers?.authorization)
-
-    const result = await dispatch(method, path, token, json)
+    
+    const result = await dispatch(method, path, token, body, params)
 
     if (result) {
       return {
