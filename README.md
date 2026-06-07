@@ -33,19 +33,16 @@ The readme for this component is in [/fvtt/README.md](./fvtt/README.md)
 
 # Server
 
-This component provides functionality to store sheets.
+This component provides functionality to store documents.
 
-The sheet information is stored in DynamoDB, and served by a lambda function.
+The document information is stored in DynamoDB, and served by a lambda function.
 
-The server provides the following functions:
- * List sheets owned by a user
- * Read sheets
- * Write sheet
+The server url is `https://caltrops.tlembedded.com/api/v2/`
 
-The lambda url is `https://nad7hr2keheheljlwvlkiyjtq40mwgzl.lambda-url.ap-southeast-2.on.aws/`
+Documentation to the API can be found [in bruno format here](./server/bruno/caltrops-documentation.html)
 
 ## Deployment
 
-Currently the contents of [/server/lambda.js](./server/lambda.js) are merely copied and pasted into 
+On push to the `deploy/server` branch, the server will be built and published to the lambda.
 
-The lambda has been tested using node v14.
+It can also be published manually with the `npm run deploy` script.
