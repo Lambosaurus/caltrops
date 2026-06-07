@@ -1,0 +1,21 @@
+info:
+  name: sign
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: https://caltrops.tlembedded.com/api/v2/sign
+  body:
+    type: json
+    data: |-
+      {
+        "user": "test@tlembedded.com"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

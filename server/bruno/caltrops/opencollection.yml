@@ -1,0 +1,30 @@
+opencollection: 1.0.0
+
+info:
+  name: caltrops
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: bearer
+    token: eyJ1c2VyIjoidGVzdEB0bGVtYmVkZGVkLmNvbSJ9.crRHdD8Vbfb+UXiMBL9iJTZrkvC0w8cDpzk0yyWYqQ4
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    presets:
+      request:
+        type: http
+        url: https://caltrops.tlembedded.com/api/v2/

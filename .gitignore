@@ -1,8 +1,9 @@
 /char-sheet/node_modules/*
 /char-sheet/dist/*
-*/package-lock.json
-fvtt-caltrops.zip
 
-fvtt/module.zip
+/fvtt-caltrops.zip
+/fvtt/module.zip
 
-scripts/token.txt
+/server/dist/
+/server/node_modules/
+/server/dist.zip

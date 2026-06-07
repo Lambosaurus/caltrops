@@ -15,7 +15,10 @@ function encode(payload, secret) {
 }
 
 function decode(token, secret) {
-    const [text, signature] = token.split('.');
+    const components = token.split('.');
+    if (components.length != 2)
+        return null
+    const [text, signature] = components
     const expected = sign(text, secret);
     if (trimB64(signature) === expected) {
         return JSON.parse(atob(text));

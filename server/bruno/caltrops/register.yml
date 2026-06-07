@@ -1,0 +1,21 @@
+info:
+  name: register
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: https://caltrops.tlembedded.com/api/v2/register
+  body:
+    type: json
+    data: |-
+      {
+        "user": "test@tlembedded.com"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

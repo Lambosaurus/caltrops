@@ -1,0 +1,22 @@
+info:
+  name: cors
+  type: http
+  seq: 1
+
+http:
+  method: OPTIONS
+  url: https://caltrops.tlembedded.com/api/v2/
+  headers:
+    - name: Access-Control-Request-Headers
+      value: authorization
+    - name: Access-Control-Request-Method
+      value: GET
+    - name: Origin
+      value: "null"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
