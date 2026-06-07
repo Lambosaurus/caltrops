@@ -54,7 +54,7 @@ function parseToken(token) {
 
 function parseBody(text) {
   if (!text)
-    return null;
+    throw new HTTPError(400, "No body")
   try {
     return JSON.parse(text)
   }
@@ -70,14 +70,14 @@ export const handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-          "Access-Control-Allow-Methods": "POST,OPTIONS", 
+          "Access-Control-Allow-Methods": "GET,PUT,POST,PATCH,DELETE,OPTIONS",
           "Access-Control-Allow-Headers": "*", 
       }
     }
   }
 
   try {
-    const body = parseBody(event.body)
+    const body = ["PUT", "POST", "PATCH"].includes(method) ? parseBody(event.body) : null;
     const path = event.rawPath.slice(URI_MOUNTPOINT.length)
     const params = event.queryStringParameters ?? {}
     const token = parseToken(event.headers?.authorization)

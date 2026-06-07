@@ -14,38 +14,65 @@ function isString(item) {
   return typeof item === 'string' && item.length > 0
 }
 
-function isAdmin(token) {
-  return token && token.role === "admin"
+function requireLogin(token) {
+  if (!isString(token?.user))
+    throw new HTTPError(401, "Unauthorised")
 }
 
-function isUser(token) {
-  return token && isString(token.user)
+function requireAdmin(token) {
+  if (token?.role !== "admin")
+    throw new HTTPError(401, "Unauthorised")
 }
 
-function isGUID(id) {
-  return GUID_REGEX.test(id)
+function requireUser(user) {
+  if (!(isString(user) && EMAIL_REGEX.test(user)))
+    throw new HTTPError(400, "Invalid user")
 }
 
-function isType(type) {
-  return isString(type)
+function requireGUID(id) {
+  if (!(isString(id) && GUID_REGEX.test(id)))
+    throw new HTTPError(400, "Invalid id")
 }
 
-function isPattern(item, pattern) {
-  return typeof item === 'string' && pattern.test(item)
+function requireType(type) {
+  if (!isString(type))
+    throw new HTTPError(400, "Invalid type")
 }
 
-function getShareAuthority(token, user, id, path) {
-  token = Signature.decode(token, CALTROPS_PSK)
-  if ( token
-    && isString(token.from)
-    && token.to === user && token.document === id
-  ) {
-    path = path ?? ""
-    if (token.path === undefined || path === token.path || path.startsWith(token.path + "/"))
-      return token.from;
+function requirePath(path) {
+  if (path === undefined)
+    return
+  if (!(isString(path) && CONTENT_PATH_REGEX.test(path)))
+    throw new HTTPError(400, "Invalid path")
+}
+
+function isPathInScope(scope, path) {
+  if (!scope) // scope === undefined || scope === ""
+    return true
+  return path && (path === scope || path.startsWith(scope + "/"))
+}
+
+function acceptShareToken(token, user, id, path) {
+  // This allows us to act as another owner
+  // We check the share token is valid, and is scoped correctly
+
+  if (!token)
+    return user
+  
+  if (isString(token)) {
+    token = Signature.decode(token, CALTROPS_PSK)
+
+    if (   token
+        && isString(token.from)
+        && (token.to === undefined || token.to === user)
+        && (token.document === undefined || token.document === id)
+        && isPathInScope(token.path, path)
+    )
+      return token.from
   }
   throw new HTTPError(401, "Unauthorised")
 }
+
 
 function testHandler(body, token, params) {
   return {
@@ -57,11 +84,7 @@ function testHandler(body, token, params) {
 
 async function registerHandler(body, token, params) {
 
-  if (!body)
-    throw new HTTPError(400, "No body")
-
-  if (!isPattern(body.user, EMAIL_REGEX))
-    throw new HTTPError(400, "Invalid user")
+  requireUser(body.user)
 
   const new_token = Signature.encode({user: body.user}, CALTROPS_PSK)
 
@@ -76,20 +99,11 @@ async function registerHandler(body, token, params) {
   text += `\n`;
   text += `If you believe there is something wrong with this email, you can contact me at ${SUPPORT_EMAIL}\n`;
   
-  try {
-    await Services.sendEmail(body.user, "Caltrops registration", text);
-  } catch (error) {
-    throw new HTTPError(500, "Email send failure", error)
-  }
+  await Services.sendEmail(body.user, "Caltrops registration", text);
 }
 
 function signHandler(body, token, params) {
-  if (!body)
-    throw new HTTPError(400, "No body")
-
-  if (!isAdmin(token))
-    throw new HTTPError(401, "Unauthorised")
-
+  requireAdmin(token)
   return {
     token: Signature.encode(body, CALTROPS_PSK)
   }
@@ -97,24 +111,15 @@ function signHandler(body, token, params) {
 
 async function getDocumentHandler(body, token, params) {
   let content = await Services.readDocument(params.id)
-
   if (!content)
     throw new HTTPError(404, "Document not found")
   return content
 }
 
 async function putDocumentHandler(body, token, params) {
-  if (!isUser(token))
-    throw new HTTPError(401, "Unauthorised")
-
-  if (!isGUID(params.id))
-    throw new HTTPError(400, "Bad ID format")
-
-  if (!body)
-    throw new HTTPError(400, "No body")
-
-  if (!isType(body.type))
-    throw new HTTPError(400, "Bad type")
+  requireLogin(token)
+  requireGUID(params.id)
+  requireType(body.type)
 
   let success = await Services.putDocument(params.id, token.user, body.title, body.type, body.content)
   if (!success)
@@ -122,26 +127,18 @@ async function putDocumentHandler(body, token, params) {
 }
 
 async function patchDocumentHandler(body, token, params) {
-  if (!isUser(token))
-    throw new HTTPError(401, "Unauthorised")
+  requireLogin(token)
+  requirePath(body.path)
 
-  if (!body)
-    throw new HTTPError(400, "No body")
+  const user = acceptShareToken(body.token, token.user, params.id, body.path)
 
-  let path = body.path
-  if (path !== undefined && !isPattern(path, CONTENT_PATH_REGEX))
-    throw new HTTPError(400, "Invalid path")
-
-  let user = body.token ? getShareAuthority(body.token, token.user, params.id, path) : token.user
-
-  let success = await Services.updateDocument(params.id, user, body.content, path)
+  let success = await Services.updateDocument(params.id, user, body.content, body.path)
   if (!success)
     throw new HTTPError(401, "Unauthorised")
 }
 
 async function deleteDocumentHandler(body, token, params) {
-  if (!isUser(token))
-    throw new HTTPError(401, "Unauthorised")
+  requireLogin(token)
 
   let success = await Services.deleteDocument(params.id, token.user)
   if (!success)
@@ -149,17 +146,9 @@ async function deleteDocumentHandler(body, token, params) {
 }
 
 async function shareDocumentHandler(body, token, params) {
-  if (!isUser(token))
-    throw new HTTPError(401, "Unauthorised")
-
-  if (!body)
-    throw new HTTPError(400, "No body")
-
-  if (body.path !== undefined && !isPattern(body.path, CONTENT_PATH_REGEX))
-    throw new HTTPError(400, "Invalid path")
-
-  if (!isString(body.user))
-    throw new HTTPError(400, "User not specified")
+  requireLogin(token)
+  requirePath(body.path)
+  requireUser(body.user)
 
   let token_body = {
     to: body.user,
@@ -174,15 +163,12 @@ async function shareDocumentHandler(body, token, params) {
 }
 
 async function listDocumentHandler(body, token, params) {
-  if (!isUser(token))
-    throw new HTTPError(401, "Unauthorised")
-
+  requireLogin(token)
   return await Services.listDocuments(token.user, params.type)
 }
 
 async function usersHandler(body, token, params) {
-  if (!isAdmin(token))
-    throw new HTTPError(401, "Unauthorised")
+  requireAdmin(token)
   return await Services.listUsers()
 }
 
