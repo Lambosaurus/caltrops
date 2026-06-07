@@ -1,6 +1,8 @@
-const SERVER_URI = 'https://caltrops.tlembedded.com/api/v1/'
+import { Dictionary } from "./rules"
 
-export interface ServerItem {
+const SERVER_URI = 'https://caltrops.tlembedded.com/api/v2'
+
+export interface Document {
     owner: string,
     time: string,
     id: string,
@@ -9,71 +11,75 @@ export interface ServerItem {
     content?: any,
 }
 
-async function post(body: any): Promise<any> {
-    const result = await fetch(SERVER_URI, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
+async function request(method: "GET"|"POST"|"PATCH"|"PUT"|"DELETE", resource: string, token: string|undefined = undefined, body: any = undefined): Promise<any> {
+
+    let headers: any = {
+        'Accept': 'application/json'
+    }
+    if (body) {
+        headers['Content-Type'] = "application/json"
+        body =  JSON.stringify(body)
+    }
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+    }
+
+    const result = await fetch( `${SERVER_URI}/${resource}`, {
+            method: method,
+            headers: headers,
+            body: body
         })
-    const json = await result.json()
-    if (json.error) {
+
+    const text = await result.text()
+    const json = text ? JSON.parse(text) : null
+
+    if (result.status > 299) {
         throw Error(json.error)
     }
-    return json;
+
+    return json
 }
 
-async function listContent(token: string, type: string): Promise<ServerItem[]> {
-    const result = await post({
-        token: token,
-        list: type,
-    })
-    return result.list;
+async function listDocuments(token: string, type: string): Promise<Document[]> {
+    return await request("GET", `documents?type=${type}`, token)
 }
 
-async function readContent(id: string): Promise<ServerItem> {
-    const result = await post({
-        read: [ id ]
-    })
-    if (!result.read.length || !result.read[0]) {
-        throw Error(`Sheet ${id} not found!`)
-    }
-    return result.read[0]
+async function readDocument(id: string): Promise<Document> {
+    return await request("GET", `documents/${id}`)
 }
 
-async function writeContent(token: string, id: string, type: string, title: string, content: any): Promise<boolean> {
-    const result = await post({
-        token: token,
-        write: [
-            {
-                id: id,
-                type: type,
-                title: title,
-                content: content,
-            }
-        ]
+async function writeDocument(token: string, id: string, type: string, title: string, content: any) {
+    await request("PUT", `documents/${id}`, token, {
+        type: type,
+        title: title,
+        content: content
     })
-    return true;
 }
 
-async function deleteContent(token: string, id: string): Promise<ServerItem[]> {
-    const result = await post({
-        token: token,
-        delete: [
-            id
-        ],
-        list: "*",
-    })
-    return result.list
+async function deleteDocument(token: string, id: string) {
+    await request("DELETE", `documents/${id}`, token)
 }
 
-async function requestToken(email: string): Promise<boolean> {
-    const result = await post({
-        register: email
+async function updateDocument(token: string, id: string, content: any, path: string|undefined = undefined, share_token: string|undefined = undefined) {
+    await request("PATCH", `documents/${id}`, token, {
+        path: path,
+        content: content,
+        token: share_token
     })
-    return true;
+}
+
+async function shareDocument(token: string, id: string, user: string|undefined, path: string|undefined) {
+    let result = await request("POST", `documents/${id}/share`, token, {
+        path: path,
+        user: user,
+    })
+    return result.token;
+}
+
+async function requestToken(email: string) {
+    await request("POST", "register", undefined, {
+        user: email
+    })
 }
 
 function parseToken(token: string): string | null {
@@ -92,10 +98,12 @@ function parseToken(token: string): string | null {
 }
 
 const server = {
-    list: listContent,
-    read: readContent,
-    write: writeContent,
-    delete: deleteContent,
+    list: listDocuments,
+    read: readDocument,
+    write: writeDocument,
+    update: updateDocument,
+    delete: deleteDocument,
+    share: shareDocument,
     parseToken: parseToken,
     requestToken: requestToken,
 }

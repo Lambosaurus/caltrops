@@ -9,7 +9,7 @@ import ActionModal from './ActionModal';
 
 // Libraries
 import caltrops from '../lib/caltrops'
-import server, { ServerItem } from '../lib/server'
+import server, { Document } from '../lib/server'
 import { alertError, alertSuccess } from '../lib/alerts'
 import { timeSince } from '../lib/util';
 
@@ -18,18 +18,18 @@ function LoadSheetModal({open, close, setSheet, sheets, setSheets, token}:{
     open: boolean,
     close(): void,
     setSheet(sheet: Sheet | null): void,
-    sheets: ServerItem[] | null,
-    setSheets( sheets: ServerItem[] | null ): void,
+    sheets: Document[] | null,
+    setSheets( sheets: Document[] | null ): void,
     token: string
   }): JSX.Element | null {
 
-  const [toDelete, setToDelete] = useState(null as ServerItem | null)
+  const [toDelete, setToDelete] = useState(null as Document | null)
 
   if (!open) {
     return null
   }
 
-  function selectSheet(item: ServerItem) {
+  function selectSheet(item: Document) {
     setSheet(null)
     server.read(item.id).then(s => {
         setSheet( caltrops.importSheet(s.content) )
@@ -84,10 +84,14 @@ function LoadSheetModal({open, close, setSheet, sheets, setSheets, token}:{
           type: "error",
           callback: () => {
             setSheets(null);
-            server.delete(token, toDelete?.id ?? "").then(
-              sheets => {
-                setSheets(sheets)
+            server.delete(token, toDelete?.id ?? "").then( () => {
                 alertSuccess(`${toDelete?.title} deleted`)
+                server.list(token, "sheet").then(
+                  sheets => {
+                    setSheets(sheets)
+                    
+                  }
+                )
               }
             ).catch( e => alertError(`Error deleting sheet: ${e.message}`))
           },

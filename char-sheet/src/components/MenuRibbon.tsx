@@ -13,7 +13,7 @@ import { ImCheckmark, ImPencil } from 'react-icons/im';
 // Internal imports
 import { downloadObject, copyToClipboard, EditMode } from '../lib/util'
 import { Sheet } from '../lib/rules'
-import server, { ServerItem } from '../lib/server'
+import server, { Document } from '../lib/server'
 import UserLoginModal from './UserLoginModal';
 import { alertError, alertInfo, alertSuccess, alertWarning } from '../lib/alerts';
 import caltrops from '../lib/caltrops';
@@ -30,7 +30,7 @@ function MenuRibbon( {editable, setEditable, view, children}: {
   const [isNewSheetOpen, setIsNewSheetOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isLoadSheetOpen, setIsLoadSheetOpen] = useState(false)
-  const [sheetList, setSheetList] = useState(null as ServerItem[] | null)
+  const [sheetList, setSheetList] = useState(null as Document[] | null)
 
   const token = useListener(view, "token")
   const sheetId = useListener(view, "sheet/id")
