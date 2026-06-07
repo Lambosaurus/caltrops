@@ -1,0 +1,22 @@
+info:
+  name: share doc
+  type: http
+  seq: 10
+
+http:
+  method: POST
+  url: https://caltrops.tlembedded.com/api/v2/documents/0801d9c8-1058-463d-b3f3-f51887626045/share
+  body:
+    type: json
+    data: |-
+      {
+        "user": "test@tlembedded.com",
+        "path": "items"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,22 @@
+info:
+  name: update doc
+  type: http
+  seq: 9
+
+http:
+  method: PATCH
+  url: https://caltrops.tlembedded.com/api/v2/documents/0801d9c8-1058-463d-b3f3-f51887626045
+  body:
+    type: json
+    data: |-
+      {
+        "path": "items",
+        "content": [ "sword", "shield", "torch" ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

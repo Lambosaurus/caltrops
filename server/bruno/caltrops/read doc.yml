@@ -1,0 +1,20 @@
+info:
+  name: read doc
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: https://caltrops.tlembedded.com/api/v2/documents/0801d9c8-1058-463d-b3f3-f51887626045
+  auth: inherit
+
+runtime:
+  variables:
+    - name: id
+      value: facce310-c4a2-4029-83bf-912a1f24e6fa
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
