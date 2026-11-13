@@ -5,7 +5,7 @@ import { FIXTURE_RULES } from '../../lib/mech/fixture'
 import { newMech } from '../../lib/mech/loadout'
 import { withDnd } from '../dnd/testWrap'
 import EquipmentTable from '../EquipmentTable'
-import MechView from './MechView'
+import MechManage from './MechManage'
 
 function setup(editable: EditMode, tweak?: (m: any) => void) {
   const mechs = { ...FIXTURE_RULES, chassis: [...FIXTURE_RULES.chassis, { ...FIXTURE_RULES.chassis[0], name: 'Jackal', loadout: {} }] }
@@ -15,7 +15,7 @@ function setup(editable: EditMode, tweak?: (m: any) => void) {
   const view = new ObjectService().view('')
   view.publish('rules', rules)
   view.publish('mech', mech)
-  render(withDnd(<MechView view={view} editable={editable}/>))
+  render(withDnd(<MechManage view={view} editable={editable}/>))
   return view
 }
 

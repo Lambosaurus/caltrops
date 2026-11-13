@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { ObjectService } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { FIXTURE_RULES } from '../../lib/mech/fixture'
@@ -57,6 +57,11 @@ test('activation button enabled when live and allowed', () => {
   expect(btns.some(b => !b.disabled)).toBe(true)
 })
 
+test('New turn is disabled when the mech is out of action', () => {
+  setup(EditMode.Live, m => { m.turn.out = true })
+  expect((screen.getByText(/New turn/) as HTMLButtonElement).disabled).toBe(true)
+})
+
 test('unknown parts render without actions', () => {
   setup(EditMode.Full, m => { m.sections.larm.mounts[0].name = 'Mystery Box' })
   expect(screen.getByText('Unknown part: Mystery Box')).toBeTruthy()
@@ -112,6 +117,14 @@ describe('Pilot tab', () => {
     sheet(scrapLancerRuleset, false)
     expect(screen.getByText(/No mech assigned — manage in the Mech tab/)).toBeTruthy()
     expect(screen.queryByText(/^Sprint/)).toBeNull()
+  })
+
+  test('Mech tab offers management without an assigned mech', () => {
+    sheet(scrapLancerRuleset, false)
+    fireEvent.click(screen.getByText('Mech'))
+    expect(screen.getByText('New mech')).toBeTruthy()
+    expect(screen.getByText('Load mech')).toBeTruthy()
+    expect(screen.getByText(/^Assign/)).toBeTruthy()
   })
 
   test('Bludgeon has no mech panel and no tabs', () => {

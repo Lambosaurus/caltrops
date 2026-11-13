@@ -19,6 +19,7 @@ import type { Dictionary, RollInfo, Rules } from '../../lib/rules'
 import { roller } from './roller'
 import { showNotices } from './notify'
 
+const BANDS: RangeBand[] = ['Short', 'Mid', 'Long']
 const signed = (n: number) => (n >= 0 ? '+' : '') + n
 
 /**
@@ -38,12 +39,14 @@ function ActivationModal({ rules, view, mountKey, close }: {
   const [aspectScore, setAspectScore] = useState(0)
   const [skillScore, setSkillScore] = useState(0)
   const [other, setOther] = useState(0)
+  const [chosen, setChosen] = useState(null as RangeBand | null)
   const [done, setDone] = useState(null as { dice: number[], info: RollInfo } | null)
 
   useEffect(() => {
     setAspectScore(0)
     setSkillScore(0)
     setOther(0)
+    setChosen(null)
     setDone(null)
   }, [mountKey])
 
@@ -62,7 +65,9 @@ function ActivationModal({ rules, view, mountKey, close }: {
   }
 
   const mechMode = mode === 'mech'
-  const band: RangeBand = att.range && att.range !== 'Melee' ? att.range : 'Short' // own band: no range penalty
+  const ranged = !!att.range && att.range !== 'Melee'
+  // Defaults to the weapon's own band (no penalty); Melee is fixed to Short (engaged).
+  const band: RangeBand = !ranged ? 'Short' : chosen ?? att.range as RangeBand
   const names = activationRoll(rules, att, band, {})
   const scores: Dictionary<number> = mechMode && names
     ? { [names.attribute!.name]: aspectScore, [names.skill!.name]: skillScore }
@@ -86,7 +91,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
     parts.push({ label: `${info.skill!.name} (skill)`, value: info.skill!.score })
     if (att.roll!.bonus) parts.push({ label: `${att.name} bonus`, value: att.roll!.bonus })
     const pen = (att.roll!.bonus ?? 0) - (base.bonus ?? 0)
-    if (pen) parts.push({ label: `Target inside ${att.range} range`, value: -pen })
+    if (pen) parts.push({ label: `Target ${band} (weapon ${att.range})`, value: -pen })
   }
 
   function confirm(toVtt: boolean) {
@@ -133,6 +138,17 @@ function ActivationModal({ rules, view, mountKey, close }: {
     <div className='my-2'>Cost: {costs.join(', ')}</div>
     {hot && !done ? <div className='my-2 text-error'>
       Overheated: this action also rolls {selfDamage}d4 of heat self-damage.
+    </div> : null}
+    {att.range ? <div className='my-2 flex items-center gap-2'>
+      <span>Target range</span>
+      {BANDS.map(b => <button
+        key={b}
+        type='button'
+        className={`btn btn-xs rounded-none ${b === band ? 'btn-primary' : 'btn-outline'}`}
+        disabled={!ranged || !!done}
+        aria-pressed={b === band}
+        onClick={() => setChosen(b)}
+      >{b}</button>)}
     </div> : null}
     {blocker ? <div className='my-2 text-error' role='alert'>{blocker}</div> : null}
     {info ? <div className='my-2'>

@@ -6,7 +6,7 @@ import FileUploader from '../components/FileUploader'
 import MenuRibbon from '../components/MenuRibbon'
 import SheetView from '../components/SheetView'
 import AlertGroup from '../components/AlertGroup'
-import MechView from '../components/mech/MechView'
+import StandaloneMech from '../components/mech/StandaloneMech'
 import MechPanel from '../components/mech/MechPanel'
 
 // Internal imports
@@ -267,7 +267,7 @@ function MainPage(): JSX.Element {
         {
           mode === 'mech' ?
           (
-            mechId !== undefined ? <><MechPanel view={view} editable={mechEditable}/><MechView view={view} editable={mechEditable}/></> : <LoadingSpinner size={100}/>
+            mechId !== undefined ? <StandaloneMech view={view} editable={mechEditable}/> : <LoadingSpinner size={100}/>
           ) :
           sheetId !== undefined ?
           <SheetView

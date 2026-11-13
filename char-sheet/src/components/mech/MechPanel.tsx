@@ -112,7 +112,7 @@ function MechPanel({ view, editable }: {
       <button className='btn btn-xs btn-error rounded-none' disabled={purgeDisabled} onClick={() => run(shutdownPurge(mechRules, mech))}>
         Shut down &amp; purge
       </button>
-      <button className='btn btn-xs btn-success rounded-none' disabled={!play} onClick={() => run(newTurn(mechRules, mech))}>New turn ▶</button>
+      <button className='btn btn-xs btn-success rounded-none' disabled={!play || t.out} onClick={() => run(newTurn(mechRules, mech))}>New turn ▶</button>
       <button className='btn btn-xs btn-outline rounded-none' onClick={() => copyMechLink(mech.id)}>Copy mech link</button>
     </div>
 
