@@ -151,7 +151,7 @@ function MechSection({ rules, section, view, editable, loadout = false, onHit, o
         className='btn btn-xs btn-ghost btn-error px-1'
         aria-label={`Remove ${mount.name}`}
         onClick={() => onUnmount?.(section.id, mount.start)}
-      >×</button> : null}
+      >Ã—</button> : null}
       {loadout ? null : <Popover content={woundPop(section, i, wounded)}>
         <button
           className={`w-3 h-3 border flex-none ${wounded ? 'bg-error border-error' : 'border-current'}`}
@@ -209,7 +209,7 @@ function MechSection({ rules, section, view, editable, loadout = false, onHit, o
           className='btn btn-xs btn-ghost btn-error px-1'
           aria-label={`Remove ${state.armour.name}`}
           onClick={() => onClearArmour?.(section.id)}
-        >×</button> : null}
+        >Ã—</button> : null}
         {Array.from({ length: armourMax }, (_, k) =>
           <Popover key={k} content={armourPop(rules, state.armour!.name, state.armour!.points)}>
             <button

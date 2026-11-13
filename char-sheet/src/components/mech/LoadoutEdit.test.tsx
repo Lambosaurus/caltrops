@@ -70,3 +70,10 @@ describe('EquipmentTable capacity strike-through', () => {
     expect(screen.getByText('Item2').closest('tr')!.className).not.toContain('line-through')
   })
 })
+
+test('remove buttons render a multiplication sign', () => {
+  setup(EditMode.Full)
+  fireEvent.click(screen.getByText('Edit loadout'))
+  expect(screen.getByLabelText('Remove Dipole Fusion Reactor').textContent).toBe('×')
+  screen.getAllByLabelText('Remove Plating').forEach(b => expect(b.textContent).toBe('×'))
+})
