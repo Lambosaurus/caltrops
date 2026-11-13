@@ -111,11 +111,17 @@ function MechManage({ view, editable, sheetEditable }: {
       {modals}
     </div>
   }
-  if (!mechRules) {
-    return <div className='p-4 opacity-70'>This mech's ruleset ({rules?.name ?? mech.rules}) has no mech rules loaded.</div>
-  }
-  if (!chassis) {
-    return <div className='p-4 text-error'>Unknown chassis: {mech.chassis}</div>
+  if (!mechRules || !chassis) {
+    return <div className='flex flex-col gap-2 p-4 w-full font-mono text-xs'>
+      <div className='flex flex-wrap items-center gap-2 bg-base-200 p-2'>
+        {!mechRules
+          ? <span className='opacity-70'>This mech's ruleset ({rules?.name ?? mech.rules}) has no mech rules loaded.</span>
+          : <span className='text-error'>Unknown chassis: {mech.chassis}</span>}
+        <span className='flex-1'/>
+        {actions}
+      </div>
+      {modals}
+    </div>
   }
 
   const mv = view.view('mech')

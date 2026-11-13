@@ -1,7 +1,7 @@
 import { DEFAULT_RULES } from '../rules'
 import { FIXTURE_RULES } from './fixture'
 import { newMech, unmount } from './loadout'
-import { applyWounds, markWounds, cookoffDice, toggleWound, setArmourPoints, adjustAmmo, repairAll } from './damage'
+import { applyWounds, markWounds, cookoffDice, toggleWound, setArmourPoints, adjustAmmo } from './damage'
 import type { Mech } from './types'
 
 const RULES = { ...DEFAULT_RULES, name: 'Test', mechs: FIXTURE_RULES }
@@ -149,16 +149,5 @@ describe('direct edits', () => {
     expect(adjustAmmo(FIXTURE_RULES, m, 'core:4', 99).sections.core.mounts.find(x => x.start === 4)!.ammo).toBe(16)
     expect(setArmourPoints(FIXTURE_RULES, m, 'lleg', 9).sections.lleg.armour!.points).toBe(2)
     expect(setArmourPoints(FIXTURE_RULES, m, 'lleg', -3).sections.lleg.armour!.points).toBe(0)
-  })
-  it('repairs everything', () => {
-    let m = applyWounds(FIXTURE_RULES, mule(), 'core', 99, off).mech
-    m = adjustAmmo(FIXTURE_RULES, m, 'core:4', -99)
-    m = { ...m, turn: { ...m.turn, pilotWounds: 2 } }
-    const r = repairAll(FIXTURE_RULES, m)
-    expect(Object.values(r.sections).every(s => s.wounds.every(w => !w))).toBe(true)
-    expect(r.sections.core.mounts.find(x => x.start === 4)!.ammo).toBe(16)
-    expect(r.sections.core.armour!.points).toBe(3)
-    expect(r.turn.out).toBe(false)
-    expect(r.turn.pilotWounds).toBe(0)
   })
 })

@@ -37,6 +37,14 @@ test('renders sections with hit labels and the status bar buttons', () => {
   expect(screen.getAllByText(/^Stowage/).length).toBeGreaterThan(0)
 })
 
+test('after Shut down & purge the end-of-turn heat figure equals current heat', () => {
+  const { container } = setup(EditMode.Full, m => { m.turn.heat = 5 })
+  fireEvent.click(screen.getByText('Shut down & purge'))
+  const el = Array.from(container.querySelectorAll('span')).find(e => /end of turn/.test(e.textContent ?? '') && e.children.length === 0)!
+  const cur = el.parentElement!.querySelector('b')!.textContent
+  expect(el.textContent).toBe(`end of turn → ${cur}`)
+})
+
 test('no Move, Target, Take a hit, Repair or log elements', () => {
   setup(EditMode.Full)
   for (const re of [/^Move/, /Target/, /Take a hit/, /Repair/, /^Log$/, /End turn/, /Start turn/, /Sitting Duck/]) {

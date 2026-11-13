@@ -7,7 +7,6 @@ import MenuRibbon from '../components/MenuRibbon'
 import SheetView from '../components/SheetView'
 import AlertGroup from '../components/AlertGroup'
 import StandaloneMech from '../components/mech/StandaloneMech'
-import MechPanel from '../components/mech/MechPanel'
 
 // Internal imports
 import { EditMode, setTheme } from '../lib/util'

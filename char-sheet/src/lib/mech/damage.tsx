@@ -167,21 +167,3 @@ export function adjustAmmo(rules: MechRules, mech: Mech, key: string, delta: num
     ...sec, mounts: sec.mounts.map(x => (x === m ? { ...x, ammo: clamp((x.ammo ?? 0) + delta, 0, perBin) } : x)),
   }))
 }
-
-export function repairAll(rules: MechRules, mech: Mech): Mech {
-  const sections: Mech['sections'] = {}
-  for (const [id, s] of Object.entries(mech.sections)) {
-    sections[id] = {
-      armour: s.armour ? { ...s.armour, points: findAttachment(rules, s.armour.name)?.armour ?? s.armour.points } : null,
-      wounds: s.wounds.map(() => false),
-      mounts: s.mounts.map(m => {
-        const att = findAttachment(rules, m.name)
-        const out: Mount = { ...m }
-        if (att?.bin) out.ammo = rules.ammo.find(a => a.name === att.bin)?.perBin ?? 0
-        if (att?.charges) out.charges = att.charges
-        return out
-      }),
-    }
-  }
-  return { ...mech, sections, turn: { ...mech.turn, out: false, pilotWounds: 0 } }
-}

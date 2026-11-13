@@ -89,3 +89,16 @@ test('standalone renders Mech and Manage tabs, not stacked', () => {
   expect(screen.getByText('Automation')).toBeTruthy()
   expect(screen.queryByText(/^Sprint/)).toBeNull()
 })
+
+test('an unknown chassis still shows Unassign so the assignment can be fixed', () => {
+  const rules: any = { name: 'x', mechs: FIXTURE_RULES, equipment: [] }
+  const mech = { ...newMech(rules, 'Mule', 'Rusty'), chassis: 'Nonexistent' }
+  const view = new ObjectService().view('')
+  view.publish('rules', rules)
+  view.publish('sheet', { id: 's', mech: mech.id })
+  view.publish('mech', mech)
+  render(withDnd(<MechManage view={view} editable={EditMode.Live}/>))
+  expect(screen.getByText(/Unknown chassis/)).toBeTruthy()
+  fireEvent.click(screen.getByText('Unassign'))
+  expect(view.read('sheet/mech')).toBeUndefined()
+})

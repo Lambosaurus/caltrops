@@ -34,8 +34,6 @@ function MenuRibbon( {editable, setEditable, view, children}: {
   const [sheetList, setSheetList] = useState(null as Document[] | null)
 
   const token = useListener(view, "token")
-  const rules = useListener(view, "rules")
-  const mode = useListener(view, "mode")
   const sheetId = useListener(view, "sheet/id")
 
   function setSheet(sheet: Sheet | null) {

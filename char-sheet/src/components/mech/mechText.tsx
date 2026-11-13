@@ -120,7 +120,7 @@ export function sectionPop(rules: MechRules, mech: Mech, section: ChassisSection
   ]
   const armour = state?.armour ? findAttachment(rules, state.armour.name) : undefined
   lines.push(`Wounds: ${hurt}/${state?.wounds.length ?? 0} slots${state?.armour ? `, armour ${state.armour.points}/${armour?.armour ?? '?'}` : ''}.`)
-  const prov = [section.provides?.speed ? `Speed ${section.provides.speed}` : '', section.provides?.evasion ? `Evasion ${section.provides.evasion} (when sprinting)` : ''].filter(Boolean)
+  const prov = [section.provides?.speed ? `Speed ${section.provides.speed}` : '', section.provides?.evasion ? `Evasion ${section.provides.evasion}` : ''].filter(Boolean)
   if (prov.length) lines.push(`Provides: ${prov.join(', ')} while not destroyed.`)
   const transferTo = section.transfer && section.transfer !== 'pilot' ? chassis?.sections.find(s => s.id === section.transfer)?.name ?? section.transfer : ''
   lines.push(section.transfer === 'pilot' ? "When destroyed: further hits go to the pilot's Body track."
@@ -170,11 +170,12 @@ export function statPop(rules: MechRules, mech: Mech, kind: StatKind): PopText {
         'Refilled to reactor output on each New turn. Spend it on activations and sprinting.',
         `Unspent energy is lost${d.capacitor ? `, except up to ${d.capacitor} kept by capacitors` : ''}.`] }
     case 'heat': {
-      const proj = Math.max(0, t.heat + (t.shutdown ? 0 : d.reactorHeat) - d.cooling)
+      const proj = t.shutdown ? t.heat : Math.max(0, t.heat + d.reactorHeat - d.cooling)
       const sinks = d.heatMax - d.baseHeatMax
       const lines = [
         `Heat Max ${d.baseHeatMax} chassis${sinks ? ` ${signed(sinks)} heat sinks` : ''}.`,
-        `Activations add heat now. At end of turn: ${t.heat}${t.shutdown ? '' : ` + ${d.reactorHeat} reactor`} − ${d.cooling} cooling = ${proj}.`]
+        t.shutdown ? 'Activations add heat now. New turn: reboot, heat unchanged.'
+          : `Activations add heat now. At end of turn: ${t.heat} + ${d.reactorHeat} reactor − ${d.cooling} cooling = ${proj}.`]
       if (proj > d.heatMax) lines.push(`That is over Heat Max by ${proj - d.heatMax}: you will start next turn overheated.`)
       lines.push('Above Heat Max you are Overheated: every further action rolls d4s equal to the overage after it; each 4 wounds that part.')
       return { title: `Heat ${t.heat}/${d.heatMax}`, lines }

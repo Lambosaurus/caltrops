@@ -57,7 +57,7 @@ function MechPanel({ view, editable }: {
   const stats = deriveStats(mechRules, mech)
   const t = mech.turn
   const hot = overheated(mechRules, mech)
-  const projected = Math.max(0, t.heat + (t.shutdown ? 0 : stats.reactorHeat) - stats.cooling)
+  const projected = Math.max(0, t.shutdown ? t.heat : t.heat + stats.reactorHeat - stats.cooling)
   const heatColor = hot ? 'bg-error' : t.heat > stats.heatMax * 0.7 ? 'bg-warning' : 'bg-primary'
   const warns: string[] = []
   if (!stats.hasReactor) warns.push('No reactor mounted')
