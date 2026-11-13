@@ -37,6 +37,14 @@ export function mountAt(mech: Mech, sectionId: string, slot: number): Mount | un
   return mech.sections[sectionId]?.mounts.find(m => m.start === slot)
 }
 
+// The mount whose occupied slots (start..start+size-1) include `slot`.
+export function mountCovering(rules: MechRules, mech: Mech, sectionId: string, slot: number): Mount | undefined {
+  return mech.sections[sectionId]?.mounts.find(m => {
+    const att = findAttachment(rules, m.name)
+    return slot >= m.start && slot < m.start + (att ? sizeOf(att) : 1)
+  })
+}
+
 function sectionSlots(rules: MechRules, mech: Mech, sectionId: string): string[] | undefined {
   return findChassis(rules, mech.chassis)?.sections.find(s => s.id === sectionId)?.slots
 }

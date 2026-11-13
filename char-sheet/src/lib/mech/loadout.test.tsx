@@ -2,7 +2,7 @@ import { DEFAULT_RULES } from '../rules'
 import { DEFAULT_MECH_SETTINGS } from './types'
 import { FIXTURE_RULES } from './fixture'
 import {
-  slotAccepts, canMount, mount, moveMount, newMech, changeChassis, loadMech, findAttachment,
+  slotAccepts, canMount, mount, mountAt, mountCovering, moveMount, newMech, changeChassis, loadMech, findAttachment,
 } from './loadout'
 
 const RULES = { ...DEFAULT_RULES, name: 'Test', mechs: FIXTURE_RULES }
@@ -30,8 +30,19 @@ describe('canMount', () => {
     expect(canMount(FIXTURE_RULES, empty, 'lleg', 'Machine Gun', 1)).toBe(false)
   })
   it('rejects overlaps', () => {
-    const m = mount(FIXTURE_RULES, empty, 'core', 'Heat Exchanger', 3)
-    expect(canMount(FIXTURE_RULES, m, 'core', 'Dipole Fusion Reactor', 2)).toBe(false)
+    const m = mount(FIXTURE_RULES, empty, 'larm', 'Autocannon', 1)
+    expect(canMount(FIXTURE_RULES, m, 'larm', 'Machine Gun', 1)).toBe(false)
+    expect(canMount(FIXTURE_RULES, m, 'larm', 'Machine Gun', 2)).toBe(false)
+  })
+})
+
+describe('mountAt / mountCovering', () => {
+  it('distinguishes start from covered slots', () => {
+    const m = mount(FIXTURE_RULES, changeChassis(RULES, newMech(RULES, 'Mule'), 'Mule'), 'larm', 'Autocannon', 1)
+    expect(mountCovering(FIXTURE_RULES, m, 'larm', 2)?.name).toBe('Autocannon')
+    expect(mountCovering(FIXTURE_RULES, m, 'larm', 0)).toBeUndefined()
+    expect(mountAt(m, 'larm', 2)).toBeUndefined()
+    expect(mountAt(m, 'larm', 1)?.name).toBe('Autocannon')
   })
 })
 
@@ -60,6 +71,28 @@ describe('moveMount', () => {
     const r = moveMount(FIXTURE_RULES, b, { section: 'rarm', start: 1 }, { section: 'larm', start: 2 })
     expect(r.sections.larm.mounts[0]).toMatchObject({ name: 'Machine Gun', start: 2 })
     expect(r.sections.rarm.mounts).toEqual([])
+  })
+})
+
+describe('moveMount within a section', () => {
+  const wide = {
+    ...FIXTURE_RULES,
+    chassis: [{
+      ...FIXTURE_RULES.chassis[0],
+      sections: FIXTURE_RULES.chassis[0].sections.map(sec => sec.id === 'larm' ? { ...sec, slots: ['Weapon', 'Weapon', 'Weapon'] } : sec),
+    }],
+  }
+  const wrules = { ...RULES, mechs: wide }
+  const base = changeChassis(wrules, newMech(wrules, 'Mule'), 'Mule')
+  it('allows shifting onto its own old slots', () => {
+    const m = mount(wide, base, 'larm', 'Autocannon', 0)
+    const r = moveMount(wide, m, { section: 'larm', start: 0 }, { section: 'larm', start: 1 })
+    expect(r.sections.larm.mounts).toEqual([{ name: 'Autocannon', start: 1 }])
+  })
+  it('is a no-op when overlapping a different mount', () => {
+    const m = mount(wide, mount(wide, base, 'larm', 'Autocannon', 0), 'larm', 'Machine Gun', 2)
+    const r = moveMount(wide, m, { section: 'larm', start: 0 }, { section: 'larm', start: 1 })
+    expect(r).toEqual(m)
   })
 })
 
