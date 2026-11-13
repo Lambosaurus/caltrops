@@ -8,6 +8,8 @@ import ActivationModal from './ActivationModal'
 import TakeHitPanel from './TakeHitPanel'
 import MechSettingsPanel from './MechSettingsPanel'
 import MechLog from './MechLog'
+import AttachmentCatalogue from './AttachmentCatalogue'
+import EquipmentTable from '../EquipmentTable'
 import ActionModal from '../ActionModal'
 import { statPop, StatKind } from './mechText'
 import { useState } from 'react'
@@ -15,7 +17,7 @@ import { useState } from 'react'
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
-import { findChassis } from '../../lib/mech/loadout'
+import { changeChassis, dropOnCatalogue, dropPart, findChassis, setArmour, unmount, type PartDrag } from '../../lib/mech/loadout'
 import { deriveStats, overheated } from '../../lib/mech/derive'
 import { adjustAmmo, repairAll, setArmourPoints, toggleWound } from '../../lib/mech/damage'
 import { logMech } from '../../lib/mech/store'
@@ -37,6 +39,8 @@ function MechView({ view, editable, onActivate = () => {} }: {
   const rules: Rules | undefined = useListener(view, 'rules')
   const [hitSection, setHitSection] = useState(null as string | null)
   const [confirmRepair, setConfirmRepair] = useState(false)
+  const [loadout, setLoadout] = useState(false)
+  const [newChassis, setNewChassis] = useState(null as string | null)
   const [activeKey, setActiveKey] = useState(null as string | null)
   const mechRules: MechRules | undefined = rules?.mechs
   const chassis = mech && mechRules ? findChassis(mechRules, mech.chassis) : undefined
@@ -69,17 +73,29 @@ function MechView({ view, editable, onActivate = () => {} }: {
     ? <span className='badge badge-primary rounded-none font-bold'>SPRINTING −{stats.evasion}</span>
     : <span className='badge badge-outline rounded-none font-bold'>MOVED</span>
 
-  const play = editable >= EditMode.Live
+  // Loadout editing needs full edit rights; while it is on, play controls are off.
+  const loading = loadout && editable === EditMode.Full
+  const playMode = loading ? EditMode.None : editable
+  const play = playMode >= EditMode.Live
   const publish = (next: Mech) => view.publish('mech', next)
 
-  const stowage = mech.equipment.Stowage ?? []
+  const stowageContainer = { name: 'Stowage', size: stats.stowage, tags: ['handheld', 'custom'] }
 
   return <div className='flex flex-col gap-2 p-4 w-full font-mono text-xs'>
 
     {/* Status bar */}
     <div className='flex flex-wrap items-center gap-2 bg-base-200 p-2'>
       <span className='px-2 border border-base-300 font-bold'>{mech.name}</span>
-      <span className='px-2 border border-base-300'>{chassis.name}</span>
+      {loading
+        ? <select
+            className='select select-xs select-bordered rounded-none'
+            aria-label='Chassis'
+            value={chassis.name}
+            onChange={e => e.target.value !== chassis.name && setNewChassis(e.target.value)}
+          >
+            {mechRules.chassis.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+          </select>
+        : <span className='px-2 border border-base-300'>{chassis.name}</span>}
       {stat('energy', <>
         Energy <b>{t.energy}</b>/{stats.energyOut}
         {stats.capacitor ? <span className='opacity-60'> (+store {stats.capacitor})</span> : null}
@@ -98,10 +114,15 @@ function MechView({ view, editable, onActivate = () => {} }: {
         : t.shutdown ? <span className='badge badge-error rounded-none font-bold'>SHUT DOWN</span>
         : hot ? <span className='badge badge-error rounded-none font-bold'>OVERHEATED</span> : null}
       <span className='flex-1'/>
+      {editable === EditMode.Full
+        ? <button className={`btn btn-xs rounded-none ${loading ? 'btn-primary' : 'btn-outline'}`} onClick={() => setLoadout(!loadout)}>
+            {loading ? 'Done editing' : 'Edit loadout'}
+          </button>
+        : null}
       <Popover content={statPop(mechRules, mech, 'posture')}>{posture}</Popover>
     </div>
 
-    <TurnControls view={view} editable={editable}/>
+    {loading ? null : <TurnControls view={view} editable={editable}/>}
 
     {warns.length ? <div className='border border-error bg-error/10 p-2'>⚠ {warns.join(' · ')}</div> : null}
 
@@ -127,7 +148,12 @@ function MechView({ view, editable, onActivate = () => {} }: {
                 rules={mechRules}
                 section={section}
                 view={mv}
-                editable={editable}
+                editable={playMode}
+                loadout={loading}
+                onDropPart={(item, id, start) => publish(dropPart(mechRules, mech, item, id, start))}
+                onUnmount={(id, start) => publish(unmount(mech, id, start))}
+                onDropArmour={(id, name) => publish(setArmour(mechRules, mech, id, name))}
+                onClearArmour={id => publish(setArmour(mechRules, mech, id, null))}
                 onHit={setHitSection}
                 onActivate={key => { setActiveKey(key); onActivate(key) }}
                 onWound={(id, i) => publish(toggleWound(mechRules, mech, id, i))}
@@ -144,26 +170,51 @@ function MechView({ view, editable, onActivate = () => {} }: {
       </div>
 
       {/* Side column */}
-      <div className='flex flex-col gap-2 w-full lg:w-64 flex-none'>
-        <div className='bg-base-200 border border-base-300 p-2'>
+      <div className='flex flex-col gap-2 w-full lg:w-80 flex-none'>
+        {loading
+          ? <AttachmentCatalogue rules={mechRules} onRemove={(item: PartDrag) => publish(dropOnCatalogue(mech, item))}/>
+          : null}
+        <div className='bg-base-200 border border-base-300 p-2 overflow-x-auto'>
           <Popover content={statPop(mechRules, mech, 'stowage')}>
-            <h4 className='font-bold text-accent mb-1'>Stowage {stowage.length}/{stats.stowage}</h4>
+            <h4 className='font-bold text-accent mb-1'>Stowage {(mech.equipment.Stowage ?? []).length}/{stats.stowage}</h4>
           </Popover>
-          {stowage.length ? stowage.map((e, i) => <div key={i}>{e.name}{e.count && e.count > 1 ? ` x${e.count}` : ''}</div>)
-            : <div className='opacity-50'>Nothing stowed.</div>}
+          <EquipmentTable
+            equipment={rules!.equipment}
+            container={stowageContainer}
+            view={view.view('mech/equipment/Stowage')}
+            editable={editable}
+          />
         </div>
-        <TakeHitPanel view={view} editable={editable}/>
-        <MechSettingsPanel view={view} editable={editable}/>
-        <div className='bg-base-200 border border-base-300 p-2'>
-          <h4 className='font-bold text-accent mb-1'>Between missions</h4>
-          <button className='btn btn-xs btn-outline' disabled={!play} onClick={() => setConfirmRepair(true)}>Repair &amp; rearm</button>
-        </div>
+        {loading ? null : <>
+          <TakeHitPanel view={view} editable={editable}/>
+          <MechSettingsPanel view={view} editable={editable}/>
+          <div className='bg-base-200 border border-base-300 p-2'>
+            <h4 className='font-bold text-accent mb-1'>Between missions</h4>
+            <button className='btn btn-xs btn-outline' disabled={!play} onClick={() => setConfirmRepair(true)}>Repair &amp; rearm</button>
+          </div>
+        </>}
         <MechLog view={view}/>
       </div>
     </div>
 
     <HitModal view={view} sectionId={hitSection} close={() => setHitSection(null)}/>
     {play && rules ? <ActivationModal rules={rules} view={view} mountKey={activeKey} close={() => setActiveKey(null)}/> : null}
+    <ActionModal
+      open={newChassis !== null}
+      close={() => setNewChassis(null)}
+      title='Change chassis'
+      actions={[
+        { name: 'Cancel', callback: () => {} },
+        { name: 'Change chassis', type: 'primary', callback: () => {
+          if (newChassis && rules) {
+            publish(changeChassis(rules, mech, newChassis))
+            logMech(view, [`Chassis changed to ${newChassis}; loadout cleared.`])
+          }
+        } },
+      ]}
+    >
+      <p className='my-4'>Change chassis to {newChassis}? The current loadout, armour and turn state are cleared. Stowage is kept.</p>
+    </ActionModal>
     <ActionModal
       open={confirmRepair}
       close={() => setConfirmRepair(false)}

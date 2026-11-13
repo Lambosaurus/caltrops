@@ -3,6 +3,7 @@ import { ObjectService } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { FIXTURE_RULES } from '../../lib/mech/fixture'
 import { newMech } from '../../lib/mech/loadout'
+import { withDnd } from '../dnd/testWrap'
 import MechView from './MechView'
 
 function setup(mode: 'sheet' | 'mech' = 'sheet') {
@@ -14,7 +15,7 @@ function setup(mode: 'sheet' | 'mech' = 'sheet') {
   view.publish('mode', mode)
   view.publish('mech', mech)
   view.publish('sheet', { attributes: { Precision: 3 }, skills: { Gunnery: 2 } })
-  render(<MechView view={view} editable={EditMode.Live}/>)
+  render(withDnd(<MechView view={view} editable={EditMode.Live}/>))
   return { view, energy: mech.turn.energy }
 }
 

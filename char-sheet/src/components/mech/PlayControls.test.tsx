@@ -3,6 +3,7 @@ import { ObjectService } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { FIXTURE_RULES } from '../../lib/mech/fixture'
 import { newMech } from '../../lib/mech/loadout'
+import { withDnd } from '../dnd/testWrap'
 import MechView from './MechView'
 import HitModal from './HitModal'
 import TurnControls from './TurnControls'
@@ -63,14 +64,14 @@ test('target select writes mech/turn/target', () => {
 
 test('settings checkbox writes mech/settings', () => {
   const view = makeView()
-  render(<MechView view={view} editable={EditMode.Live}/>)
+  render(withDnd(<MechView view={view} editable={EditMode.Live}/>))
   fireEvent.click(screen.getByLabelText('Spend ammo on activation'))
   expect(view.read('mech').settings.autoAmmo).toBe(true)
 })
 
 test('wound box and Repair & rearm', () => {
   const view = makeView()
-  render(<MechView view={view} editable={EditMode.Live}/>)
+  render(withDnd(<MechView view={view} editable={EditMode.Live}/>))
   fireEvent.click(screen.getByLabelText('Left leg slot 1 wound'))
   expect(view.read('mech').sections.lleg.wounds[0]).toBe(true)
   fireEvent.click(screen.getAllByText('Repair & rearm')[0])
@@ -80,7 +81,7 @@ test('wound box and Repair & rearm', () => {
 
 test('every play control is disabled when not editable', () => {
   const view = makeView()
-  const { container } = render(<MechView view={view} editable={EditMode.None}/>)
+  const { container } = render(withDnd(<MechView view={view} editable={EditMode.None}/>))
   // The closed repair dialog is always mounted but hidden.
   const controls = (Array.from(container.querySelectorAll('button, select, input')) as HTMLInputElement[]).filter(c => !c.closest('.modal'))
   expect(controls.length).toBeGreaterThan(10)

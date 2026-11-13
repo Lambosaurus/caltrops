@@ -1,10 +1,12 @@
 // Components
 import Popover from './Popover'
+import { DragSource } from '../dnd/DragSource'
+import { DropTarget } from '../dnd/DropTarget'
 
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
-import { findAttachment, mountCovering, mountKey } from '../../lib/mech/loadout'
+import { canDropArmour, canDropPart, findAttachment, mountCovering, mountKey, type PartDrag } from '../../lib/mech/loadout'
 import { mountDisabled, sectionDestroyed } from '../../lib/mech/derive'
 import { activationBlocker } from '../../lib/mech/turn'
 import type { ChassisSection, Mech, MechRules, MechSlotType } from '../../lib/mech/types'
@@ -33,16 +35,21 @@ export function TypeTag({ rules, type, label }: { rules: MechRules, type: string
   </Popover>
 }
 
-function MechSection({ rules, section, view, editable, onHit, onActivate, onWound, onArmour, onAmmo }: {
+function MechSection({ rules, section, view, editable, loadout = false, onHit, onActivate, onWound, onArmour, onAmmo, onDropPart, onUnmount, onDropArmour, onClearArmour }: {
     rules: MechRules,
     section: ChassisSection,
     view: View, // the mech
     editable: EditMode,
+    loadout?: boolean, // loadout editing: slots accept dragged parts
     onHit(sectionId: string): void,
     onActivate(key: string): void,
     onWound?(sectionId: string, index: number): void,
     onArmour?(sectionId: string, points: number): void,
     onAmmo?(key: string, delta: number): void,
+    onDropPart?(item: PartDrag, sectionId: string, start: number): void,
+    onUnmount?(sectionId: string, start: number): void,
+    onDropArmour?(sectionId: string, name: string): void,
+    onClearArmour?(sectionId: string): void,
   }): JSX.Element | null {
 
   const mech: Mech | undefined = useListener(view)
@@ -96,11 +103,18 @@ function MechSection({ rules, section, view, editable, onHit, onActivate, onWoun
       } else {
         const disabled = mountDisabled(rules, mech!, section.id, mount)
         const pop = mountPop(rules, mech!, section.id, mount, key, play)
-        body = <Popover content={pop}>
+        const name = <Popover content={pop}>
           <span className={`flex-1 min-w-0 truncate ${(att.size ?? 1) > 1 ? 'border-l-4 border-primary pl-1' : ''} ${disabled ? 'text-error line-through' : ''}`}>
             {att.name}
           </span>
         </Popover>
+        body = loadout
+          ? <DragSource
+              type='mech-part'
+              item={{ name: att.name, from: { section: section.id, start: mount.start } }}
+              wrappingElement={<span className='flex-1 min-w-0 flex'></span>}
+            >{name}</DragSource>
+          : name
         if (att.energy !== undefined) {
           const used = mech!.turn.used[key] ?? 0
           const rep = att.repeat ?? 1
@@ -127,23 +141,39 @@ function MechSection({ rules, section, view, editable, onHit, onActivate, onWoun
       }
     }
 
-    return <div
-      key={i}
-      className='flex items-center gap-1 border-t border-dashed border-base-300 py-0.5 pl-1 min-h-[1.5rem]'
-      style={{ borderLeft: `2px solid ${color}` }}
-    >
+    const rowClass = 'flex items-center gap-1 border-t border-dashed border-base-300 py-0.5 pl-1 min-h-[1.5rem]'
+    const rowStyle = { borderLeft: `2px solid ${color}` }
+    const content = <>
       <TypeTag rules={rules} type={type}/>
       {body}
       {right}
-      <Popover content={woundPop(section, i, wounded)}>
+      {loadout && mount && mount.start === i ? <button
+        className='btn btn-xs btn-ghost btn-error px-1'
+        aria-label={`Remove ${mount.name}`}
+        onClick={() => onUnmount?.(section.id, mount.start)}
+      >×</button> : null}
+      {loadout ? null : <Popover content={woundPop(section, i, wounded)}>
         <button
           className={`w-3 h-3 border flex-none ${wounded ? 'bg-error border-error' : 'border-current'}`}
           disabled={!play || !onWound}
           aria-label={`${section.name} slot ${i + 1} wound`}
           onClick={() => onWound?.(section.id, i)}
         />
-      </Popover>
-    </div>
+      </Popover>}
+    </>
+
+    if (!loadout) {
+      return <div key={i} className={rowClass} style={rowStyle}>{content}</div>
+    }
+    return <DropTarget
+      key={i}
+      accept='mech-part'
+      canDrop={(item: PartDrag) => canDropPart(rules, mech!, item, section.id, i)}
+      hoverClass='bg-success/30'
+      invalidClass='bg-error/30'
+      onDrop={(item: PartDrag) => onDropPart?.(item, section.id, i)}
+      wrappingElement={<div className={rowClass} style={rowStyle}></div>}
+    >{content}</DropTarget>
   }
 
   return <div
@@ -161,12 +191,25 @@ function MechSection({ rules, section, view, editable, onHit, onActivate, onWoun
     </h5>
     <div className='text-[10px] opacity-60 mb-0.5'>{prov.join(' Â· ')}</div>
 
-    <div className='flex items-center gap-1 border-t border-dashed border-base-300 py-0.5 pl-1' style={{ borderLeft: `2px solid ${armourColor}` }}>
+    <DropTarget
+      accept='mech-part'
+      enabled={loadout}
+      canDrop={(item: PartDrag) => canDropArmour(rules, item)}
+      hoverClass='bg-success/30'
+      invalidClass='bg-error/30'
+      onDrop={(item: PartDrag) => onDropArmour?.(section.id, item.name)}
+      wrappingElement={<div className='flex items-center gap-1 border-t border-dashed border-base-300 py-0.5 pl-1' style={{ borderLeft: `2px solid ${armourColor}` }}></div>}
+    >
       <TypeTag rules={rules} type='Armour' label='ARMR'/>
       {state.armour ? <>
         <Popover content={armourPop(rules, state.armour.name, state.armour.points)}>
           <span className='flex-1 min-w-0 truncate text-primary'>{state.armour.name}</span>
         </Popover>
+        {loadout ? <button
+          className='btn btn-xs btn-ghost btn-error px-1'
+          aria-label={`Remove ${state.armour.name}`}
+          onClick={() => onClearArmour?.(section.id)}
+        >×</button> : null}
         {Array.from({ length: armourMax }, (_, k) =>
           <Popover key={k} content={armourPop(rules, state.armour!.name, state.armour!.points)}>
             <button
@@ -180,7 +223,7 @@ function MechSection({ rules, section, view, editable, onHit, onActivate, onWoun
       </> : <Popover content={slotTypePop(rules, 'Armour')}>
         <span className='flex-1 opacity-30 italic'>no armour</span>
       </Popover>}
-    </div>
+    </DropTarget>
 
     {section.slots.map((_, i) => slotRow(i))}
   </div>

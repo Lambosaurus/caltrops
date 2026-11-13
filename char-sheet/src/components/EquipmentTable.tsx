@@ -28,7 +28,7 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
   }): JSX.Element {
 
   const items: SheetEquipment[] = useListener(view) ?? []
-  const freeCapacity = container.size ? (container.size - items.length) : 1
+  const freeCapacity = container.size !== undefined ? (container.size - items.length) : 1
   const empty = items.length === 0
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -65,6 +65,7 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
 
       const sourceItems = root.read(source)
       const destItems = root.read(dest) ?? []
+      if (!sourceItems) return // Dragged from a container this view does not own (e.g. sheet to mech)
 
       if (sourceItems === destItems) {
         root.publish(source, listUtil.move(sourceItems, index, dropIdx))
@@ -74,6 +75,9 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
       }
     }
   }
+
+  // Items past the container's size (e.g. a destroyed rack) are shown struck through. Inert unless over capacity.
+  const overCapacity = (i: number) => container.size !== undefined && items.length > container.size && i >= container.size
 
   const previewRef = useRef(null)
 
@@ -97,7 +101,7 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
                 accept='equipment'
                 hoverClass='drop-hover'
                 enabled={ editable >= EditMode.Live && freeCapacity > 0 }
-                wrappingElement={<tr className='hover tooltip tooltip-left w-full border-t-2 border-transparent' data-tip={lookupDescription(item.name)}></tr>}
+                wrappingElement={<tr className={`hover tooltip tooltip-left w-full border-t-2 border-transparent ${overCapacity(i) ? 'line-through text-error' : ''}`} data-tip={lookupDescription(item.name)}></tr>}
                 onDrop={dropHandlerFactory(i)}
               >
               {

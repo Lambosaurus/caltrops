@@ -2,7 +2,7 @@ import { DEFAULT_RULES } from '../rules'
 import { DEFAULT_MECH_SETTINGS } from './types'
 import { FIXTURE_RULES } from './fixture'
 import {
-  slotAccepts, canMount, mount, mountAt, mountCovering, moveMount, newMech, changeChassis, loadMech, findAttachment,
+  slotAccepts, canMount, mount, mountAt, unmount, canDropPart, dropPart, canDropArmour, dropOnCatalogue, mountCovering, moveMount, newMech, changeChassis, loadMech, findAttachment,
 } from './loadout'
 
 const RULES = { ...DEFAULT_RULES, name: 'Test', mechs: FIXTURE_RULES }
@@ -118,5 +118,28 @@ describe('loadMech', () => {
 describe('findAttachment', () => {
   it('returns undefined for unknown', () => {
     expect(findAttachment(FIXTURE_RULES, 'Nope')).toBeUndefined()
+  })
+})
+
+describe('drag-and-drop helpers', () => {
+  const rules: any = { name: 'x', mechs: FIXTURE_RULES }
+  const mech = newMech(rules, 'Mule')
+  test('machine gun is refused in a leg and accepted in an empty arm weapon slot', () => {
+    expect(canDropPart(FIXTURE_RULES, mech, { name: 'Machine Gun' }, 'lleg', 1)).toBe(false)
+    const free = unmount(mech, 'rarm', 1)
+    expect(canDropPart(FIXTURE_RULES, free, { name: 'Machine Gun' }, 'rarm', 1)).toBe(true)
+    expect(dropPart(FIXTURE_RULES, free, { name: 'Machine Gun' }, 'rarm', 1).sections.rarm.mounts.length).toBe(2)
+  })
+  test('a mounted part can be moved onto its own slot but not onto an occupied one', () => {
+    const from = { section: 'rarm', start: 1 }
+    expect(canDropPart(FIXTURE_RULES, mech, { name: 'Machine Gun', from }, 'rarm', 1)).toBe(true)
+    expect(canDropPart(FIXTURE_RULES, mech, { name: 'Machine Gun', from }, 'larm', 1)).toBe(false)
+  })
+  test('armour only drops on the armour row, and the catalogue unmounts', () => {
+    expect(canDropArmour(FIXTURE_RULES, { name: 'Plating' })).toBe(true)
+    expect(canDropArmour(FIXTURE_RULES, { name: 'Machine Gun' })).toBe(false)
+    expect(canDropPart(FIXTURE_RULES, mech, { name: 'Plating' }, 'rarm', 1)).toBe(false)
+    const out = dropOnCatalogue(mech, { name: 'Machine Gun', from: { section: 'rarm', start: 1 } })
+    expect(out.sections.rarm.mounts.some(m => m.name === 'Machine Gun')).toBe(false)
   })
 })

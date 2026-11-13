@@ -175,3 +175,27 @@ export function loadMech(obj: any): Mech {
     settings: { ...DEFAULT_MECH_SETTINGS, ...(o.settings ?? {}) },
   }
 }
+
+// Drag-and-drop helpers. A dragged part is `{ name }` from the catalogue or `{ name, from }` from a mounted slot.
+export interface PartDrag { name: string, from?: { section: string, start: number } }
+
+export function canDropPart(rules: MechRules, mech: Mech, item: PartDrag | null | undefined, sectionId: string, start: number): boolean {
+  if (!item) return false
+  const ignore = item.from && item.from.section === sectionId ? item.from.start : undefined
+  return canMount(rules, mech, sectionId, item.name, start, ignore)
+}
+
+export function dropPart(rules: MechRules, mech: Mech, item: PartDrag, sectionId: string, start: number): Mech {
+  if (!canDropPart(rules, mech, item, sectionId, start)) return mech
+  return item.from
+    ? moveMount(rules, mech, item.from, { section: sectionId, start })
+    : mount(rules, mech, sectionId, item.name, start)
+}
+
+export const canDropArmour = (rules: MechRules, item: PartDrag | null | undefined): boolean =>
+  !!item && !item.from && findAttachment(rules, item.name)?.type === 'Armour'
+
+// Dropping a mounted part on the catalogue removes it; a catalogue part dropped there does nothing.
+export function dropOnCatalogue(mech: Mech, item: PartDrag): Mech {
+  return item.from ? unmount(mech, item.from.section, item.from.start) : mech
+}

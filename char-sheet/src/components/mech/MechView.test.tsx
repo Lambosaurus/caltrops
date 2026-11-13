@@ -3,6 +3,7 @@ import { ObjectService } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { FIXTURE_RULES } from '../../lib/mech/fixture'
 import { newMech } from '../../lib/mech/loadout'
+import { withDnd } from '../dnd/testWrap'
 import MechView from './MechView'
 
 function setup(editable: EditMode, tweak?: (m: any) => void) {
@@ -13,7 +14,7 @@ function setup(editable: EditMode, tweak?: (m: any) => void) {
   view.publish('rules', rules)
   view.publish('mech', mech)
   view.publish('mechLog', ['hello'])
-  render(<MechView view={view} editable={editable}/>)
+  render(withDnd(<MechView view={view} editable={editable}/>))
   return mech
 }
 
