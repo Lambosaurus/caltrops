@@ -4,6 +4,7 @@ import MechSection, { TypeTag } from './MechSection'
 import ChassisSilhouette from './ChassisSilhouette'
 import TurnControls from './TurnControls'
 import HitModal from './HitModal'
+import ActivationModal from './ActivationModal'
 import TakeHitPanel from './TakeHitPanel'
 import MechSettingsPanel from './MechSettingsPanel'
 import MechLog from './MechLog'
@@ -24,7 +25,7 @@ import type { Rules } from '../../lib/rules'
 /*
  * The mech sheet: status bar, slot legend, section grid over the chassis silhouette, and a side column.
  * `view` is the root view; `editable` is the effective mech edit mode (see SheetView / MainPage).
- * Hits, wound and armour edits, ammo and repair are wired here; activation is wired by the parent.
+ * Hits, wound and armour edits, ammo and repair are wired here; activation opens ActivationModal.
  */
 function MechView({ view, editable, onActivate = () => {} }: {
     view: View,
@@ -36,6 +37,7 @@ function MechView({ view, editable, onActivate = () => {} }: {
   const rules: Rules | undefined = useListener(view, 'rules')
   const [hitSection, setHitSection] = useState(null as string | null)
   const [confirmRepair, setConfirmRepair] = useState(false)
+  const [activeKey, setActiveKey] = useState(null as string | null)
   const mechRules: MechRules | undefined = rules?.mechs
   const chassis = mech && mechRules ? findChassis(mechRules, mech.chassis) : undefined
 
@@ -127,7 +129,7 @@ function MechView({ view, editable, onActivate = () => {} }: {
                 view={mv}
                 editable={editable}
                 onHit={setHitSection}
-                onActivate={onActivate}
+                onActivate={key => { setActiveKey(key); onActivate(key) }}
                 onWound={(id, i) => publish(toggleWound(mechRules, mech, id, i))}
                 onArmour={(id, points) => {
                   const cur = mech.sections[id]?.armour?.points
@@ -161,6 +163,7 @@ function MechView({ view, editable, onActivate = () => {} }: {
     </div>
 
     <HitModal view={view} sectionId={hitSection} close={() => setHitSection(null)}/>
+    {play && rules ? <ActivationModal rules={rules} view={view} mountKey={activeKey} close={() => setActiveKey(null)}/> : null}
     <ActionModal
       open={confirmRepair}
       close={() => setConfirmRepair(false)}
