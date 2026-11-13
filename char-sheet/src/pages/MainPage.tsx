@@ -6,6 +6,7 @@ import FileUploader from '../components/FileUploader'
 import MenuRibbon from '../components/MenuRibbon'
 import SheetView from '../components/SheetView'
 import AlertGroup from '../components/AlertGroup'
+import MechView from '../components/mech/MechView'
 
 // Internal imports
 import { EditMode, setTheme } from '../lib/util'
@@ -251,7 +252,6 @@ function MainPage(): JSX.Element {
   const sheetId = useListener(view, "sheet/id")
   const mode = useListener(view, "mode")
   const mechId = useListener(view, "mech/id")
-  const mechName = useListener(view, "mech/name")
   const mechEditable = useListener(view, "mechEditable") ?? EditMode.None
 
   return (
@@ -265,8 +265,7 @@ function MainPage(): JSX.Element {
         {
           mode === 'mech' ?
           (
-            // Placeholder until MechView exists.
-            mechId !== undefined ? <pre>{mechName}</pre> : <LoadingSpinner size={100}/>
+            mechId !== undefined ? <MechView view={view} editable={mechEditable}/> : <LoadingSpinner size={100}/>
           ) :
           sheetId !== undefined ?
           <SheetView
