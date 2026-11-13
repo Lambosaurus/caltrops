@@ -34,7 +34,7 @@ test('activation buttons are disabled when read only', () => {
 })
 
 test('activation button enabled when live and allowed', () => {
-  setup(EditMode.Live, m => { m.turn.target = 'Short' })
+  setup(EditMode.Live)
   const btns = screen.getAllByText(/^1E \+1H 0\/2/) as HTMLButtonElement[]
   expect(btns.some(b => !b.disabled)).toBe(true)
 })

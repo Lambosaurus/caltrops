@@ -25,14 +25,12 @@ export interface MechAmmo { name: string, perBin: number, volatility: number }
 export interface MechRules {
   slotTypes: MechSlotType[], chassis: Chassis[], attachments: MechAttachment[], ammo: MechAmmo[],
   rangeAspects: { [band in RangeBand]: string }, sprint: { energy: number, heat: number },
-  sittingDuck: number, stunned: number,
 }
 export interface Mount { name: string, start: number, ammo?: number, charges?: number, state?: { [k: string]: any } }
 export interface MechSectionState { armour: { name: string, points: number } | null, mounts: Mount[], wounds: boolean[] }
 export interface MechTurn {
-  phase: 'active' | 'ended', posture: 'still' | 'moved' | 'sprint', energy: number, heat: number,
-  stored: number, shutdown: boolean, used: { [mountKey: string]: number }, lastFired: string | null,
-  target: RangeBand, out: boolean, pilotWounds: number,
+  energy: number, heat: number, stored: number, shutdown: boolean,
+  used: { [mountKey: string]: number }, lastFired: string | null, out: boolean, pilotWounds: number,
 }
 export interface MechSettings { autoAmmo: boolean, autoHeatDamage: boolean, autoCookoff: boolean, autoHitDamage: boolean }
 export interface Mech {
@@ -41,5 +39,5 @@ export interface Mech {
   equipment: { [container: string]: SheetEquipment[] } /* key 'Stowage' */,
   turn: MechTurn, settings: MechSettings,
 }
-export interface MechResult { mech: Mech, events: string[] }
+export interface MechResult { mech: Mech, events: string[], notices: string[] }
 export const DEFAULT_MECH_SETTINGS: MechSettings = { autoAmmo: false, autoHeatDamage: false, autoCookoff: false, autoHitDamage: false }

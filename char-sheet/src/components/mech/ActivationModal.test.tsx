@@ -9,7 +9,6 @@ import MechView from './MechView'
 function setup(mode: 'sheet' | 'mech' = 'sheet') {
   const rules: any = { name: 'x', mechs: FIXTURE_RULES }
   const mech = newMech(rules, 'Mule', 'Rusty')
-  mech.turn.target = 'Short'
   const view = new ObjectService().view('')
   view.publish('rules', rules)
   view.publish('mode', mode)
@@ -19,15 +18,15 @@ function setup(mode: 'sheet' | 'mech' = 'sheet') {
   return { view, energy: mech.turn.energy }
 }
 
-test('Autocannon shows 7 dice and confirming pays energy and rolls', () => {
+test('Autocannon shows 8 dice (own band, no penalty) and confirming pays energy and rolls', () => {
   const { view, energy } = setup()
   fireEvent.click(screen.getAllByText(/^2E \+2H/)[0])
   expect(view.read('mech').turn.energy).toBe(energy)
-  fireEvent.click(screen.getByText('Roll 7 dice & activate'))
+  fireEvent.click(screen.getByText('Roll 8 dice & activate'))
   expect(view.read('mech').turn.energy).toBe(energy - 2)
-  expect(document.querySelectorAll('svg polygon').length).toBeGreaterThanOrEqual(7)
+  expect(document.querySelectorAll('svg polygon').length).toBeGreaterThanOrEqual(8)
   expect(screen.getByText('Done')).toBeTruthy()
-  expect(view.read('mechLog').some((l: string) => /Rolled 7d4/.test(l))).toBe(true)
+  expect(view.read('mechLog').some((l: string) => /Rolled 8d4/.test(l))).toBe(true)
 })
 
 test('Jump Jets show only Activate', () => {

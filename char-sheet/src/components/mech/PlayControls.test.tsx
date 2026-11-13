@@ -42,24 +42,13 @@ test('HitModal with autoHitDamage on destroys the leg and overflows', () => {
   expect(view.read('mechLog').length).toBeGreaterThan(0)
 })
 
-test('TurnControls: Move, End turn then Start turn', () => {
+test('TurnControls: New turn clears used marks', () => {
   const view = makeView()
   render(<TurnControls view={view} editable={EditMode.Live}/>)
-  fireEvent.click(screen.getByText('Move'))
-  expect(view.read('mech').turn.posture).toBe('moved')
-  fireEvent.click(screen.getByText(/End turn/))
-  expect(view.read('mech').turn.phase).toBe('ended')
-  expect(screen.getByText(/Start turn/)).toBeTruthy()
-  expect(screen.queryByText(/End turn/)).toBeNull()
-  fireEvent.click(screen.getByText(/Start turn/))
-  expect(view.read('mech').turn.phase).toBe('active')
-})
-
-test('target select writes mech/turn/target', () => {
-  const view = makeView()
-  render(<TurnControls view={view} editable={EditMode.Live}/>)
-  fireEvent.change(screen.getByLabelText('Target range'), { target: { value: 'Long' } })
-  expect(view.read('mech/turn/target')).toBe('Long')
+  fireEvent.click(screen.getByText('Sprint (2E +2H)'))
+  expect(view.read('mech').turn.used.sprint).toBe(1)
+  fireEvent.click(screen.getByText(/New turn/))
+  expect(view.read('mech').turn.used).toEqual({})
 })
 
 test('settings checkbox writes mech/settings', () => {

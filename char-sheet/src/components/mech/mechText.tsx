@@ -1,7 +1,7 @@
 // Pure popover text for the mech sheet. Components render these; nothing here touches React.
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
 import { aimCost, deriveStats, hitLabel, mountDisabled, sectionDestroyed, slotsOf } from '../../lib/mech/derive'
-import { activationBlocker, attackModifier, outOfRange, rangePenalty } from '../../lib/mech/turn'
+import { activationBlocker, rangePenalty } from '../../lib/mech/turn'
 import type { ChassisSection, Mech, MechAttachment, MechRules, Mount, RangeBand } from '../../lib/mech/types'
 
 export interface PopText { title: string, sub?: string, lines: string[] }
@@ -92,7 +92,7 @@ export function mountPop(rules: MechRules, mech: Mech, sectionId: string, mount:
   if (mountDisabled(rules, mech, sectionId, mount)) status += ' · DISABLED'
   if (att.bin) status += ` · ${mount.ammo ?? 0}/${binCapacity(rules, att)} rounds`
   if (att.charges) status += ` · ${mount.charges ?? 0} charges`
-  const lines = [...attachmentStats(rules, att, mech.turn.target)]
+  const lines = [...attachmentStats(rules, att)]
   if (att.energy !== undefined) {
     status += ` · used ${mech.turn.used[key] ?? 0}/${att.repeat ?? 1}`
   }
@@ -107,9 +107,6 @@ export function mountPop(rules: MechRules, mech: Mech, sectionId: string, mount:
       if (mech.turn.heat > heatMax) {
         lines.push(`Overheated: activating rolls ${Math.max(0, mech.turn.heat + (att.heat ?? 0) - heatMax)}d4 self-damage to this part.`)
       }
-    }
-    if (att.range && outOfRange(att, mech.turn.target)) {
-      lines.push(att.range === 'Melee' ? 'Out of range: melee needs a Short target.' : `Out of range: target is ${mech.turn.target}, beyond ${att.range}.`)
     }
   }
   return { title: att.name, lines }
@@ -165,7 +162,7 @@ export function woundPop(section: ChassisSection, index: number, wounded: boolea
   }
 }
 
-export type StatKind = 'energy' | 'heat' | 'speed' | 'evasion' | 'target' | 'hand' | 'posture' | 'stowage'
+export type StatKind = 'energy' | 'heat' | 'speed' | 'evasion' | 'hand' | 'stowage'
 
 export function statPop(rules: MechRules, mech: Mech, kind: StatKind): PopText {
   const d = deriveStats(rules, mech), t = mech.turn
@@ -173,7 +170,7 @@ export function statPop(rules: MechRules, mech: Mech, kind: StatKind): PopText {
   switch (kind) {
     case 'energy':
       return { title: `Energy ${t.energy}/${d.energyOut}`, lines: [
-        'Refilled to reactor output at the start of each turn. Spend it on activations and sprinting.',
+        'Refilled to reactor output on each New turn. Spend it on activations and sprinting.',
         `Unspent energy is lost${d.capacitor ? `, except up to ${d.capacitor} kept by capacitors` : ''}.`] }
     case 'heat': {
       const proj = Math.max(0, t.heat + (t.shutdown ? 0 : d.reactorHeat) - d.cooling)
@@ -190,26 +187,12 @@ export function statPop(rules: MechRules, mech: Mech, kind: StatKind): PopText {
         ...(chassis?.sections ?? []).filter(s => s.provides?.speed).map(s => `${s.name}: ${sectionDestroyed(mech, s.id) ? 'destroyed' : s.provides?.speed}`),
         `Sum of surviving legs/treads. Moving is free; sprint for ${rules.sprint.energy} energy, +${rules.sprint.heat} heat.`] }
     case 'evasion':
-      return { title: `Evasion ${d.evasion}`, lines: ['Sum of surviving legs/treads. While sprinting, attacks against you lose this many dice.'] }
-    case 'target':
-      return { title: `Target range: ${t.target}`, lines: [
-        'Short weapons roll Reflex; Mid and Long roll Precision.',
-        "Beyond a weapon's range: can't fire. Inside it: −1 die per band closer.",
-        'Melee (punch, hammer, saw) needs Short.'] }
+      return { title: `Evasion ${d.evasion}`, lines: ['Sum of surviving legs/treads.'] }
     case 'hand':
       return { title: `Hand ${d.hand ? '✓' : '✗'}`, lines: ['Needs a working Manipulator on a surviving arm. Lets the mech grab, carry and use handheld gear.'] }
     case 'stowage':
       return { title: `Stowage ${(mech.equipment.Stowage ?? []).length}/${d.stowage}`, lines: [
         'Pilot-scale inventory carried by the mech: scrap, supplies, salvage, spare gear.',
         'If a rack is destroyed, the items it held are lost or unreachable until it is repaired.'] }
-    case 'posture': {
-      const m = attackModifier(rules, mech)
-      return { title: 'Mobility', lines: [
-        `Stationary: Sitting Duck, attacks against you ${signed(rules.sittingDuck)} dice.`,
-        'Moved: no modifier.',
-        `Sprinted: attacks against you −evasion (sum of surviving legs: ${d.evasion}).`,
-        'Lasts until your next turn starts.',
-        `Right now: attackers ${signed(m.total)} dice${m.parts.length ? ` (${m.parts.map(p => p.label).join(', ')})` : ''}.`] }
-    }
   }
 }

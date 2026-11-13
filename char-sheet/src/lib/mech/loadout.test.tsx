@@ -111,8 +111,14 @@ describe('loadMech', () => {
   it('fills defaults', () => {
     const m = loadMech({ chassis: 'Mule', sections: {} })
     expect(m.settings).toEqual(DEFAULT_MECH_SETTINGS)
-    expect(m.turn.phase).toBe('active')
     expect(m.equipment.Stowage).toEqual([])
+  })
+  it('drops removed turn keys from old mechs', () => {
+    const m = loadMech({ chassis: 'Mule', turn: { phase: 'ended', posture: 'still', target: 'Long', energy: 3, heat: 2 } })
+    expect(m.turn).not.toHaveProperty('phase')
+    expect(m.turn).not.toHaveProperty('posture')
+    expect(m.turn).not.toHaveProperty('target')
+    expect(m.turn).toMatchObject({ energy: 3, heat: 2 })
   })
 })
 

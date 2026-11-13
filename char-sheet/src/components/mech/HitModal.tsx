@@ -7,7 +7,6 @@ import ActionModal from '../ActionModal'
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
 import { findChassis } from '../../lib/mech/loadout'
-import { attackModifier } from '../../lib/mech/turn'
 import { applyWounds, markWounds } from '../../lib/mech/damage'
 import { logMech } from '../../lib/mech/store'
 import type { Mech, MechRules } from '../../lib/mech/types'
@@ -50,7 +49,6 @@ function HitModal({ view, sectionId, close }: { view: View, sectionId: string | 
     return null
   }
   const section = findChassis(mechRules, mech.chassis)?.sections.find(s => s.id === sectionId)
-  const m = attackModifier(mechRules, mech)
   const n = Math.max(0, parseInt(count) || 0)
 
   function apply() {
@@ -92,9 +90,6 @@ function HitModal({ view, sectionId, close }: { view: View, sectionId: string | 
       <input type='checkbox' className='checkbox checkbox-sm' checked={ignore} onChange={e => setIgnore(e.target.checked)}/>
       Ignores armour
     </label>
-    <div className='opacity-70'>
-      Attacker dice modifier right now: {m.total >= 0 ? '+' : ''}{m.total}{m.parts.length ? ` (${m.parts.map(p => p.label).join(', ')})` : ''}
-    </div>
   </ActionModal>
 }
 

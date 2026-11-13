@@ -6,7 +6,6 @@ import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { findChassis } from '../../lib/mech/loadout'
 import { sectionForRoll } from '../../lib/mech/derive'
-import { attackModifier } from '../../lib/mech/turn'
 import type { Mech } from '../../lib/mech/types'
 import type { Rules } from '../../lib/rules'
 import { applyHit } from './HitModal'
@@ -24,7 +23,6 @@ function TakeHitPanel({ view, editable }: { view: View, editable: EditMode }): J
   if (!mechRules || !mech || !chassis) {
     return null
   }
-  const m = attackModifier(mechRules, mech)
   const play = editable >= EditMode.Live
 
   function apply() {
@@ -46,9 +44,6 @@ function TakeHitPanel({ view, editable }: { view: View, editable: EditMode }): J
 
   return <div className='bg-base-200 border border-base-300 p-2 flex flex-col gap-1'>
     <h4 className='font-bold text-accent'>Take a hit</h4>
-    <div className={m.total > 0 ? 'text-warning' : m.total < 0 ? 'text-primary' : 'opacity-60'}>
-      Attacker dice {m.total >= 0 ? '+' : ''}{m.total}{m.parts.length ? `: ${m.parts.map(p => `${p.value > 0 ? '+' : ''}${p.value} ${p.label}`).join(', ')}` : ''}
-    </div>
     <div className='flex items-center gap-2'>
       <label>Successes <input type='number' min={0} className='input input-bordered input-xs w-14' aria-label='Successes'
         value={successes} onChange={e => setSuccesses(e.target.value)} disabled={!play}/></label>

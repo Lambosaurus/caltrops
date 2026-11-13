@@ -76,12 +76,6 @@ function MechView({ view, editable }: {
       <span className='px-2 border border-base-300 whitespace-nowrap'>{children}</span>
     </Popover>
 
-  const posture = t.posture === 'still'
-    ? <span className='badge badge-warning rounded-none font-bold'>SITTING DUCK</span>
-    : t.posture === 'sprint'
-    ? <span className='badge badge-primary rounded-none font-bold'>SPRINTING −{stats.evasion}</span>
-    : <span className='badge badge-outline rounded-none font-bold'>MOVED</span>
-
   // Loadout editing needs full edit rights; while it is on, play controls are off.
   const loading = loadout && editable === EditMode.Full
   const playMode = loading ? EditMode.None : editable
@@ -129,7 +123,6 @@ function MechView({ view, editable }: {
             {loading ? 'Done editing' : 'Edit loadout'}
           </button>
         : null}
-      <Popover content={statPop(mechRules, mech, 'posture')}>{posture}</Popover>
     </div>
 
     {loading ? null : <TurnControls view={view} editable={editable}/>}

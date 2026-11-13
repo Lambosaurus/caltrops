@@ -15,7 +15,7 @@ import { overheated, deriveStats } from '../../lib/mech/derive'
 import { activate, activationBlocker } from '../../lib/mech/turn'
 import { activationRoll } from '../../lib/mech/roll'
 import { logMech } from '../../lib/mech/store'
-import type { Mech } from '../../lib/mech/types'
+import type { Mech, RangeBand } from '../../lib/mech/types'
 import type { Dictionary, RollInfo, Rules } from '../../lib/rules'
 import { roller } from './roller'
 
@@ -62,15 +62,16 @@ function ActivationModal({ rules, view, mountKey, close }: {
   }
 
   const mechMode = mode === 'mech'
-  const names = activationRoll(rules, att, mech.turn.target, {})
+  const band: RangeBand = att.range && att.range !== 'Melee' ? att.range : 'Short' // own band: no range penalty
+  const names = activationRoll(rules, att, band, {})
   const scores: Dictionary<number> = mechMode && names
     ? { [names.attribute!.name]: aspectScore, [names.skill!.name]: skillScore }
     : { ...(attributes ?? {}), ...(skills ?? {}) }
-  const base = activationRoll(rules, att, mech.turn.target, scores)
+  const base = activationRoll(rules, att, band, scores)
   const info: RollInfo | null = base ? { ...base, bonus: (base.bonus ?? 0) + other } : null
   const count = info ? Math.max(0, caltrops.rollDiceCount(info)) : 0
 
-  const blocker = done ? null : activationBlocker(mechRules, mech, mountKey)
+  const blocker = done ? null : activationBlocker(mechRules, mech, mountKey, band)
   const hot = overheated(mechRules, mech)
   const heat = att.heat ?? 0
   const selfDamage = Math.max(0, mech.turn.heat + heat - deriveStats(mechRules, mech).heatMax)
@@ -90,7 +91,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
 
   function confirm(toVtt: boolean) {
     if (!mech || !mechRules || !mountKey) return
-    const res = activate(mechRules, mech, mountKey, roller)
+    const res = activate(mechRules, mech, mountKey, roller, band)
     if (res.mech === mech) {
       return // blocked: nothing was paid, so do not roll
     }

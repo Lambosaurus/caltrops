@@ -25,8 +25,8 @@ export function slotAccepts(slotType: string, attachmentType: string): boolean {
 
 export function freshTurn(): MechTurn {
   return {
-    phase: 'active', posture: 'still', energy: 0, heat: 0, stored: 0, shutdown: false,
-    used: {}, lastFired: null, target: 'Mid', out: false, pilotWounds: 0,
+    energy: 0, heat: 0, stored: 0, shutdown: false,
+    used: {}, lastFired: null, out: false, pilotWounds: 0,
   }
 }
 
@@ -173,6 +173,15 @@ export function normaliseMech(rules: MechRules, mech: Mech): Mech {
   return next
 }
 
+// Only the keys MechTurn still has; old saves carry phase / posture / target, which are dropped.
+function loadTurn(raw: any): MechTurn {
+  const fresh = freshTurn()
+  const t = raw ?? {}
+  const out: any = { ...fresh }
+  for (const k of Object.keys(fresh)) if (t[k] !== undefined) out[k] = t[k]
+  return out
+}
+
 export function loadMech(obj: any): Mech {
   const o = obj ?? {}
   const sections: Mech['sections'] = {}
@@ -193,7 +202,7 @@ export function loadMech(obj: any): Mech {
     chassis: typeof o.chassis === 'string' ? o.chassis : '',
     sections,
     equipment: { ...(o.equipment ?? {}), Stowage: stowage },
-    turn: { ...freshTurn(), ...(o.turn ?? {}) },
+    turn: loadTurn(o.turn),
     settings: { ...DEFAULT_MECH_SETTINGS, ...(o.settings ?? {}) },
   }
 }

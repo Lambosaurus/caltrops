@@ -42,20 +42,9 @@ test('attachment stats list activation and cook-off', () => {
   expect(attachmentStats(FIXTURE_RULES, att('Ammo Bin: Light')).join('\n')).toContain('Cook-off: 1d4 per round left (16d4 when full)')
 })
 
-test('mount popover explains an out-of-range block', () => {
-  const m = mule()
-  m.turn.energy = 6
-  m.turn.target = 'Long'
-  const mount = m.sections.rarm.mounts.find(x => x.start === 0)! // Breaching Hammer, melee
-  const t = text(mountPop(FIXTURE_RULES, m, 'rarm', mount, mountKey('rarm', 0), true))
-  expect(t).toContain("Can't activate: Melee only")
-  expect(t).toContain('Out of range')
-})
-
 test('mount popover offers activation when allowed', () => {
   const m = mule()
   m.turn.energy = 6
-  m.turn.target = 'Short'
   const mount = m.sections.rarm.mounts.find(x => x.start === 1)!
   const key = mountKey('rarm', 1)
   expect(text(mountPop(FIXTURE_RULES, m, 'rarm', mount, key, true))).toContain('Click the button to activate.')
@@ -66,7 +55,6 @@ test('stat popovers', () => {
   const m = mule()
   expect(statPop(FIXTURE_RULES, m, 'speed').title).toBe('Speed 60')
   expect(text(statPop(FIXTURE_RULES, m, 'heat'))).toContain('Heat Max 7 chassis')
-  expect(statPop(FIXTURE_RULES, m, 'posture').lines.join('\n')).toContain('attackers')
 })
 
 test('slot type text and unknown part', () => {

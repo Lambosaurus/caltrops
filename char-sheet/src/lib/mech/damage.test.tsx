@@ -76,6 +76,31 @@ describe('applyWounds', () => {
   })
 })
 
+describe('notices', () => {
+  it('is empty for a plain hit', () => {
+    expect(applyWounds(FIXTURE_RULES, mule(), 'lleg', 1, off).notices).toEqual([])
+  })
+  it('flags hits passing to the pilot', () => {
+    const m = setArmourPoints(FIXTURE_RULES, setWounds(mule(), 'cockpit', [true, true]), 'cockpit', 0)
+    const { notices } = applyWounds(FIXTURE_RULES, m, 'cockpit', 2, off)
+    expect(notices).toHaveLength(1)
+    expect(notices[0]).toContain('PILOT')
+  })
+  it('flags core destroyed as out of action', () => {
+    const { notices } = applyWounds(FIXTURE_RULES, mule(), 'core', 99, off)
+    expect(notices.some(n => n.includes('out of action'))).toBe(true)
+  })
+  it('flags cook-off whether rolled or by hand', () => {
+    let m = setArmourPoints(FIXTURE_RULES, mule(), 'core', 0)
+    m = setWounds(m, 'core', [true, true, true, true, true, false])
+    expect(applyWounds(FIXTURE_RULES, m, 'core', 1, off).notices.some(n => n.includes('16d4'))).toBe(true)
+    expect(applyWounds(FIXTURE_RULES, m, 'core', 1, { cookoff: true, roller: roll1 }).notices.some(n => n.includes('COOK-OFF'))).toBe(true)
+  })
+  it('markWounds adds none', () => {
+    expect(markWounds(FIXTURE_RULES, mule(), 'lleg', 3, false).notices).toEqual([])
+  })
+})
+
 describe('cookoffDice', () => {
   it('is rounds times volatility', () => {
     const bin = mule().sections.core.mounts.find(x => x.name === 'Ammo Bin: Standard')!

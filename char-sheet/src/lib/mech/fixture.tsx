@@ -59,6 +59,4 @@ export const FIXTURE_RULES: MechRules = {
   ],
   rangeAspects: { Short: 'Reflex', Mid: 'Precision', Long: 'Precision' },
   sprint: { energy: 2, heat: 2 },
-  sittingDuck: 2,
-  stunned: 1,
 }

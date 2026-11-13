@@ -32,6 +32,13 @@ const coreDestroyed = (rules: MechRules, mech: Mech): boolean => {
   return wounds.length > 0 && wounds.every(Boolean)
 }
 
+// Marks the mech out of action once, with a notice.
+export function markOut(mech: Mech, notices: string[]) {
+  if (mech.turn.out) return
+  mech.turn.out = true
+  notices.push('Mech is out of action.')
+}
+
 export function cookoffDice(rules: MechRules, mount: Mount): number {
   const bin = findAttachment(rules, mount.name)?.bin
   const volatility = rules.ammo.find(a => a.name === bin)?.volatility ?? 1
@@ -40,7 +47,7 @@ export function cookoffDice(rules: MechRules, mount: Mount): number {
 
 interface Opts { ignoreArmour?: boolean, cookoff: boolean, roller: Roller }
 
-function apply(rules: MechRules, mech: Mech, startId: string, count: number, ignoreArmour: boolean, opts: Opts, events: string[]) {
+function apply(rules: MechRules, mech: Mech, startId: string, count: number, ignoreArmour: boolean, opts: Opts, events: string[], notices: string[]) {
   const chassis = findChassis(rules, mech.chassis)
   let sectionId: string | null = startId
   let n = Math.max(0, Math.floor(count))
@@ -48,6 +55,7 @@ function apply(rules: MechRules, mech: Mech, startId: string, count: number, ign
     if (sectionId === 'pilot') {
       mech.turn.pilotWounds += n
       events.push(`  ${plural(n, 'wound')} pass through the open cockpit to the PILOT.`)
+      notices.push(`${plural(n, 'wound')} pass through the open cockpit to the PILOT.`)
       return
     }
     const def = sectionDef(chassis, sectionId)
@@ -63,7 +71,7 @@ function apply(rules: MechRules, mech: Mech, startId: string, count: number, ign
     const i = s.wounds.findIndex(w => !w)
     if (i < 0) {
       if (def.transfer === null) {
-        mech.turn.out = true
+        markOut(mech, notices)
         events.push('  CORE DESTROYED. Mech out of action.')
         return
       }
@@ -76,42 +84,46 @@ function apply(rules: MechRules, mech: Mech, startId: string, count: number, ign
     const hit = mountCovering(rules, mech, sectionId, i)
     const what = hit ? hit.name : def.slots[i] === 'Hull' ? 'hull' : 'empty'
     events.push(`  ${def.name} slot ${i + 1}: ${what} wounded${hit && mountDisabled(rules, mech, sectionId, hit) ? ' → DISABLED' : ''}.`)
-    checkCookoffs(rules, mech, sectionId, opts, events)
+    checkCookoffs(rules, mech, sectionId, opts, events, notices)
     if (s.wounds.every(Boolean)) events.push(`  ${def.name} DESTROYED.`)
   }
-  if (coreDestroyed(rules, mech)) mech.turn.out = true
+  if (coreDestroyed(rules, mech)) markOut(mech, notices)
 }
 
-function checkCookoffs(rules: MechRules, mech: Mech, sectionId: string, opts: Opts, events: string[]) {
+function checkCookoffs(rules: MechRules, mech: Mech, sectionId: string, opts: Opts, events: string[], notices: string[]) {
   for (const m of mech.sections[sectionId].mounts) {
     const att = findAttachment(rules, m.name)
     if (!att?.bin || !(m.ammo && m.ammo > 0) || !mountDisabled(rules, mech, sectionId, m)) continue
     const dice = cookoffDice(rules, m)
     if (!opts.cookoff) {
       events.push(`  ${m.name} disabled with ${m.ammo} rounds: cook-off is ${dice}d4 to this section, ignoring armour. Apply by hand.`)
+      notices.push(`${m.name} cook-off: roll ${dice}d4 on this section, ignoring armour. Apply by hand.`)
       continue
     }
     const vol = dice / m.ammo
     const rolled = opts.roller(dice)
     const k = rolled.filter(x => x === 4).length
-    events.push(`  COOK-OFF: ${m.name}, ${m.ammo} rounds × ${vol} = ${dice}d4 [${rolled.join(' ')}] → ${plural(k, 'wound')}, ignoring armour.`)
+    const line = `COOK-OFF: ${m.name}, ${m.ammo} rounds × ${vol} = ${dice}d4 [${rolled.join(' ')}] → ${plural(k, 'wound')}, ignoring armour.`
+    events.push(`  ${line}`)
+    notices.push(line)
     m.ammo = 0
-    if (k) apply(rules, mech, sectionId, k, true, opts, events)
+    if (k) apply(rules, mech, sectionId, k, true, opts, events, notices)
   }
 }
 
 export function applyWounds(rules: MechRules, mech: Mech, sectionId: string, count: number, opts: Opts): MechResult {
   const next = cloneMech(mech)
   const events: string[] = []
-  apply(rules, next, sectionId, count, !!opts.ignoreArmour, opts, events)
-  return { mech: next, events }
+  const notices: string[] = []
+  apply(rules, next, sectionId, count, !!opts.ignoreArmour, opts, events, notices)
+  return { mech: next, events, notices }
 }
 
 // Manual-mode hit: soak armour, then mark slots in this section only. No overflow, cook-off or out/pilot changes.
 export function markWounds(rules: MechRules, mech: Mech, sectionId: string, count: number, ignoreArmour: boolean): MechResult {
   const next = cloneMech(mech)
   const s = next.sections[sectionId]
-  if (!s) return { mech: next, events: [] }
+  if (!s) return { mech: next, events: [], notices: [] }
   let n = Math.max(0, Math.floor(count))
   const name = sectionName(findChassis(rules, mech.chassis), sectionId)
   const events: string[] = []
@@ -126,7 +138,7 @@ export function markWounds(rules: MechRules, mech: Mech, sectionId: string, coun
     if (!s.wounds[i]) { s.wounds[i] = true; n--; marked++ }
   }
   if (marked > 0) events.push(`${plural(marked, 'wound')} marked on ${name}`)
-  return { mech: next, events }
+  return { mech: next, events, notices: [] }
 }
 
 export function toggleWound(rules: MechRules, mech: Mech, sectionId: string, slot: number): Mech {

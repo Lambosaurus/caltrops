@@ -6,6 +6,11 @@ import { canMount, changeChassis, newMech } from '../lib/mech/loadout'
 const mechs = scrapLancerRuleset.mechs!
 
 describe('Scrap Lancer data', () => {
+  it('has no sitting duck / stunned values', () => {
+    expect(mechs).not.toHaveProperty('sittingDuck')
+    expect(mechs).not.toHaveProperty('stunned')
+  })
+
   it('has hit faces 1-12 exactly once per chassis', () => {
     for (const c of mechs.chassis) {
       const faces: number[] = []
