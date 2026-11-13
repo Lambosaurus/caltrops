@@ -6,7 +6,7 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n))
 
 // Deep copy of the parts of a mech that damage touches, so inputs are never mutated.
-function cloneMech(mech: Mech): Mech {
+export function cloneMech(mech: Mech): Mech {
   const sections: Mech['sections'] = {}
   for (const [id, s] of Object.entries(mech.sections)) {
     sections[id] = {
