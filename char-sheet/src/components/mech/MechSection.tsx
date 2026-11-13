@@ -177,8 +177,8 @@ function MechSection({ rules, section, view, editable, loadout = false, onHit, o
   }
 
   return <div
-    className={`p-1.5 border ${dead ? 'border-error bg-error/20' : section.id === 'core' ? 'border-primary bg-base-200/90' : 'border-base-300 bg-base-200/90'}`}
-    style={{ gridArea: section.area }}
+    className={`min-w-0 lg:[grid-area:var(--area)] p-1.5 border ${dead ? 'border-error bg-error/20' : section.id === 'core' ? 'border-primary bg-base-200/90' : 'border-base-300 bg-base-200/90'}`}
+    style={{ '--area': section.area } as React.CSSProperties}
   >
     <h5 className='flex justify-between items-center gap-1 text-xs'>
       <Popover content={sectionPop(rules, mech, section)}>

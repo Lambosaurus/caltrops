@@ -10,6 +10,7 @@ import EquipmentTable from './EquipmentTable'
 import NotesTable from './NotesTable'
 import MechManage from './mech/MechManage'
 import MechPanel from './mech/MechPanel'
+import MechStowage from './mech/MechStowage'
 
 // Internal imports
 import { View, useListener } from '../lib/objectservice'
@@ -87,7 +88,17 @@ function SheetView( { view, editable=EditMode.Live }: {
           />
           } )
         }
+        {rules.mechs && mechId !== undefined ?
+          <MechStowage view={view} editable={mechEditable} title='Stowage (mech)'/> : null
+        }
         </section>
+
+        {/* Mech widget, about three columns wide (wraps to full width on narrow screens) */}
+        {rules.mechs && mechId !== undefined ?
+          <section className='flex gap-4 flex-col w-[62rem] max-w-full'>
+            <MechPanel view={view} editable={mechEditable} showStowage={false}/>
+          </section> : null
+        }
 
         {/* Powers & Wounds */}
         <section className='flex gap-4 flex-col'>
@@ -137,12 +148,6 @@ function SheetView( { view, editable=EditMode.Live }: {
     return pilot
   }
 
-  // The pilot sheet with the mech play panel below it.
-  const pilotPage = <>
-    {pilot}
-    {mechId !== undefined ? <MechPanel view={view} editable={mechEditable}/> : null}
-  </>
-
   return (
     <div className='flex flex-col w-full'>
       <div className='tabs tabs-boxed justify-center m-2'>
@@ -151,7 +156,7 @@ function SheetView( { view, editable=EditMode.Live }: {
           {mechName ? `Mech: ${mechName}` : 'Mech'}
         </button>
       </div>
-      {tab === 'pilot' ? pilotPage : <MechManage view={view} editable={mechEditable} sheetEditable={editable}/>}
+      {tab === 'pilot' ? pilot : <MechManage view={view} editable={mechEditable} sheetEditable={editable}/>}
     </div>
   )
 }

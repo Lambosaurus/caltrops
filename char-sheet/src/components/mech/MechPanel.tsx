@@ -4,7 +4,7 @@ import MechSection, { TypeTag } from './MechSection'
 import ChassisSilhouette from './ChassisSilhouette'
 import HitModal from './HitModal'
 import ActivationModal from './ActivationModal'
-import EquipmentTable from '../EquipmentTable'
+import MechStowage from './MechStowage'
 import { statPop, StatKind } from './mechText'
 import { showNotices } from './notify'
 import { useEffect, useState } from 'react'
@@ -22,12 +22,14 @@ import type { Rules } from '../../lib/rules'
 import { roller } from './roller'
 
 /*
- * The mech play panel: status bar with Sprint / Shut down & purge / New turn, the section grid over the
- * chassis silhouette, and the stowage list. `view` is the root view; `editable` is the effective mech edit mode.
+ * The mech play panel, a widget sized to about three sheet columns: status bar with Sprint / Shut down & purge /
+ * New turn, and the section grid over the chassis silhouette. `view` is the root view; `editable` is the effective
+ * mech edit mode. `showStowage` adds the stowage list (the pilot sheet shows it in its inventory column instead).
  */
-function MechPanel({ view, editable }: {
+function MechPanel({ view, editable, showStowage = true }: {
     view: View,
     editable: EditMode,
+    showStowage?: boolean,
   }): JSX.Element | null {
 
   const mech: Mech | undefined = useListener(view, 'mech')
@@ -70,7 +72,6 @@ function MechPanel({ view, editable }: {
 
   const play = editable >= EditMode.Live
   const mv = view.view('mech')
-  const stowageContainer = { name: 'Stowage', size: stats.stowage, tags: ['handheld', 'custom'] }
 
   // Every handler publishes the new mech, then toasts anything the player must act on.
   function run(res: MechResult) {
@@ -82,7 +83,15 @@ function MechPanel({ view, editable }: {
   const sprintDisabled = !play || sprintBlocker(mechRules, mech) !== null
   const purgeDisabled = !play || t.shutdown || t.out
 
-  return <div className='flex flex-col gap-2 p-4 w-full font-mono text-xs'>
+  return <div className='w-full'>
+    <table className='table table-compact w-full'>
+      <thead>
+        <tr>
+          <th>Mech: {mech.name}</th>
+        </tr>
+      </thead>
+    </table>
+    <div className='flex flex-col gap-2 p-2 bg-base-100 font-mono text-xs'>
 
     {/* Status bar */}
     <div className='flex flex-wrap items-center gap-2 bg-base-200 p-2'>
@@ -129,7 +138,7 @@ function MechPanel({ view, editable }: {
     {/* Body */}
     <div className='relative'>
       <ChassisSilhouette chassis={chassis}/>
-      <div className='relative grid grid-cols-2 lg:grid-cols-6 gap-2.5 p-2.5'>
+      <div className='relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2 p-2'>
         {chassis.sections.map(section =>
           <MechSection
             key={section.id}
@@ -151,21 +160,17 @@ function MechPanel({ view, editable }: {
       </div>
     </div>
 
-    {/* Stowage */}
-    <div className='bg-base-200 border border-base-300 p-2 overflow-x-auto max-w-md'>
+    {/* Stowage (standalone page only; the pilot sheet lists it with the inventory) */}
+    {showStowage ? <div className='bg-base-200 border border-base-300 p-2 overflow-x-auto max-w-md'>
       <Popover content={statPop(mechRules, mech, 'stowage')}>
         <h4 className='font-bold text-accent mb-1'>Stowage {(mech.equipment.Stowage ?? []).length}/{stats.stowage}</h4>
       </Popover>
-      <EquipmentTable
-        equipment={rules!.equipment}
-        container={stowageContainer}
-        view={view.view('mech/equipment/Stowage')}
-        editable={editable}
-      />
-    </div>
+      <MechStowage view={view} editable={editable}/>
+    </div> : null}
 
     <HitModal view={view} sectionId={hitSection} close={() => setHitSection(null)}/>
     {play && rules ? <ActivationModal rules={rules} view={view} mountKey={activeKey} close={() => setActiveKey(null)}/> : null}
+    </div>
   </div>
 }
 

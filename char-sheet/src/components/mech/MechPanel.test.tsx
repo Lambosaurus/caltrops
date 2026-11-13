@@ -121,10 +121,26 @@ describe('Pilot tab', () => {
     expect(screen.queryByText(/Repair & rearm/)).toBeNull()
   })
 
+  test('mech widget sits in the pilot container beside the Equipment column; Stowage is in the Equipment column', () => {
+    const { container } = sheet(scrapLancerRuleset, true)
+    const widget = screen.getByText(/^Sprint/).closest('section')!
+    expect(widget.className).toContain('w-[62rem]')
+    expect(widget.className).toContain('max-w-full')
+    const stowageHeader = screen.getByText('Stowage (mech)')
+    const equipmentColumn = stowageHeader.closest('section')!
+    expect(equipmentColumn).not.toBe(widget)
+    expect(equipmentColumn.parentElement).toBe(widget.parentElement)
+    expect(equipmentColumn.nextElementSibling).toBe(widget)
+    expect(widget.contains(stowageHeader)).toBe(false)
+    expect(equipmentColumn.querySelectorAll('table').length).toBe(scrapLancerRuleset.containers.length + 1)
+    expect(container.querySelectorAll('.w-full > .table').length).toBeGreaterThan(0)
+  })
+
   test('without an assigned mech it shows the manage line', () => {
     sheet(scrapLancerRuleset, false)
     expect(screen.getByText(/No mech assigned — manage in the Mech tab/)).toBeTruthy()
     expect(screen.queryByText(/^Sprint/)).toBeNull()
+    expect(screen.queryByText('Stowage (mech)')).toBeNull()
   })
 
   test('Mech tab offers management without an assigned mech', () => {
@@ -139,5 +155,17 @@ describe('Pilot tab', () => {
     sheet(bludgeonRuleset, false)
     expect(screen.queryByText('Pilot')).toBeNull()
     expect(screen.queryByText(/^Sprint/)).toBeNull()
+    expect(screen.queryByText('Stowage (mech)')).toBeNull()
   })
+})
+
+test('standalone panel keeps its stowage, embedded panel (showStowage=false) does not', () => {
+  const rules: any = { name: 'x', mechs: FIXTURE_RULES, equipment: [] }
+  const view = new ObjectService().view('')
+  view.publish('rules', rules)
+  view.publish('mech', newMech(rules, 'Mule', 'Rusty'))
+  const { rerender } = render(withDnd(<MechPanel view={view} editable={EditMode.Full}/>))
+  expect(screen.getAllByText('Items: Stowage').length).toBe(1)
+  rerender(withDnd(<MechPanel view={view} editable={EditMode.Full} showStowage={false}/>))
+  expect(screen.queryAllByText('Items: Stowage').length).toBe(0)
 })
