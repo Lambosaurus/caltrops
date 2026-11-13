@@ -33,7 +33,7 @@ export function TypeTag({ rules, type, label }: { rules: MechRules, type: string
   </Popover>
 }
 
-function MechSection({ rules, section, view, editable, onHit, onActivate, onWound, onArmour }: {
+function MechSection({ rules, section, view, editable, onHit, onActivate, onWound, onArmour, onAmmo }: {
     rules: MechRules,
     section: ChassisSection,
     view: View, // the mech
@@ -42,6 +42,7 @@ function MechSection({ rules, section, view, editable, onHit, onActivate, onWoun
     onActivate(key: string): void,
     onWound?(sectionId: string, index: number): void,
     onArmour?(sectionId: string, points: number): void,
+    onAmmo?(key: string, delta: number): void,
   }): JSX.Element | null {
 
   const mech: Mech | undefined = useListener(view)
@@ -116,7 +117,12 @@ function MechSection({ rules, section, view, editable, onHit, onActivate, onWoun
           </Popover>
         } else {
           const passive = att.bin ? `${mount.ammo ?? 0}/${binCapacity(rules, att)}` : passiveText(att)
-          right = passive ? <Popover content={pop}><span className='text-[10px] opacity-60 whitespace-nowrap'>{passive}</span></Popover> : null
+          const text = passive ? <Popover content={pop}><span className='text-[10px] opacity-60 whitespace-nowrap'>{passive}</span></Popover> : null
+          right = att.bin && onAmmo ? <>
+            <button className='btn btn-xs btn-ghost px-1' disabled={!play} aria-label={`${att.name} ammo minus`} onClick={() => onAmmo(key, -1)}>−</button>
+            {text}
+            <button className='btn btn-xs btn-ghost px-1' disabled={!play} aria-label={`${att.name} ammo plus`} onClick={() => onAmmo(key, 1)}>+</button>
+          </> : text
         }
       }
     }

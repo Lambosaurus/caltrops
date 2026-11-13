@@ -2,33 +2,40 @@
 import Popover from './Popover'
 import MechSection, { TypeTag } from './MechSection'
 import ChassisSilhouette from './ChassisSilhouette'
+import TurnControls from './TurnControls'
+import HitModal from './HitModal'
+import TakeHitPanel from './TakeHitPanel'
+import MechSettingsPanel from './MechSettingsPanel'
+import MechLog from './MechLog'
+import ActionModal from '../ActionModal'
 import { statPop, StatKind } from './mechText'
+import { useState } from 'react'
 
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { findChassis } from '../../lib/mech/loadout'
 import { deriveStats, overheated } from '../../lib/mech/derive'
+import { adjustAmmo, repairAll, setArmourPoints, toggleWound } from '../../lib/mech/damage'
+import { logMech } from '../../lib/mech/store'
 import type { Mech, MechRules } from '../../lib/mech/types'
 import type { Rules } from '../../lib/rules'
 
 /*
  * The mech sheet: status bar, slot legend, section grid over the chassis silhouette, and a side column.
  * `view` is the root view; `editable` is the effective mech edit mode (see SheetView / MainPage).
- * Activation, hits and wound edits are wired by the parent through the optional handlers.
+ * Hits, wound and armour edits, ammo and repair are wired here; activation is wired by the parent.
  */
-function MechView({ view, editable, onActivate = () => {}, onHit = () => {}, onWound, onArmour }: {
+function MechView({ view, editable, onActivate = () => {} }: {
     view: View,
     editable: EditMode,
     onActivate?(key: string): void,
-    onHit?(sectionId: string): void,
-    onWound?(sectionId: string, index: number): void,
-    onArmour?(sectionId: string, points: number): void,
   }): JSX.Element | null {
 
   const mech: Mech | undefined = useListener(view, 'mech')
   const rules: Rules | undefined = useListener(view, 'rules')
-  const log: string[] = useListener(view, 'mechLog') ?? []
+  const [hitSection, setHitSection] = useState(null as string | null)
+  const [confirmRepair, setConfirmRepair] = useState(false)
   const mechRules: MechRules | undefined = rules?.mechs
   const chassis = mech && mechRules ? findChassis(mechRules, mech.chassis) : undefined
 
@@ -60,6 +67,9 @@ function MechView({ view, editable, onActivate = () => {}, onHit = () => {}, onW
     ? <span className='badge badge-primary rounded-none font-bold'>SPRINTING −{stats.evasion}</span>
     : <span className='badge badge-outline rounded-none font-bold'>MOVED</span>
 
+  const play = editable >= EditMode.Live
+  const publish = (next: Mech) => view.publish('mech', next)
+
   const stowage = mech.equipment.Stowage ?? []
 
   return <div className='flex flex-col gap-2 p-4 w-full font-mono text-xs'>
@@ -80,7 +90,6 @@ function MechView({ view, editable, onActivate = () => {}, onHit = () => {}, onW
       </>)}
       {stat('speed', <>Speed {stats.speed}</>)}
       {stat('evasion', <>Evasion {stats.evasion}</>)}
-      {stat('target', <>Target {t.target}</>)}
       {stat('hand', <>Hand {stats.hand ? '✓' : '✗'}</>)}
       {t.pilotWounds ? <span className='px-2 border border-error text-error'>Pilot wounds {t.pilotWounds}</span> : null}
       {t.out ? <span className='badge badge-error rounded-none font-bold'>OUT OF ACTION</span>
@@ -89,6 +98,8 @@ function MechView({ view, editable, onActivate = () => {}, onHit = () => {}, onW
       <span className='flex-1'/>
       <Popover content={statPop(mechRules, mech, 'posture')}>{posture}</Popover>
     </div>
+
+    <TurnControls view={view} editable={editable}/>
 
     {warns.length ? <div className='border border-error bg-error/10 p-2'>⚠ {warns.join(' · ')}</div> : null}
 
@@ -115,10 +126,15 @@ function MechView({ view, editable, onActivate = () => {}, onHit = () => {}, onW
                 section={section}
                 view={mv}
                 editable={editable}
-                onHit={onHit}
+                onHit={setHitSection}
                 onActivate={onActivate}
-                onWound={onWound}
-                onArmour={onArmour}
+                onWound={(id, i) => publish(toggleWound(mechRules, mech, id, i))}
+                onArmour={(id, points) => {
+                  const cur = mech.sections[id]?.armour?.points
+                  // Clicking the current top pip lowers it by one, so the last pip can be cleared.
+                  publish(setArmourPoints(mechRules, mech, id, cur === points ? points - 1 : points))
+                }}
+                onAmmo={(key, delta) => publish(adjustAmmo(mechRules, mech, key, delta))}
               />
             )}
           </div>
@@ -134,15 +150,31 @@ function MechView({ view, editable, onActivate = () => {}, onHit = () => {}, onW
           {stowage.length ? stowage.map((e, i) => <div key={i}>{e.name}{e.count && e.count > 1 ? ` x${e.count}` : ''}</div>)
             : <div className='opacity-50'>Nothing stowed.</div>}
         </div>
+        <TakeHitPanel view={view} editable={editable}/>
+        <MechSettingsPanel view={view} editable={editable}/>
         <div className='bg-base-200 border border-base-300 p-2'>
-          <h4 className='font-bold text-accent mb-1'>Log</h4>
-          <div className='max-h-64 overflow-auto'>
-            {log.length ? log.map((l, i) => <div key={i} className='border-t border-dashed border-base-300 py-0.5'>{l}</div>)
-              : <div className='opacity-50'>No events yet.</div>}
-          </div>
+          <h4 className='font-bold text-accent mb-1'>Between missions</h4>
+          <button className='btn btn-xs btn-outline' disabled={!play} onClick={() => setConfirmRepair(true)}>Repair &amp; rearm</button>
         </div>
+        <MechLog view={view}/>
       </div>
     </div>
+
+    <HitModal view={view} sectionId={hitSection} close={() => setHitSection(null)}/>
+    <ActionModal
+      open={confirmRepair}
+      close={() => setConfirmRepair(false)}
+      title='Repair & rearm'
+      actions={[
+        { name: 'Cancel', callback: () => {} },
+        { name: 'Repair & rearm', type: 'primary', callback: () => {
+          publish(repairAll(mechRules, mech))
+          logMech(view, ['Repaired, re-armoured and rearmed.'])
+        } },
+      ]}
+    >
+      <p className='my-4'>Clear all wounds and pilot wounds, restore armour, ammo and charges?</p>
+    </ActionModal>
   </div>
 }
 
