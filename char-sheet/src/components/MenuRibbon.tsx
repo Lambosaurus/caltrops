@@ -4,9 +4,11 @@ import React, { useState } from 'react'
 // Components
 import NewSheetModal from './NewSheetModal';
 import LoadSheetModal from './LoadSheetModal'
+import NewMechModal from './mech/NewMechModal'
+import LoadMechModal from './mech/LoadMechModal'
 import { BsPerson, BsShare, BsCloudArrowDown,
   BsCloudArrowUp, BsFileEarmarkPlus, BsDownload,
-  BsJournalText, BsCopy,
+  BsJournalText, BsCopy, BsRobot, BsCloudDownload,
  } from 'react-icons/bs'
 import { ImCheckmark, ImPencil } from 'react-icons/im';
 
@@ -18,6 +20,7 @@ import UserLoginModal from './UserLoginModal';
 import { alertError, alertInfo, alertSuccess, alertWarning } from '../lib/alerts';
 import caltrops from '../lib/caltrops';
 import { View, useListener } from "../lib/objectservice"
+import { MECH_DOC_TYPE, openMech } from '../lib/mech/store'
 
 
 function MenuRibbon( {editable, setEditable, view, children}: {
@@ -32,7 +35,13 @@ function MenuRibbon( {editable, setEditable, view, children}: {
   const [isLoadSheetOpen, setIsLoadSheetOpen] = useState(false)
   const [sheetList, setSheetList] = useState(null as Document[] | null)
 
+  const [isNewMechOpen, setIsNewMechOpen] = useState(false)
+  const [isLoadMechOpen, setIsLoadMechOpen] = useState(false)
+  const [mechList, setMechList] = useState(null as Document[] | null)
+
   const token = useListener(view, "token")
+  const rules = useListener(view, "rules")
+  const mode = useListener(view, "mode")
   const sheetId = useListener(view, "sheet/id")
 
   function setSheet(sheet: Sheet | null) {
@@ -43,6 +52,49 @@ function MenuRibbon( {editable, setEditable, view, children}: {
     }
   }
   
+  // Mech entries only exist for rulesets that define mechs. In sheet mode they attach the mech
+  // to the (editable) sheet; in mech mode they replace the open mech.
+  const canAttachMech = mode === 'mech' || (!!sheetId && editable > EditMode.None)
+
+  function chooseMech(id: string) {
+    if (mode === 'mech') {
+      openMech(view, id)
+    } else {
+      view.publish('sheet/mech', id)
+    }
+  }
+
+  const mechItems = rules?.mechs ? [
+  <li key='new-mech'>
+    <button
+      className='btn btn-ghost'
+      onClick={() => setIsNewMechOpen(true)}
+      disabled={!canAttachMech}
+    >
+      <BsRobot size={25}/>
+      New mech
+    </button>
+  </li>,
+  <li key='load-mech'>
+    <button
+      className='btn btn-ghost'
+      onClick={() => {
+        if (token) {
+          setMechList(null)
+          server.list(token, MECH_DOC_TYPE)
+            .then( m => setMechList(m))
+            .catch(e => alertError(`Error listing mechs: ${e.message}`))
+          setIsLoadMechOpen(true)
+        }
+      }}
+      disabled={!token || !canAttachMech}
+    >
+      <BsCloudDownload size={27}/>
+      Load mech
+    </button>
+  </li>,
+  ] : []
+
   const menuItems = [
   <li key='new'>
     <button
@@ -106,6 +158,7 @@ function MenuRibbon( {editable, setEditable, view, children}: {
     Clone
   </button>
   </li>,
+  ...mechItems,
   <li key='download'>
     <button
       className='btn btn-ghost'
@@ -212,6 +265,30 @@ function MenuRibbon( {editable, setEditable, view, children}: {
       setUser={u => view.publish('token', u)}
       isLoggedIn={!!token}
       />
+
+    { rules?.mechs ? <NewMechModal
+      open={isNewMechOpen}
+      close={() => setIsNewMechOpen(false)}
+      rules={rules}
+      setMech={m => {
+        view.publish('mechEditable', EditMode.Full)
+        view.publish('mechLog', [])
+        view.publish('mech', m)
+        if (mode !== 'mech') {
+          view.publish('sheet/mech', m.id)
+        }
+        closeRibbon()
+      }}
+      /> : null }
+
+    { token && rules?.mechs ? <LoadMechModal
+      open={isLoadMechOpen}
+      close={() => setIsLoadMechOpen(false)}
+      setMechId={id => { chooseMech(id); closeRibbon() }}
+      setMechs={setMechList}
+      mechs={mechList}
+      token={token}
+    /> : null }
 
     { token ? <LoadSheetModal
       open={isLoadSheetOpen}

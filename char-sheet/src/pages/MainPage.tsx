@@ -15,9 +15,11 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import server from '../lib/server'
 import { alertSuccess, alertError, alertWarning } from '../lib/alerts'
 import { ObjectService, View, useListener } from '../lib/objectservice'
+import { MECH_DOC_TYPE, openMech, readMechEditable } from '../lib/mech/store'
 
 const AUTO_SAVE_TIMEOUT = 5.0
 let SAVE_TIMEOUT_ID: any = -1
+let MECH_SAVE_TIMEOUT_ID: any = -1
 
 /* 
   - Top level parent component responsible for all state management
@@ -60,6 +62,10 @@ function MainPage(): JSX.Element {
   }
 
   function loadSheet(view: View): Sheet | null {
+    if (view.read('mode') === 'mech') {
+      // A standalone mech has no pilot sheet.
+      return null
+    }
     let sheet_id = new URLSearchParams(window.location.search).get("sheet")
     if (!sheet_id) {
       sheet_id = localStorage.getItem('caltrops-sheet')
@@ -144,6 +150,60 @@ function MainPage(): JSX.Element {
     }
   }
 
+  function onMechEdit(view: View) {
+    if (MECH_SAVE_TIMEOUT_ID >= 0) {
+      clearTimeout(MECH_SAVE_TIMEOUT_ID)
+      MECH_SAVE_TIMEOUT_ID = -1
+    }
+
+    const token = view.read('token')
+    if (token && view.read('mech') && readMechEditable(view) > EditMode.None) {
+      MECH_SAVE_TIMEOUT_ID = setTimeout(() => {
+        MECH_SAVE_TIMEOUT_ID = -1
+        const mech = view.read('mech')
+        // Re-check at fire time: the mech may have been swapped or the user logged out.
+        if (token && mech && readMechEditable(view) > EditMode.None) {
+          const username = server.parseToken(token)
+          if (username && mech.owner !== username) {
+            mech.owner = username
+          }
+          server.write(token, mech.id, MECH_DOC_TYPE, mech.name, mech)
+            .then( s => alertSuccess("Mech auto saved") )
+            .catch(e => alertError(`Error auto saving mech: ${e.message}`))
+        }
+      }, AUTO_SAVE_TIMEOUT * 1000)
+    }
+  }
+
+  function onMechChange(view: View) {
+    // openMech flags the mech it just loaded: cancel the save its publish triggered.
+    // Registered after onMechEdit, like the sheet equivalents.
+    if (view.read('mechFresh')) {
+      view.publish('mechFresh', false)
+      if (MECH_SAVE_TIMEOUT_ID >= 0) {
+        clearTimeout(MECH_SAVE_TIMEOUT_ID)
+        MECH_SAVE_TIMEOUT_ID = -1
+      }
+    }
+  }
+
+  function onSheetMechChange(view: View) {
+    if (view.read('mode') === 'mech') {
+      return
+    }
+    const sheet = view.read('sheet')
+    if (!sheet) {
+      return
+    }
+    if (!sheet.mech) {
+      if (view.read('mech')) {
+        view.delete('mech')
+      }
+    } else if (view.read('mech/id') !== sheet.mech) {
+      openMech(view, sheet.mech)
+    }
+  }
+
   const [editable, setEditable] = useState(EditMode.Live);
 
   const [view, _] = useState( () => {
@@ -151,6 +211,11 @@ function MainPage(): JSX.Element {
 
     view.subscribe("sheet/info/name", () => setTitle(view.read("sheet/info/name")))
     view.subscribe("rules/theme", () => setTheme(view.read("rules/theme")))
+
+    const mechId = new URLSearchParams(window.location.search).get("mech")
+    view.publish('mode', mechId ? 'mech' : 'sheet')
+    view.publish('mechLog', [])
+    view.publish('mechEditable', EditMode.None)
 
     view.publish('token', loadToken())
     view.publish('rules', loadRules())
@@ -160,20 +225,49 @@ function MainPage(): JSX.Element {
     view.subscribe('sheet', () => onSheetEdit(view))
     view.subscribe('sheet/id', () => onSheetChange(view))
 
+    view.subscribe('mech', () => onMechEdit(view))
+    view.subscribe('mech/id', () => onMechChange(view))
+    view.subscribe('sheet/mech', () => onSheetMechChange(view))
+    view.subscribe('mech/name', () => {
+      if (view.read('mode') === 'mech') {
+        setTitle(view.read('mech/name'))
+      }
+    })
+    view.subscribe('mech/id', () => {
+      // Keep the URL pointing at the open standalone mech.
+      const id = view.read('mech/id')
+      if (id && view.read('mode') === 'mech' && new URLSearchParams(window.location.search).get('mech') !== id) {
+        window.history.replaceState(null, '', `${window.location.href.split('?')[0]}?mech=${id}`)
+      }
+    })
+
+    if (mechId) {
+      openMech(view, mechId)
+    }
+
     return view;
   })
 
   const sheetId = useListener(view, "sheet/id")
+  const mode = useListener(view, "mode")
+  const mechId = useListener(view, "mech/id")
+  const mechName = useListener(view, "mech/name")
+  const mechEditable = useListener(view, "mechEditable") ?? EditMode.None
 
   return (
-    <FileUploader setFile={s => view.publish("sheet", s)}>
+    <FileUploader setFile={s => { if (mode !== 'mech') view.publish("sheet", s) }}>
 
       <MenuRibbon
-        editable={editable}
-        setEditable={setEditable}
+        editable={mode === 'mech' ? mechEditable : editable}
+        setEditable={mode === 'mech' ? (e => view.publish('mechEditable', e)) : setEditable}
         view={view}
       >
         {
+          mode === 'mech' ?
+          (
+            // Placeholder until MechView exists.
+            mechId !== undefined ? <pre>{mechName}</pre> : <LoadingSpinner size={100}/>
+          ) :
           sheetId !== undefined ?
           <SheetView
             view={view}

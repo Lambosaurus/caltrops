@@ -201,6 +201,7 @@ function cloneSheet(sheet: Sheet): Sheet {
         ...sheet,
         owner: null,
         id: uuidv4(),
+        mech: undefined, // a cloned pilot must not share the original mech
     }
     return result
 }

@@ -8,3 +8,14 @@ describe('loadSheet mech field', () => {
         expect(caltrops.importSheet({}).mech).toBeUndefined()
     })
 })
+
+describe('cloneSheet', () => {
+    test('clears mech and owner but leaves the original alone', () => {
+        const sheet = caltrops.importSheet({ mech: 'abc', owner: 'bob' })
+        const clone = caltrops.cloneSheet(sheet)
+        expect(clone.mech).toBeUndefined()
+        expect(clone.owner).toBeNull()
+        expect(clone.id).not.toBe(sheet.id)
+        expect(sheet.mech).toBe('abc')
+    })
+})
