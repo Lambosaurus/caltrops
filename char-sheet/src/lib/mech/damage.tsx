@@ -1,6 +1,6 @@
 import { findAttachment, findChassis, mountCovering } from './loadout'
 import { mountDisabled } from './derive'
-import type { Mech, MechRules, MechSectionState, Mount, Roller, MechResult } from './types'
+import type { Chassis, Mech, MechRules, MechSectionState, Mount, Roller, MechResult } from './types'
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n))
@@ -22,6 +22,9 @@ function withSection(mech: Mech, sectionId: string, change: (s: MechSectionState
   if (!mech.sections[sectionId]) return mech
   return { ...mech, sections: { ...mech.sections, [sectionId]: change(mech.sections[sectionId]) } }
 }
+
+const sectionDef = (chassis: Chassis | undefined, id: string) => chassis?.sections.find(x => x.id === id)
+const sectionName = (chassis: Chassis | undefined, id: string): string => sectionDef(chassis, id)?.name ?? id
 
 const coreDestroyed = (rules: MechRules, mech: Mech): boolean => {
   const core = findChassis(rules, mech.chassis)?.sections.find(s => s.transfer === null)
@@ -47,7 +50,7 @@ function apply(rules: MechRules, mech: Mech, startId: string, count: number, ign
       events.push(`  ${plural(n, 'wound')} pass through the open cockpit to the PILOT.`)
       return
     }
-    const def = chassis?.sections.find(s => s.id === sectionId)
+    const def = sectionDef(chassis, sectionId)
     const s: MechSectionState | undefined = mech.sections[sectionId]
     if (!def || !s) return
     if (!ignoreArmour && s.armour && s.armour.points > 0) {
@@ -64,7 +67,7 @@ function apply(rules: MechRules, mech: Mech, startId: string, count: number, ign
         events.push('  CORE DESTROYED. Mech out of action.')
         return
       }
-      events.push(`  ${def.name} destroyed; ${n} pass to ${def.transfer === 'pilot' ? 'pilot' : chassis?.sections.find(x => x.id === def.transfer)?.name ?? def.transfer}.`)
+      events.push(`  ${def.name} destroyed; ${n} pass to ${def.transfer === 'pilot' ? 'pilot' : sectionName(chassis, def.transfer)}.`)
       sectionId = def.transfer
       continue
     }
@@ -110,16 +113,20 @@ export function markWounds(rules: MechRules, mech: Mech, sectionId: string, coun
   const s = next.sections[sectionId]
   if (!s) return { mech: next, events: [] }
   let n = Math.max(0, Math.floor(count))
+  const name = sectionName(findChassis(rules, mech.chassis), sectionId)
+  const events: string[] = []
   if (!ignoreArmour && s.armour && s.armour.points > 0) {
     const k = Math.min(n, s.armour.points)
     s.armour.points -= k
     n -= k
+    if (k > 0) events.push(`${name}: armour absorbs ${k}.`)
   }
+  let marked = 0
   for (let i = 0; i < s.wounds.length && n > 0; i++) {
-    if (!s.wounds[i]) { s.wounds[i] = true; n-- }
+    if (!s.wounds[i]) { s.wounds[i] = true; n--; marked++ }
   }
-  const name = findChassis(rules, mech.chassis)?.sections.find(x => x.id === sectionId)?.name ?? sectionId
-  return { mech: next, events: [`${count} wounds marked on ${name}`] }
+  if (marked > 0) events.push(`${plural(marked, 'wound')} marked on ${name}`)
+  return { mech: next, events }
 }
 
 export function toggleWound(rules: MechRules, mech: Mech, sectionId: string, slot: number): Mech {

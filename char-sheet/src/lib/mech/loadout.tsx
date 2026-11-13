@@ -151,6 +151,28 @@ export function changeChassis(rules: Rules, mech: Mech, chassisName: string): Me
   return { ...mech, chassis: chassis.name, sections: emptySections(chassis), turn: freshTurn() }
 }
 
+// Reconcile a saved mech with its chassis: add missing sections, fit wounds to slots, drop mounts that no longer fit.
+export function normaliseMech(rules: MechRules, mech: Mech): Mech {
+  const chassis = findChassis(rules, mech.chassis)
+  if (!chassis) return mech
+  const sections: Mech['sections'] = {}
+  for (const def of chassis.sections) {
+    const old = mech.sections[def.id] ?? { armour: null, mounts: [], wounds: [] }
+    const wounds = def.slots.map((_, i) => !!old.wounds[i])
+    sections[def.id] = { armour: old.armour, mounts: [], wounds }
+  }
+  let next: Mech = { ...mech, sections }
+  for (const def of chassis.sections) {
+    const kept = (mech.sections[def.id]?.mounts ?? []).slice().sort((a, b) => a.start - b.start)
+    for (const m of kept) {
+      if (canMount(rules, next, def.id, m.name, m.start)) {
+        next = withSection(next, def.id, s => ({ ...s, mounts: [...s.mounts, m] }))
+      }
+    }
+  }
+  return next
+}
+
 export function loadMech(obj: any): Mech {
   const o = obj ?? {}
   const sections: Mech['sections'] = {}

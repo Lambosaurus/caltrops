@@ -89,7 +89,7 @@ describe('markWounds', () => {
     const { mech, events } = markWounds(FIXTURE_RULES, mule(), 'lleg', 3, false)
     expect(mech.sections.lleg.armour!.points).toBe(0)
     expect(mech.sections.lleg.wounds).toEqual([true, false, false])
-    expect(events).toEqual(['3 wounds marked on Left leg'])
+    expect(events).toEqual(['Left leg: armour absorbs 2.', '1 wound marked on Left leg'])
   })
   it('does not overflow', () => {
     const m = mule()
@@ -102,6 +102,10 @@ describe('markWounds', () => {
     const { mech } = markWounds(FIXTURE_RULES, mule(), 'lleg', 1, true)
     expect(mech.sections.lleg.armour!.points).toBe(2)
     expect(mech.sections.lleg.wounds).toEqual([true, false, false])
+  })
+  it('logs plural wounds and omits absent armour', () => {
+    const { events } = markWounds(FIXTURE_RULES, mule(), 'lleg', 2, true)
+    expect(events).toEqual(['2 wounds marked on Left leg'])
   })
 })
 

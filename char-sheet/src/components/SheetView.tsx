@@ -34,6 +34,7 @@ function SheetView( { view, editable=EditMode.Live }: {
   let level: number = useListener(view, 'sheet/info/level') ?? 0
   let rules: Rules = useListener(view, 'rules')
   const mechName: string | undefined = useListener(view, 'mech/name')
+  const mechId: string | undefined = useListener(view, 'mech/id')
   // Subscribes to editability changes; the value itself is read through the helper (0 reads back as undefined).
   useListener(view, 'mechEditable')
   const [tab, setTab] = useState('pilot' as 'pilot' | 'mech')
@@ -143,13 +144,13 @@ function SheetView( { view, editable=EditMode.Live }: {
   return (
     <div className='flex flex-col w-full'>
       <div className='tabs tabs-boxed justify-center m-2'>
-        <a className={`tab ${tab === 'pilot' ? 'tab-active' : ''}`} onClick={() => setTab('pilot')}>Pilot</a>
-        <a className={`tab ${tab === 'mech' ? 'tab-active' : ''}`} onClick={() => setTab('mech')}>
+        <button type='button' className={`tab ${tab === 'pilot' ? 'tab-active' : ''}`} onClick={() => setTab('pilot')}>Pilot</button>
+        <button type='button' className={`tab ${tab === 'mech' ? 'tab-active' : ''}`} onClick={() => setTab('mech')}>
           {mechName ? `Mech: ${mechName}` : 'Mech'}
-        </a>
+        </button>
       </div>
       {tab === 'pilot' ? pilot :
-        mechName !== undefined ?
+        mechId !== undefined ?
         <MechView view={view} editable={Math.min(editable, readMechEditable(view))}/> :
         <div className='p-4 text-center opacity-60'>No mech assigned. Use Assign... on the Pilot tab, or the Mech menu.</div>
       }

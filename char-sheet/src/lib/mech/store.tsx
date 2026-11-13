@@ -1,9 +1,9 @@
 import { View } from '../objectservice'
-import { EditMode } from '../util'
+import { EditMode, copyToClipboard } from '../util'
 import server from '../server'
 import caltrops from '../caltrops'
-import { alertError, alertWarning } from '../alerts'
-import { loadMech } from './loadout'
+import { alertError, alertSuccess, alertWarning } from '../alerts'
+import { loadMech, normaliseMech } from './loadout'
 
 export const MECH_DOC_TYPE = 'mech'
 export const MECH_LOG_LIMIT = 100
@@ -65,6 +65,11 @@ export async function openMech(view: View, id: string): Promise<void> {
     }
   }
 
+  const mechRules = view.read('rules')?.mechs
+  if (mechRules) {
+    mech = normaliseMech(mechRules, mech)
+  }
+
   const token = view.read('token')
   const editable = mechEditMode(mech.owner, token ? server.parseToken(token) : null)
   if (editable === EditMode.None) {
@@ -76,4 +81,27 @@ export async function openMech(view: View, id: string): Promise<void> {
   // Tells MainPage this publish is a load, not an edit, so it must not trigger an auto save.
   view.publish('mechFresh', true)
   view.publish('mech', mech)
+}
+
+export function mechLink(id: string): string {
+  return `${window.location.origin}${window.location.pathname}?mech=${id}`
+}
+
+export function copyMechLink(id: string): void {
+  copyToClipboard(mechLink(id))
+  alertSuccess('Mech link copied to clipboard')
+}
+
+/** Leave standalone mech mode so the sheet shows: switch mode and drop ?mech= from the URL. */
+export function leaveMechMode(view: View): void {
+  if (view.read('mode') !== 'mech') {
+    return
+  }
+  view.publish('mode', 'sheet')
+  const params = new URLSearchParams(window.location.search)
+  if (params.has('mech')) {
+    params.delete('mech')
+    const query = params.toString()
+    window.history.replaceState(null, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`)
+  }
 }

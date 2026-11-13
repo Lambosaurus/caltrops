@@ -1,6 +1,6 @@
 import { EditMode } from '../util'
 import { ObjectService } from '../objectservice'
-import { capLog, readMechEditable, logMech, mechEditMode, openMech } from './store'
+import { capLog, readMechEditable, logMech, mechEditMode, openMech, leaveMechMode } from './store'
 import { newMech } from './loadout'
 import { FIXTURE_RULES } from './fixture'
 import { DEFAULT_RULES } from '../rules'
@@ -67,6 +67,13 @@ describe('openMech', () => {
     expect(view.read('mechLog')).toEqual([])
     expect(view.read('mechFresh')).toBe(true)
   })
+  test('normalises a saved mech against its chassis', async () => {
+    const m = newMech(RULES, chassis, 'Mule')
+    m.sections.core.wounds = []
+    const view = setup(m)
+    await openMech(view, m.id)
+    expect(view.read('mech/sections/core/wounds')).toHaveLength(6)
+  })
   test('foreign owner is read only', async () => {
     const m = { ...newMech(RULES, chassis), owner: 'bob' }
     const view = setup(m, 'alice')
@@ -91,5 +98,23 @@ describe('openMech', () => {
     const view = new ObjectService().view('')
     await openMech(view, 'x')
     expect(view.read('mech')).toBeUndefined()
+  })
+})
+
+describe('leaveMechMode', () => {
+  test('switches to sheet mode and strips ?mech= from the URL', () => {
+    window.history.replaceState(null, '', '/?mech=abc&x=1')
+    const view = new ObjectService().view('')
+    view.publish('mode', 'mech')
+    leaveMechMode(view)
+    expect(view.read('mode')).toBe('sheet')
+    expect(window.location.search).toBe('?x=1')
+  })
+  test('does nothing in sheet mode', () => {
+    window.history.replaceState(null, '', '/?mech=abc')
+    const view = new ObjectService().view('')
+    view.publish('mode', 'sheet')
+    leaveMechMode(view)
+    expect(window.location.search).toBe('?mech=abc')
   })
 })

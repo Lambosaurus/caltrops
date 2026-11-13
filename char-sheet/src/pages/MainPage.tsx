@@ -201,6 +201,8 @@ function MainPage(): JSX.Element {
         view.delete('mech')
       }
     } else if (view.read('mech/id') !== sheet.mech) {
+      // Drop the previous pilot's mech first so a failed load can't leave it on screen (and saving).
+      view.delete('mech')
       openMech(view, sheet.mech)
     }
   }

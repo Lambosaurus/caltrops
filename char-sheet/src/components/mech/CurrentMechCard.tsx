@@ -8,6 +8,7 @@ import AssignMechModal from './AssignMechModal'
 import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { deriveStats } from '../../lib/mech/derive'
+import { copyMechLink } from '../../lib/mech/store'
 import type { Mech, MechRules } from '../../lib/mech/types'
 
 /* Pilot tab summary of the sheet's current mech. */
@@ -35,6 +36,10 @@ function CurrentMechCard({ view, mechRules, editable, open }: {
     <div className='flex gap-2'>
       <button className='btn btn-primary btn-sm' disabled={!mech} onClick={open}>Open</button>
       <button className='btn btn-outline btn-sm' disabled={editable === EditMode.None} onClick={() => setAssigning(true)}>Assign…</button>
+    </div>
+    <div className='flex gap-2'>
+      <button className='btn btn-outline btn-sm' disabled={!sheetMechId || editable < EditMode.Live} onClick={() => view.delete('sheet/mech')}>Unassign</button>
+      <button className='btn btn-outline btn-sm' disabled={!sheetMechId} onClick={() => sheetMechId && copyMechLink(sheetMechId)}>Copy mech link</button>
     </div>
     <AssignMechModal
       open={assigning}

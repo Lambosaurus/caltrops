@@ -1,8 +1,9 @@
 import { DEFAULT_RULES } from '../rules'
 import { DEFAULT_MECH_SETTINGS } from './types'
 import { FIXTURE_RULES } from './fixture'
+import { applyWounds } from './damage'
 import {
-  slotAccepts, canMount, mount, mountAt, unmount, canDropPart, dropPart, canDropArmour, dropOnCatalogue, mountCovering, moveMount, newMech, changeChassis, loadMech, findAttachment,
+  slotAccepts, canMount, mount, mountAt, unmount, canDropPart, dropPart, canDropArmour, dropOnCatalogue, mountCovering, moveMount, newMech, changeChassis, loadMech, findAttachment, normaliseMech,
 } from './loadout'
 
 const RULES = { ...DEFAULT_RULES, name: 'Test', mechs: FIXTURE_RULES }
@@ -141,5 +142,36 @@ describe('drag-and-drop helpers', () => {
     expect(canDropPart(FIXTURE_RULES, mech, { name: 'Plating' }, 'rarm', 1)).toBe(false)
     const out = dropOnCatalogue(mech, { name: 'Machine Gun', from: { section: 'rarm', start: 1 } })
     expect(out.sections.rarm.mounts.some(m => m.name === 'Machine Gun')).toBe(false)
+  })
+})
+
+describe('normaliseMech', () => {
+  const base = () => newMech(RULES, 'Mule')
+  it('pads short wounds arrays and a hit behaves normally', () => {
+    const m = base()
+    m.sections.core.wounds = []
+    const n = normaliseMech(FIXTURE_RULES, m)
+    expect(n.sections.core.wounds).toEqual([false, false, false, false, false, false])
+    const { mech, events } = applyWounds(FIXTURE_RULES, n, 'core', 1, { cookoff: false, roller: () => [] })
+    expect(mech.turn.out).toBe(false)
+    expect(events.join()).not.toContain('CORE DESTROYED')
+  })
+  it('trims extra wounds and adds missing sections empty', () => {
+    const m = base()
+    m.sections.lleg.wounds = [true, true, true, true, true]
+    delete m.sections.rarm
+    const n = normaliseMech(FIXTURE_RULES, m)
+    expect(n.sections.lleg.wounds).toEqual([true, true, true])
+    expect(n.sections.rarm).toEqual({ armour: null, mounts: [], wounds: [false, false] })
+  })
+  it('drops mounts that no longer fit without throwing', () => {
+    const m = base()
+    m.sections.rarm.mounts.push({ name: 'Autocannon', start: 1 }, { name: 'Machine Gun', start: 9 }, { name: 'Gone', start: 0 })
+    const n = normaliseMech(FIXTURE_RULES, m)
+    expect(n.sections.rarm.mounts.map(x => x.name)).toEqual(['Breaching Hammer', 'Machine Gun'])
+  })
+  it('leaves unknown chassis untouched', () => {
+    const m = { ...base(), chassis: 'Nope' }
+    expect(normaliseMech(FIXTURE_RULES, m)).toBe(m)
   })
 })

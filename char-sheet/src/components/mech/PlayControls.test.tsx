@@ -29,7 +29,7 @@ test('HitModal manual path marks wounds on the left leg', () => {
   const after = view.read('mech').sections.lleg
   expect(after.armour.points).toBe(0)
   expect(after.wounds.slice(0, 3)).toEqual([true, false, false])
-  expect(view.read('mechLog')).toContain('3 wounds marked on Left leg')
+  expect(view.read('mechLog')).toContain('1 wound marked on Left leg')
 })
 
 test('HitModal with autoHitDamage on destroys the leg and overflows', () => {
@@ -85,5 +85,6 @@ test('every play control is disabled when not editable', () => {
   // The closed repair dialog is always mounted but hidden.
   const controls = (Array.from(container.querySelectorAll('button, select, input')) as HTMLInputElement[]).filter(c => !c.closest('.modal'))
   expect(controls.length).toBeGreaterThan(10)
-  expect(controls.filter(c => !c.disabled).map(c => c.outerHTML)).toEqual([])
+  // Copying the mech link is a read-only action and stays enabled.
+  expect(controls.filter(c => !c.disabled && c.textContent !== 'Copy mech link').map(c => c.outerHTML)).toEqual([])
 })

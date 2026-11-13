@@ -139,7 +139,7 @@ const scrapLancerRuleset: Rules = {
     ],
     containers: [
         { name: 'Personal', size: 5, tags: ['handheld', 'custom'] },
-        { name: 'Stowage', size: 5 },
+        { name: 'Pack', size: 5 },
     ],
     wounds: [
         { name: 'Body', size: 5 },

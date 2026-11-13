@@ -48,3 +48,12 @@ test('continuation rows are marked', () => {
   setup(EditMode.Full)
   expect(screen.getByText('↳ Autocannon')).toBeTruthy()
 })
+
+test('mech without mech rules shows a message', () => {
+  const rules: any = { name: 'Plain' }
+  const view = new ObjectService().view('')
+  view.publish('rules', rules)
+  view.publish('mech', newMech({ name: 'x', mechs: FIXTURE_RULES } as any, 'Mule'))
+  render(withDnd(<MechView view={view} editable={EditMode.Full}/>))
+  expect(screen.getByText(/ruleset \(Plain\) has no mech rules loaded/)).toBeTruthy()
+})

@@ -12,7 +12,7 @@ import AttachmentCatalogue from './AttachmentCatalogue'
 import EquipmentTable from '../EquipmentTable'
 import ActionModal from '../ActionModal'
 import { statPop, StatKind } from './mechText'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
@@ -20,7 +20,7 @@ import { EditMode } from '../../lib/util'
 import { changeChassis, dropOnCatalogue, dropPart, findChassis, setArmour, unmount, type PartDrag } from '../../lib/mech/loadout'
 import { deriveStats, overheated } from '../../lib/mech/derive'
 import { adjustAmmo, repairAll, setArmourPoints, toggleWound } from '../../lib/mech/damage'
-import { logMech } from '../../lib/mech/store'
+import { logMech, copyMechLink } from '../../lib/mech/store'
 import type { Mech, MechRules } from '../../lib/mech/types'
 import type { Rules } from '../../lib/rules'
 
@@ -29,10 +29,9 @@ import type { Rules } from '../../lib/rules'
  * `view` is the root view; `editable` is the effective mech edit mode (see SheetView / MainPage).
  * Hits, wound and armour edits, ammo and repair are wired here; activation opens ActivationModal.
  */
-function MechView({ view, editable, onActivate = () => {} }: {
+function MechView({ view, editable }: {
     view: View,
     editable: EditMode,
-    onActivate?(key: string): void,
   }): JSX.Element | null {
 
   const mech: Mech | undefined = useListener(view, 'mech')
@@ -45,8 +44,18 @@ function MechView({ view, editable, onActivate = () => {} }: {
   const mechRules: MechRules | undefined = rules?.mechs
   const chassis = mech && mechRules ? findChassis(mechRules, mech.chassis) : undefined
 
-  if (!mech || !mechRules) {
+  // Closing the activation modal when play rights drop (e.g. a different, read only mech opens).
+  useEffect(() => {
+    if (editable < EditMode.Live) {
+      setActiveKey(null)
+    }
+  }, [editable])
+
+  if (!mech) {
     return null
+  }
+  if (!mechRules) {
+    return <div className='p-4 opacity-70'>This mech's ruleset ({rules?.name ?? mech.rules}) has no mech rules loaded.</div>
   }
   if (!chassis) {
     return <div className='p-4 text-error'>Unknown chassis: {mech.chassis}</div>
@@ -114,6 +123,7 @@ function MechView({ view, editable, onActivate = () => {} }: {
         : t.shutdown ? <span className='badge badge-error rounded-none font-bold'>SHUT DOWN</span>
         : hot ? <span className='badge badge-error rounded-none font-bold'>OVERHEATED</span> : null}
       <span className='flex-1'/>
+      <button className='btn btn-xs btn-outline rounded-none' onClick={() => copyMechLink(mech.id)}>Copy mech link</button>
       {editable === EditMode.Full
         ? <button className={`btn btn-xs rounded-none ${loading ? 'btn-primary' : 'btn-outline'}`} onClick={() => setLoadout(!loadout)}>
             {loading ? 'Done editing' : 'Edit loadout'}
@@ -155,7 +165,7 @@ function MechView({ view, editable, onActivate = () => {} }: {
                 onDropArmour={(id, name) => publish(setArmour(mechRules, mech, id, name))}
                 onClearArmour={id => publish(setArmour(mechRules, mech, id, null))}
                 onHit={setHitSection}
-                onActivate={key => { setActiveKey(key); onActivate(key) }}
+                onActivate={key => { setActiveKey(key) }}
                 onWound={(id, i) => publish(toggleWound(mechRules, mech, id, i))}
                 onArmour={(id, points) => {
                   const cur = mech.sections[id]?.armour?.points
