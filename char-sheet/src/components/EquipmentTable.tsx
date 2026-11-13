@@ -14,21 +14,18 @@ import { View, useListener } from '../lib/objectservice'
 import TextEntryBox from './TextEntryBox'
 import { DropTarget } from './dnd/DropTarget'
 import { DragSource } from './dnd/DragSource'
+import { applyEquipmentDrop, EquipmentDrag } from '../lib/equipmentDrop'
 
-type DragItem = {
-  container: string,
-  index: number,
-}
-
-function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
+function EquipmentTable({equipment, container, view, editable=EditMode.Live, title}: {
     equipment: Equipment[],
     container: Container,
     view: View,
-    editable?: EditMode
+    editable?: EditMode,
+    title?: string, // header text; defaults to "Items: <container name>"
   }): JSX.Element {
 
   const items: SheetEquipment[] = useListener(view) ?? []
-  const freeCapacity = container.size ? (container.size - items.length) : 1
+  const freeCapacity = container.size !== undefined ? (container.size - items.length) : 1
   const empty = items.length === 0
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -56,24 +53,13 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
   }
 
   function dropHandlerFactory(dropIdx = 0) {
-    return (item: DragItem) => {
-      const source = item.container
-      const index = item.index
-      const dest = container.name
-
-      const root = view.view("../")
-
-      const sourceItems = root.read(source)
-      const destItems = root.read(dest) ?? []
-
-      if (sourceItems === destItems) {
-        root.publish(source, listUtil.move(sourceItems, index, dropIdx))
-      } else {
-        root.publish(source, listUtil.delete(sourceItems, index))
-        root.publish(dest, listUtil.insert(destItems, dropIdx, sourceItems[index]))
-      }
+    return (item: EquipmentDrag) => {
+      applyEquipmentDrop(view, item, dropIdx, container.size)
     }
   }
+
+  // Items past the container's size (e.g. a destroyed rack) are shown struck through. Inert unless over capacity.
+  const overCapacity = (i: number) => container.size !== undefined && items.length > container.size && i >= container.size
 
   const previewRef = useRef(null)
 
@@ -86,7 +72,7 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
       <table className="table table-compact w-80">
         <thead>
           <tr>
-            <th colSpan={4}>Items: {container.name}</th>
+            <th colSpan={4}>{title ?? <>Items: {container.name}</>}</th>
           </tr>
         </thead>
         <tbody>
@@ -97,7 +83,7 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
                 accept='equipment'
                 hoverClass='drop-hover'
                 enabled={ editable >= EditMode.Live && freeCapacity > 0 }
-                wrappingElement={<tr className='hover tooltip tooltip-left w-full border-t-2 border-transparent' data-tip={lookupDescription(item.name)}></tr>}
+                wrappingElement={<tr className={`hover tooltip tooltip-left w-full border-t-2 border-transparent ${overCapacity(i) ? 'line-through text-error' : ''}`} data-tip={lookupDescription(item.name)}></tr>}
                 onDrop={dropHandlerFactory(i)}
               >
               {
@@ -112,7 +98,7 @@ function EquipmentTable({equipment, container, view, editable=EditMode.Live}: {
                 <td className='w-full text-left'>
                   <DragSource
                       type='equipment'
-                      item={ {container: container.name, index: i} }
+                      item={ {container: container.name, index: i, path: view.path} }
                       enabled={editable >= EditMode.Live}
                     >
                       { item.name }

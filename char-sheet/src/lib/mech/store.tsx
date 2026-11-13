@@ -1,0 +1,93 @@
+import { View } from '../objectservice'
+import { EditMode, copyToClipboard } from '../util'
+import server from '../server'
+import caltrops from '../caltrops'
+import { alertError, alertSuccess, alertWarning } from '../alerts'
+import { loadMech, normaliseMech } from './loadout'
+
+export const MECH_DOC_TYPE = 'mech'
+
+/** Owners and unowned mechs get full edit rights (play and loadout); anyone else is read only. */
+export function mechEditMode(owner: string | null | undefined, username: string | null | undefined): EditMode {
+  if (!owner || (username && owner === username)) {
+    return EditMode.Full
+  }
+  return EditMode.None
+}
+
+/**
+ * ObjectService.read returns undefined for falsy values, so EditMode.None (0) reads back as undefined.
+ * Always read mechEditable through this helper (or use `?? EditMode.None`).
+ */
+export function readMechEditable(view: View): EditMode {
+  return view.read('mechEditable') ?? EditMode.None
+}
+
+// Guards against an older, slower read overwriting a newer one.
+let OPEN_SEQ = 0
+
+export async function openMech(view: View, id: string): Promise<void> {
+  const seq = ++OPEN_SEQ
+  let mech
+  try {
+    const doc = await server.read(id)
+    mech = loadMech(doc.content)
+    // The document id is authoritative.
+    mech.id = id
+  } catch (e: any) {
+    if (seq === OPEN_SEQ) {
+      alertError(`Error reading mech: ${e.message}`)
+    }
+    return
+  }
+  if (seq !== OPEN_SEQ) {
+    return
+  }
+
+  if (view.read('mode') === 'mech' && view.read('rules')?.name !== mech.rules) {
+    const rules = caltrops.loadRules(mech.rules)
+    view.publish('rules', rules)
+    if (rules.name !== mech.rules) {
+      alertWarning(`Ruleset ${mech.rules} was not loaded. ${rules.name} loaded instead.`)
+    }
+  }
+
+  const mechRules = view.read('rules')?.mechs
+  if (mechRules) {
+    mech = normaliseMech(mechRules, mech)
+  }
+
+  const token = view.read('token')
+  const editable = mechEditMode(mech.owner, token ? server.parseToken(token) : null)
+  if (editable === EditMode.None) {
+    alertWarning(`Mech opened in read only mode. Owner: ${mech.owner}.`)
+  }
+  // Publish editability first so auto save never sees a stale value for the new mech.
+  view.publish('mechEditable', editable)
+  // Tells MainPage this publish is a load, not an edit, so it must not trigger an auto save.
+  view.publish('mechFresh', true)
+  view.publish('mech', mech)
+}
+
+export function mechLink(id: string): string {
+  return `${window.location.origin}${window.location.pathname}?mech=${id}`
+}
+
+export function copyMechLink(id: string): void {
+  copyToClipboard(mechLink(id))
+  alertSuccess('Mech link copied to clipboard')
+}
+
+/** Leave standalone mech mode so the sheet shows: switch mode and drop ?mech= from the URL. */
+export function leaveMechMode(view: View): void {
+  if (view.read('mode') !== 'mech') {
+    return
+  }
+  view.publish('mode', 'sheet')
+  const params = new URLSearchParams(window.location.search)
+  if (params.has('mech')) {
+    params.delete('mech')
+    const query = params.toString()
+    window.history.replaceState(null, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`)
+  }
+}

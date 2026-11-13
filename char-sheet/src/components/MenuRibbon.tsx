@@ -18,6 +18,7 @@ import UserLoginModal from './UserLoginModal';
 import { alertError, alertInfo, alertSuccess, alertWarning } from '../lib/alerts';
 import caltrops from '../lib/caltrops';
 import { View, useListener } from "../lib/objectservice"
+import { leaveMechMode } from '../lib/mech/store'
 
 
 function MenuRibbon( {editable, setEditable, view, children}: {
@@ -37,6 +38,8 @@ function MenuRibbon( {editable, setEditable, view, children}: {
 
   function setSheet(sheet: Sheet | null) {
     if (sheet) {
+      // A published sheet must be visible, so leave standalone mech mode first.
+      leaveMechMode(view)
       view.publish("sheet", sheet)
     } else {
       view.delete("sheet")

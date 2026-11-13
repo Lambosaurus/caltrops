@@ -3,6 +3,7 @@ import bludgeonRuleset from "./bludgeon";
 import felfuturesRuleset from "./felfutures";
 import turnipRuleset from "./turnip28";
 import lancerRuleset from "./lancer"
+import scrapLancerRuleset from "./scraplancer"
 import vermisRuleset from "./vermis";
 import briefcaseRuleset from "./briefcase";
 import driftersRuleset from "./drifters";
@@ -12,6 +13,7 @@ const RULESETS = [
     bludgeonRuleset,
     driftersRuleset,
     lancerRuleset,
+    scrapLancerRuleset,
     airlockRuleset,
     turnipRuleset,
     felfuturesRuleset,

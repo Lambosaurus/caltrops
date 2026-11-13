@@ -8,12 +8,17 @@ import PowerTable from './PowerTable'
 import WoundTable from './WoundTable'
 import EquipmentTable from './EquipmentTable'
 import NotesTable from './NotesTable'
+import MechManage from './mech/MechManage'
+import MechPanel from './mech/MechPanel'
+import MechStowage from './mech/MechStowage'
 
 // Internal imports
 import { View, useListener } from '../lib/objectservice'
 import { EditMode } from '../lib/util'
 import caltrops from '../lib/caltrops'
 import { Rules } from '../lib/rules'
+import { readMechEditable } from '../lib/mech/store'
+import { useState } from 'react'
 
 
 
@@ -29,8 +34,14 @@ function SheetView( { view, editable=EditMode.Live }: {
   // This will trigger a re-render if the level changes. This is probably fine.
   let level: number = useListener(view, 'sheet/info/level') ?? 0
   let rules: Rules = useListener(view, 'rules')
+  const mechName: string | undefined = useListener(view, 'mech/name')
+  const mechId: string | undefined = useListener(view, 'mech/id')
+  // Subscribes to editability changes; the value itself is read through the helper (0 reads back as undefined).
+  useListener(view, 'mechEditable')
+  const [tab, setTab] = useState('pilot' as 'pilot' | 'mech')
 
-  return (
+  const mechEditable = Math.min(editable, readMechEditable(view))
+  const pilot = (
     <div className='flex flex-wrap justify-center flex-row gap-4 basis-full p-4 scrollbar scrollbar-neutral'>
 
         {/* Info & Attributes */}
@@ -77,7 +88,17 @@ function SheetView( { view, editable=EditMode.Live }: {
           />
           } )
         }
+        {rules.mechs && mechId !== undefined ?
+          <MechStowage view={view} editable={mechEditable} title='Stowage (mech)'/> : null
+        }
         </section>
+
+        {/* Mech widget, about three columns wide (wraps to full width on narrow screens) */}
+        {rules.mechs && mechId !== undefined ?
+          <section className='flex gap-4 flex-col w-[62rem] max-w-full'>
+            <MechPanel view={view} editable={mechEditable} showStowage={false}/>
+          </section> : null
+        }
 
         {/* Powers & Wounds */}
         <section className='flex gap-4 flex-col'>
@@ -108,12 +129,34 @@ function SheetView( { view, editable=EditMode.Live }: {
           />
         </section>
 
+        {rules.mechs && mechId === undefined ?
+          <section className='flex gap-4 flex-col'>
+            <div className='opacity-60 max-w-xs'>No mech assigned — manage in the Mech tab.</div>
+          </section> : null
+        }
+
         <RollCreateModal
           rollView={view.view('roll')}
           scoreView={view.view('sheet/attributes')}
           useAspects={rules.useAspects}
           attributes={rules.attributes}
         />
+    </div>
+  )
+
+  if (!rules.mechs) {
+    return pilot
+  }
+
+  return (
+    <div className='flex flex-col w-full'>
+      <div className='tabs tabs-boxed justify-center m-2'>
+        <button type='button' className={`tab ${tab === 'pilot' ? 'tab-active' : ''}`} onClick={() => setTab('pilot')}>Pilot</button>
+        <button type='button' className={`tab ${tab === 'mech' ? 'tab-active' : ''}`} onClick={() => setTab('mech')}>
+          {mechName ? `Mech: ${mechName}` : 'Mech'}
+        </button>
+      </div>
+      {tab === 'pilot' ? pilot : <MechManage view={view} editable={readMechEditable(view)} sheetEditable={editable}/>}
     </div>
   )
 }

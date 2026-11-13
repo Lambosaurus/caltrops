@@ -1,3 +1,4 @@
+import type { MechRules } from './mech/types'
 
 export interface Aspect {
     name: string,
@@ -67,6 +68,7 @@ export interface Rules {
         skills: number,
         attributes: number,
     }
+    mechs?: MechRules,
 }
 
 export interface SheetEquipment {
@@ -102,6 +104,7 @@ export interface Sheet {
     powers: Dictionary<number>,
     wounds: Dictionary<SheetWound[]>,
     notes: string[],
+    mech?: string,
 }
 
 export interface RollInfo {
