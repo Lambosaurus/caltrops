@@ -189,6 +189,7 @@ function loadSheet(obj: any = {}): Sheet {
             background: obj.info?.background ?? '',
         }
     }
+    if (obj.mech != null) result.mech = obj.mech
     return result;
 }
 
