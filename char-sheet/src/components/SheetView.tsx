@@ -156,7 +156,7 @@ function SheetView( { view, editable=EditMode.Live }: {
           {mechName ? `Mech: ${mechName}` : 'Mech'}
         </button>
       </div>
-      {tab === 'pilot' ? pilot : <MechManage view={view} editable={mechEditable} sheetEditable={editable}/>}
+      {tab === 'pilot' ? pilot : <MechManage view={view} editable={readMechEditable(view)} sheetEditable={editable}/>}
     </div>
   )
 }

@@ -7,6 +7,7 @@ import ActionModal from '../ActionModal'
 import AssignMechModal from './AssignMechModal'
 import NewMechModal from './NewMechModal'
 import LoadMechModal from './LoadMechModal'
+import TextEntryBox from '../TextEntryBox'
 import { useState } from 'react'
 
 // Internal imports
@@ -23,8 +24,9 @@ import type { Rules } from '../../lib/rules'
 /*
  * The mech management view (the Mech tab, and "Manage" in standalone mode): New / Load / Assign / Unassign /
  * Copy link, the chassis change, loadout editing and the automation settings. Play lives in MechPanel.
- * `view` is the root view; `editable` is the effective mech edit mode (loadout needs Full, settings Live).
- * `sheetEditable` is the sheet's own edit mode, which gates assigning (defaults to `editable`).
+ * `view` is the root view; `editable` is the mech's own edit mode (renaming and loadout need Full, settings Live),
+ * independent of the sheet's edit pencil. `sheetEditable` is the sheet's own edit mode, which gates assigning
+ * (defaults to `editable`).
  */
 function MechManage({ view, editable, sheetEditable }: {
     view: View,
@@ -136,7 +138,9 @@ function MechManage({ view, editable, sheetEditable }: {
   return <div className='flex flex-col gap-2 p-4 w-full font-mono text-xs'>
 
     <div className='flex flex-wrap items-center gap-2 bg-base-200 p-2'>
-      <span className='px-2 border border-base-300 font-bold'>{mech.name}</span>
+      {editable === EditMode.Full
+        ? <TextEntryBox value={mech.name} setValue={v => view.publish('mech/name', v)} placeholder='enter name' inputSize='input-xs'/>
+        : <span className='px-2 border border-base-300 font-bold'>{mech.name}</span>}
       {editing
         ? <select
             className='select select-xs select-bordered rounded-none'
@@ -159,17 +163,17 @@ function MechManage({ view, editable, sheetEditable }: {
 
     {editing && warns.length ? <div className='border border-error bg-error/10 p-2'>⚠ {warns.join(' · ')}</div> : null}
 
-    {editing ? <div className='flex flex-col lg:flex-row gap-2 items-start'>
+    <div className='flex flex-col lg:flex-row gap-2 items-start'>
       <div className='flex-1 min-w-0 w-full'>
 
         {/* Legend */}
-        <div className='flex flex-wrap items-center gap-1.5 mb-1 opacity-90'>
+        {editing ? <div className='flex flex-wrap items-center gap-1.5 mb-1 opacity-90'>
           <span>Slots:</span>
           {mechRules.slotTypes.filter(s => s.name !== 'Generic').map(s =>
             <TypeTag key={s.name} rules={mechRules} type={s.name} label={s.label}/>
           )}
           <span className='opacity-60 ml-1'>Generic parts fit any slot except Armour and Hull.</span>
-        </div>
+        </div> : null}
 
         {/* Body */}
         <div className='relative'>
@@ -182,7 +186,7 @@ function MechManage({ view, editable, sheetEditable }: {
                 section={section}
                 view={mv}
                 editable={EditMode.None}
-                loadout={true}
+                loadout={editing}
                 onDropPart={(item, id, start) => publish(dropPart(mechRules, mech, item, id, start))}
                 onUnmount={(id, start) => publish(unmount(mech, id, start))}
                 onDropArmour={(id, name) => publish(setArmour(mechRules, mech, id, name))}
@@ -195,10 +199,10 @@ function MechManage({ view, editable, sheetEditable }: {
         </div>
       </div>
 
-      <div className='flex flex-col gap-2 w-full lg:w-80 flex-none'>
+      {editing ? <div className='flex flex-col gap-2 w-full lg:w-80 flex-none'>
         <AttachmentCatalogue rules={mechRules} onRemove={(item: PartDrag) => publish(dropOnCatalogue(mech, item))}/>
-      </div>
-    </div> : null}
+      </div> : null}
+    </div>
 
     <div className='w-full lg:w-80'>
       <MechSettingsPanel view={view} editable={editable}/>

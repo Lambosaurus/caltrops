@@ -102,3 +102,22 @@ test('an unknown chassis still shows Unassign so the assignment can be fixed', (
   fireEvent.click(screen.getByText('Unassign'))
   expect(view.read('sheet/mech')).toBeUndefined()
 })
+
+test('owner with the sheet pencil Live sees the mech body, Edit loadout and can rename', () => {
+  const { view } = setup(EditMode.Full, { sheetEditable: EditMode.Live })
+  expect(screen.getAllByText('Hit').length).toBeGreaterThan(0)
+  expect(screen.queryByLabelText(/^Remove /)).toBeNull()
+  expect(screen.queryByTestId('mech-catalogue')).toBeNull()
+  fireEvent.click(screen.getByText('Edit loadout'))
+  expect(screen.getByTestId('mech-catalogue')).toBeTruthy()
+  fireEvent.change(screen.getByPlaceholderText('enter name'), { target: { value: 'Rustier' } })
+  expect(view.read('mech/name')).toBe('Rustier')
+})
+
+test('a non-owner sees the mech body read-only, with no Edit loadout or name input', () => {
+  setup(EditMode.None, { sheetEditable: EditMode.Live })
+  expect(screen.getAllByText('Hit').length).toBeGreaterThan(0)
+  expect(screen.queryByText('Edit loadout')).toBeNull()
+  expect(screen.queryByPlaceholderText('enter name')).toBeNull()
+  expect(screen.getByText('Rusty')).toBeTruthy()
+})
