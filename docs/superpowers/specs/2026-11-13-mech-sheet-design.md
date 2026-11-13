@@ -137,3 +137,40 @@ Calls made by Claude (change any of these freely):
 - **Changing an existing mech's chassis** asks for confirmation and clears its loadout.
 - **Effects stay as text in v1,** to be resolved at the table and not modelled in state: optional extra costs (e.g. "spend 2 extra energy for Powerful"), effects lasting until next turn (Field Generator), consecutive-turn bonuses (Rotary Saw), target locks, and field repair. The mech document should store per-attachment turn state in an open-ended way, so adding these later needs no migration.
 - **The rules doc and the prototype together** are the full scope of rules that v1 models.
+
+## Revision 2: GM review of the draft PR
+
+This revision supersedes the earlier goals wherever they conflict. The GM's principle: **the VTT and DM handle the table-level bookkeeping, and the sheet tracks only the mech.**
+
+### Pilot page: the play view
+The Pilot tab shows the pilot sheet with a mech panel embedded below it.
+- **Status bar:**
+    - Stats: energy, heat / Heat Max with the end-of-turn projection, Speed, Evasion (a plain stat from the legs), Hand.
+    - Badges: SHUT DOWN, OVERHEATED, OUT OF ACTION.
+    - Buttons:
+        - **Sprint:** 2 energy, +2 heat, once per turn. It is an action, and it rolls overheat self-damage when already overheated, as before.
+        - **Shut down & purge:** an action that ends the turn. The purge applies immediately (−cooling, no reactor heat), and actions are blocked until New turn.
+        - **New turn:** if the mech was shut down, clear that and refill energy only. Otherwise settle heat (+reactor −cooling), refill energy (+capacitor store) and clear the "used" marks.
+- **Mech body:** activations, wound boxes, armour pips, ammo ±, and a per-section **Hit** popup (wounds box, ignores-armour option, with no attacker-modifier line).
+- **Stowage:** the mech's stowage list, shown on the same page.
+
+### Roll prompt
+- Short / Mid / Long buttons inside the prompt, defaulting to the weapon's own band.
+- It applies −1 die per band closer and refuses shots beyond range.
+- The chosen range is never saved.
+
+### Alerts instead of a log
+- Toast alerts appear only for things the player must act on, or for applied consequences: overheat self-damage (what to roll, or what was applied), ammo cook-off, hits passing to the pilot, and the mech being out of action.
+- There is no log.
+
+### Mech tab: management only
+New, load, assign / unassign, copy link, change chassis, the drag-and-drop loadout editor, and the automation settings.
+
+### Standalone mech (`?mech=`)
+The same mech panel, with a Manage tab beside it.
+
+### Removed
+- **Controls:** target range control, Move, End turn / Start turn as separate controls.
+- **Rules:** movement posture (Sitting Duck / Moved / Sprinting badges), attacker dice modifiers. These are tracked in the VTT.
+- **Panels:** Take a hit (the DM rolls, players apply through Hit), Repair & rearm (done by hand), the action log.
+- **Code:** the rules code that only served these (`attackModifier`, `move`, posture, `sittingDuck` / `stunned` rule values, `mechLog`).
