@@ -1,8 +1,8 @@
 // Pure popover text for the mech sheet. Components render these; nothing here touches React.
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
 import { aimCost, deriveStats, hitLabel, mountDisabled, sectionDestroyed, slotsOf } from '../../lib/mech/derive'
-import { activationBlocker, rangePenalty } from '../../lib/mech/turn'
-import type { ChassisSection, Mech, MechAttachment, MechRules, Mount, RangeBand } from '../../lib/mech/types'
+import { activationBlocker } from '../../lib/mech/turn'
+import type { ChassisSection, Mech, MechAttachment, MechRules, Mount } from '../../lib/mech/types'
 
 export interface PopText { title: string, sub?: string, lines: string[] }
 
@@ -31,17 +31,14 @@ export function passiveText(att: MechAttachment): string | null {
 export const binCapacity = (rules: MechRules, att: MechAttachment): number =>
   rules.ammo.find(a => a.name === att.bin)?.perBin ?? 0
 
-export function rollText(att: MechAttachment, rules: MechRules, target?: RangeBand): string {
+export function rollText(att: MechAttachment, rules: MechRules): string {
   if (!att.roll) return att.effect ?? ''
   const aspect = att.roll.aspect ?? (att.range ? rules.rangeAspects[att.range === 'Melee' ? 'Short' : att.range] : undefined)
-  let t = `${att.effect ? att.effect + ': ' : ''}${aspect ? aspect + ' + ' : ''}${att.roll.skill}${att.roll.bonus ? ` +${att.roll.bonus}` : ''}`
-  const pen = target ? rangePenalty(att, target) : 0
-  if (pen > 0) t += ` −${pen} (target inside ${att.range} range)`
-  return t
+  return `${att.effect ? att.effect + ': ' : ''}${aspect ? aspect + ' + ' : ''}${att.roll.skill}${att.roll.bonus ? ` +${att.roll.bonus}` : ''}`
 }
 
 /** Stat lines for an attachment (catalogue style, no mount state). */
-export function attachmentStats(rules: MechRules, att: MechAttachment, target?: RangeBand): string[] {
+export function attachmentStats(rules: MechRules, att: MechAttachment): string[] {
   const L: string[] = []
   const size = att.size ?? 1
   L.push(att.type === 'Armour' ? `Armour · ${att.armour ?? 0} points`
@@ -65,7 +62,7 @@ export function attachmentStats(rules: MechRules, att: MechAttachment, target?: 
     L.push(att.repeat ? `Repeating ${att.repeat}: up to ${att.repeat}× per turn.` : 'Once per turn.')
   }
   if (att.range) L.push(`Range: ${att.range}${att.range === 'Melee' ? ' (target must be Short)' : " (can't fire beyond; −1 die per band closer)"}`)
-  if (att.roll) L.push(`Roll: ${rollText(att, rules, target)}${att.range && att.range !== 'Melee' && target ? ` vs ${target} target` : ''}`)
+  if (att.roll) L.push(`Roll: ${rollText(att, rules)}`)
   else if (att.effect) L.push(`Effect: ${att.effect}`)
   if (att.armour) L.push('Each point absorbs one wound to this section. Refilled only at a haven.')
   if (att.tags) L.push(`Tags: ${att.tags}`)

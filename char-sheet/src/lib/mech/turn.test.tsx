@@ -166,6 +166,11 @@ describe('notices', () => {
     expect(r.notices).toHaveLength(1)
     expect(r.notices[0]).toContain('wound')
   })
+  it('overheat applied with no wounds rolled is not a notice', () => {
+    const m = mule()
+    const r = activate(R, { ...m, turn: { ...m.turn, heat: 10 } }, MG, () => [1, 2], S)
+    expect(r.notices).toEqual([])
+  })
   it('sprint when overheated notifies', () => {
     const m = mule({ autoHeatDamage: false })
     expect(sprint(R, { ...m, turn: { ...m.turn, heat: 10 } }, never).notices).toHaveLength(1)

@@ -14,10 +14,10 @@ import { findAttachment, mountKey as keyOf } from '../../lib/mech/loadout'
 import { overheated, deriveStats } from '../../lib/mech/derive'
 import { activate, activationBlocker } from '../../lib/mech/turn'
 import { activationRoll } from '../../lib/mech/roll'
-import { logMech } from '../../lib/mech/store'
 import type { Mech, RangeBand } from '../../lib/mech/types'
 import type { Dictionary, RollInfo, Rules } from '../../lib/rules'
 import { roller } from './roller'
+import { showNotices } from './notify'
 
 const signed = (n: number) => (n >= 0 ? '+' : '') + n
 
@@ -96,17 +96,14 @@ function ActivationModal({ rules, view, mountKey, close }: {
       return // blocked: nothing was paid, so do not roll
     }
     view.publish('mech', res.mech)
-    logMech(view, res.events)
+    showNotices(res.notices)
     if (info) {
       if (toVtt && foundry.isPresent()) {
         foundry.submitRoll(info)
-        logMech(view, [`  Sent ${count}d4 to the VTT.`])
         close()
         return
       }
       const dice = caltrops.rollDice(info)
-      const hits = dice.filter(d => d >= 4).length
-      logMech(view, [`  Rolled ${dice.length}d4 [${dice.join(' ')}] → ${hits} success${hits === 1 ? '' : 'es'}.`])
       setDone({ dice, info })
     } else {
       close()

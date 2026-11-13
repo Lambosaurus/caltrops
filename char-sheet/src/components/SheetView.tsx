@@ -9,6 +9,7 @@ import WoundTable from './WoundTable'
 import EquipmentTable from './EquipmentTable'
 import NotesTable from './NotesTable'
 import MechView from './mech/MechView'
+import MechPanel from './mech/MechPanel'
 import CurrentMechCard from './mech/CurrentMechCard'
 
 // Internal imports
@@ -38,6 +39,14 @@ function SheetView( { view, editable=EditMode.Live }: {
   // Subscribes to editability changes; the value itself is read through the helper (0 reads back as undefined).
   useListener(view, 'mechEditable')
   const [tab, setTab] = useState('pilot' as 'pilot' | 'mech')
+
+  const mechEditable = Math.min(editable, readMechEditable(view))
+  const card = rules.mechs ? <CurrentMechCard
+    view={view}
+    mechRules={rules.mechs}
+    editable={editable}
+    open={() => setTab('mech')}
+  /> : null
 
   const pilot = (
     <div className='flex flex-wrap justify-center flex-row gap-4 basis-full p-4 scrollbar scrollbar-neutral'>
@@ -117,14 +126,10 @@ function SheetView( { view, editable=EditMode.Live }: {
           />
         </section>
 
-        {rules.mechs ?
+        {rules.mechs && mechId === undefined ?
           <section className='flex gap-4 flex-col'>
-            <CurrentMechCard
-              view={view}
-              mechRules={rules.mechs}
-              editable={editable}
-              open={() => setTab('mech')}
-            />
+            {card}
+            <div className='opacity-60 max-w-xs'>No mech assigned — manage in the Mech tab.</div>
           </section> : null
         }
 
@@ -141,6 +146,12 @@ function SheetView( { view, editable=EditMode.Live }: {
     return pilot
   }
 
+  // The pilot sheet with the mech play panel below it.
+  const pilotPage = <>
+    {pilot}
+    {mechId !== undefined ? <MechPanel view={view} editable={mechEditable}/> : null}
+  </>
+
   return (
     <div className='flex flex-col w-full'>
       <div className='tabs tabs-boxed justify-center m-2'>
@@ -149,9 +160,12 @@ function SheetView( { view, editable=EditMode.Live }: {
           {mechName ? `Mech: ${mechName}` : 'Mech'}
         </button>
       </div>
-      {tab === 'pilot' ? pilot :
+      {tab === 'pilot' ? pilotPage :
         mechId !== undefined ?
-        <MechView view={view} editable={Math.min(editable, readMechEditable(view))}/> :
+        <>
+          <div className='flex justify-center p-4'>{card}</div>
+          <MechView view={view} editable={mechEditable}/>
+        </> :
         <div className='p-4 text-center opacity-60'>No mech assigned. Use Assign... on the Pilot tab, or the Mech menu.</div>
       }
     </div>

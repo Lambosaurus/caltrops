@@ -1,33 +1,24 @@
 // Components
-import Popover from './Popover'
 import MechSection, { TypeTag } from './MechSection'
 import ChassisSilhouette from './ChassisSilhouette'
-import TurnControls from './TurnControls'
-import HitModal from './HitModal'
-import ActivationModal from './ActivationModal'
-import TakeHitPanel from './TakeHitPanel'
 import MechSettingsPanel from './MechSettingsPanel'
-import MechLog from './MechLog'
 import AttachmentCatalogue from './AttachmentCatalogue'
-import EquipmentTable from '../EquipmentTable'
 import ActionModal from '../ActionModal'
-import { statPop, StatKind } from './mechText'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { changeChassis, dropOnCatalogue, dropPart, findChassis, setArmour, unmount, type PartDrag } from '../../lib/mech/loadout'
-import { deriveStats, overheated } from '../../lib/mech/derive'
-import { adjustAmmo, repairAll, setArmourPoints, toggleWound } from '../../lib/mech/damage'
-import { logMech, copyMechLink } from '../../lib/mech/store'
+import { deriveStats } from '../../lib/mech/derive'
+import { copyMechLink } from '../../lib/mech/store'
 import type { Mech, MechRules } from '../../lib/mech/types'
 import type { Rules } from '../../lib/rules'
 
 /*
- * The mech sheet: status bar, slot legend, section grid over the chassis silhouette, and a side column.
+ * The mech management view: chassis, loadout editing and the automation settings. Play lives in MechPanel.
  * `view` is the root view; `editable` is the effective mech edit mode (see SheetView / MainPage).
- * Hits, wound and armour edits, ammo and repair are wired here; activation opens ActivationModal.
+ * Task 3 replaces this with MechManage.
  */
 function MechView({ view, editable }: {
     view: View,
@@ -36,20 +27,10 @@ function MechView({ view, editable }: {
 
   const mech: Mech | undefined = useListener(view, 'mech')
   const rules: Rules | undefined = useListener(view, 'rules')
-  const [hitSection, setHitSection] = useState(null as string | null)
-  const [confirmRepair, setConfirmRepair] = useState(false)
   const [loadout, setLoadout] = useState(false)
   const [newChassis, setNewChassis] = useState(null as string | null)
-  const [activeKey, setActiveKey] = useState(null as string | null)
   const mechRules: MechRules | undefined = rules?.mechs
   const chassis = mech && mechRules ? findChassis(mechRules, mech.chassis) : undefined
-
-  // Closing the activation modal when play rights drop (e.g. a different, read only mech opens).
-  useEffect(() => {
-    if (editable < EditMode.Live) {
-      setActiveKey(null)
-    }
-  }, [editable])
 
   if (!mech) {
     return null
@@ -62,31 +43,16 @@ function MechView({ view, editable }: {
   }
 
   const mv = view.view('mech')
+  // Loadout editing needs full edit rights.
+  const loading = loadout && editable === EditMode.Full
+  const publish = (next: Mech) => view.publish('mech', next)
   const stats = deriveStats(mechRules, mech)
-  const t = mech.turn
-  const hot = overheated(mechRules, mech)
-  const projected = Math.max(0, t.heat + (t.shutdown ? 0 : stats.reactorHeat) - stats.cooling)
-  const heatColor = hot ? 'bg-error' : t.heat > stats.heatMax * 0.7 ? 'bg-warning' : 'bg-primary'
   const warns: string[] = []
   if (!stats.hasReactor) warns.push('No reactor mounted')
   if (!stats.hasCooling) warns.push('No cooling mounted')
 
-  const stat = (kind: StatKind, children: React.ReactNode) =>
-    <Popover content={statPop(mechRules, mech, kind)}>
-      <span className='px-2 border border-base-300 whitespace-nowrap'>{children}</span>
-    </Popover>
-
-  // Loadout editing needs full edit rights; while it is on, play controls are off.
-  const loading = loadout && editable === EditMode.Full
-  const playMode = loading ? EditMode.None : editable
-  const play = playMode >= EditMode.Live
-  const publish = (next: Mech) => view.publish('mech', next)
-
-  const stowageContainer = { name: 'Stowage', size: stats.stowage, tags: ['handheld', 'custom'] }
-
   return <div className='flex flex-col gap-2 p-4 w-full font-mono text-xs'>
 
-    {/* Status bar */}
     <div className='flex flex-wrap items-center gap-2 bg-base-200 p-2'>
       <span className='px-2 border border-base-300 font-bold'>{mech.name}</span>
       {loading
@@ -99,23 +65,6 @@ function MechView({ view, editable }: {
             {mechRules.chassis.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
           </select>
         : <span className='px-2 border border-base-300'>{chassis.name}</span>}
-      {stat('energy', <>
-        Energy <b>{t.energy}</b>/{stats.energyOut}
-        {stats.capacitor ? <span className='opacity-60'> (+store {stats.capacitor})</span> : null}
-        {' '}<Meter fraction={stats.energyOut ? t.energy / stats.energyOut : 0} color='bg-primary'/>
-      </>)}
-      {stat('heat', <>
-        Heat <b className={hot ? 'text-error' : ''}>{t.heat}</b>/{stats.heatMax}
-        {' '}<Meter fraction={t.heat / (stats.heatMax * 1.5)} color={heatColor} mark={1 / 1.5}/>
-        {' '}<span className='opacity-60'>end of turn → {projected}</span>
-      </>)}
-      {stat('speed', <>Speed {stats.speed}</>)}
-      {stat('evasion', <>Evasion {stats.evasion}</>)}
-      {stat('hand', <>Hand {stats.hand ? '✓' : '✗'}</>)}
-      {t.pilotWounds ? <span className='px-2 border border-error text-error'>Pilot wounds {t.pilotWounds}</span> : null}
-      {t.out ? <span className='badge badge-error rounded-none font-bold'>OUT OF ACTION</span>
-        : t.shutdown ? <span className='badge badge-error rounded-none font-bold'>SHUT DOWN</span>
-        : hot ? <span className='badge badge-error rounded-none font-bold'>OVERHEATED</span> : null}
       <span className='flex-1'/>
       <button className='btn btn-xs btn-outline rounded-none' onClick={() => copyMechLink(mech.id)}>Copy mech link</button>
       {editable === EditMode.Full
@@ -125,11 +74,9 @@ function MechView({ view, editable }: {
         : null}
     </div>
 
-    {loading ? null : <TurnControls view={view} editable={editable}/>}
+    {loading && warns.length ? <div className='border border-error bg-error/10 p-2'>⚠ {warns.join(' · ')}</div> : null}
 
-    {warns.length ? <div className='border border-error bg-error/10 p-2'>⚠ {warns.join(' · ')}</div> : null}
-
-    <div className='flex flex-col lg:flex-row gap-2 items-start'>
+    {loading ? <div className='flex flex-col lg:flex-row gap-2 items-start'>
       <div className='flex-1 min-w-0 w-full'>
 
         {/* Legend */}
@@ -151,57 +98,27 @@ function MechView({ view, editable }: {
                 rules={mechRules}
                 section={section}
                 view={mv}
-                editable={playMode}
-                loadout={loading}
+                editable={EditMode.None}
+                loadout={true}
                 onDropPart={(item, id, start) => publish(dropPart(mechRules, mech, item, id, start))}
                 onUnmount={(id, start) => publish(unmount(mech, id, start))}
                 onDropArmour={(id, name) => publish(setArmour(mechRules, mech, id, name))}
                 onClearArmour={id => publish(setArmour(mechRules, mech, id, null))}
-                onHit={setHitSection}
-                onActivate={key => { setActiveKey(key) }}
-                onWound={(id, i) => publish(toggleWound(mechRules, mech, id, i))}
-                onArmour={(id, points) => {
-                  const cur = mech.sections[id]?.armour?.points
-                  // Clicking the current top pip lowers it by one, so the last pip can be cleared.
-                  publish(setArmourPoints(mechRules, mech, id, cur === points ? points - 1 : points))
-                }}
-                onAmmo={(key, delta) => publish(adjustAmmo(mechRules, mech, key, delta))}
+                onHit={() => {}}
+                onActivate={() => {}}
               />
             )}
           </div>
         </div>
       </div>
 
-      {/* Side column */}
       <div className='flex flex-col gap-2 w-full lg:w-80 flex-none'>
-        {loading
-          ? <AttachmentCatalogue rules={mechRules} onRemove={(item: PartDrag) => publish(dropOnCatalogue(mech, item))}/>
-          : null}
-        <div className='bg-base-200 border border-base-300 p-2 overflow-x-auto'>
-          <Popover content={statPop(mechRules, mech, 'stowage')}>
-            <h4 className='font-bold text-accent mb-1'>Stowage {(mech.equipment.Stowage ?? []).length}/{stats.stowage}</h4>
-          </Popover>
-          <EquipmentTable
-            equipment={rules!.equipment}
-            container={stowageContainer}
-            view={view.view('mech/equipment/Stowage')}
-            editable={editable}
-          />
-        </div>
-        {loading ? null : <>
-          <TakeHitPanel view={view} editable={editable}/>
-          <MechSettingsPanel view={view} editable={editable}/>
-          <div className='bg-base-200 border border-base-300 p-2'>
-            <h4 className='font-bold text-accent mb-1'>Between missions</h4>
-            <button className='btn btn-xs btn-outline' disabled={!play} onClick={() => setConfirmRepair(true)}>Repair &amp; rearm</button>
-          </div>
-        </>}
-        <MechLog view={view}/>
+        <AttachmentCatalogue rules={mechRules} onRemove={(item: PartDrag) => publish(dropOnCatalogue(mech, item))}/>
       </div>
-    </div>
+    </div> : <div className='w-full lg:w-80'>
+      <MechSettingsPanel view={view} editable={editable}/>
+    </div>}
 
-    <HitModal view={view} sectionId={hitSection} close={() => setHitSection(null)}/>
-    {play && rules ? <ActivationModal rules={rules} view={view} mountKey={activeKey} close={() => setActiveKey(null)}/> : null}
     <ActionModal
       open={newChassis !== null}
       close={() => setNewChassis(null)}
@@ -211,35 +128,13 @@ function MechView({ view, editable }: {
         { name: 'Change chassis', type: 'primary', callback: () => {
           if (newChassis && rules) {
             publish(changeChassis(rules, mech, newChassis))
-            logMech(view, [`Chassis changed to ${newChassis}; loadout cleared.`])
           }
         } },
       ]}
     >
       <p className='my-4'>Change chassis to {newChassis}? The current loadout, armour and turn state are cleared. Stowage is kept.</p>
     </ActionModal>
-    <ActionModal
-      open={confirmRepair}
-      close={() => setConfirmRepair(false)}
-      title='Repair & rearm'
-      actions={[
-        { name: 'Cancel', callback: () => {} },
-        { name: 'Repair & rearm', type: 'primary', callback: () => {
-          publish(repairAll(mechRules, mech))
-          logMech(view, ['Repaired, re-armoured and rearmed.'])
-        } },
-      ]}
-    >
-      <p className='my-4'>Clear all wounds and pilot wounds, restore armour, ammo and charges?</p>
-    </ActionModal>
   </div>
-}
-
-function Meter({ fraction, color, mark }: { fraction: number, color: string, mark?: number }): JSX.Element {
-  return <span className='inline-block w-24 h-2 bg-base-300 align-middle relative'>
-    <i className={`absolute left-0 top-0 bottom-0 ${color}`} style={{ width: `${Math.max(0, Math.min(1, fraction)) * 100}%` }}/>
-    {mark !== undefined ? <b className='absolute -top-0.5 -bottom-0.5 w-0.5 bg-white' style={{ left: `${mark * 100}%` }}/> : null}
-  </span>
 }
 
 export default MechView

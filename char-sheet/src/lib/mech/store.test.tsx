@@ -1,6 +1,6 @@
 import { EditMode } from '../util'
 import { ObjectService } from '../objectservice'
-import { capLog, readMechEditable, logMech, mechEditMode, openMech, leaveMechMode } from './store'
+import { readMechEditable, mechEditMode, openMech, leaveMechMode } from './store'
 import { newMech } from './loadout'
 import { FIXTURE_RULES } from './fixture'
 import { DEFAULT_RULES } from '../rules'
@@ -26,27 +26,6 @@ describe('mechEditMode', () => {
   })
 })
 
-describe('capLog / logMech', () => {
-  test('prepends in order', () => {
-    expect(capLog(['c'], ['a', 'b'])).toEqual(['a', 'b', 'c'])
-  })
-  test('caps at 100 keeping newest', () => {
-    const old = Array.from({ length: 100 }, (_, i) => `old${i}`)
-    const result = capLog(old, ['new1', 'new2'])
-    expect(result).toHaveLength(100)
-    expect(result.slice(0, 2)).toEqual(['new1', 'new2'])
-    expect(result[99]).toBe('old97')
-  })
-  test('logMech publishes to the view and ignores empty', () => {
-    const view = new ObjectService().view('')
-    logMech(view, [])
-    expect(view.read('mechLog')).toBeUndefined()
-    logMech(view, ['x'])
-    logMech(view, ['y'])
-    expect(view.read('mechLog')).toEqual(['y', 'x'])
-  })
-})
-
 describe('openMech', () => {
   const chassis = FIXTURE_RULES.chassis[0].name
   function setup(mech: any, token: string | null = null, mode = 'sheet') {
@@ -58,13 +37,12 @@ describe('openMech', () => {
     view.publish('mode', mode)
     return view
   }
-  test('publishes loaded mech, log and editability', async () => {
+  test('publishes loaded mech and editability', async () => {
     const m = newMech(RULES, chassis, 'Mule')
     const view = setup(m)
     await openMech(view, m.id)
     expect(view.read('mech/name')).toBe('Mule')
     expect(view.read('mechEditable')).toBe(EditMode.Full)
-    expect(view.read('mechLog')).toEqual([])
     expect(view.read('mechFresh')).toBe(true)
   })
   test('normalises a saved mech against its chassis', async () => {

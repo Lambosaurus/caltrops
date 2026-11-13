@@ -274,7 +274,6 @@ function MenuRibbon( {editable, setEditable, view, children}: {
       rules={rules}
       setMech={m => {
         view.publish('mechEditable', EditMode.Full)
-        view.publish('mechLog', [])
         view.publish('mech', m)
         if (mode !== 'mech') {
           view.publish('sheet/mech', m.id)

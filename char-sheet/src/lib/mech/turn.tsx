@@ -80,7 +80,7 @@ function heatAfterAction(
   const rolled = roller(dice)
   const hits = rolled.filter(x => x === 4).length
   events.push(`  Overheated action: rolled ${dice}d4 [${rolled.join(' ')}] → ${plural(hits, 'wound')}.`)
-  notices.push(`Overheated: rolled ${dice}d4 self-damage on ${partName} → ${plural(hits, 'wound')} applied.`)
+  if (hits > 0) notices.push(`Overheated: rolled ${dice}d4 self-damage on ${partName} → ${plural(hits, 'wound')} applied.`)
   let left = hits
   if (actor) {
     const s = mech.sections[actor.sectionId]

@@ -15,7 +15,6 @@ function setup(editable: EditMode, tweak?: (m: any) => void) {
   const view = new ObjectService().view('')
   view.publish('rules', rules)
   view.publish('mech', mech)
-  view.publish('mechLog', [])
   render(withDnd(<MechView view={view} editable={editable}/>))
   return view
 }
@@ -30,7 +29,7 @@ test('loadout mode shows the catalogue and hides play controls', () => {
   expect(screen.queryByTestId('mech-catalogue')).toBeNull()
   fireEvent.click(screen.getByText('Edit loadout'))
   expect(screen.getByTestId('mech-catalogue')).toBeTruthy()
-  expect(screen.queryByRole('button', { name: 'Repair & rearm' })).toBeNull()
+  expect(screen.getAllByText('Hit').every(b => (b as HTMLButtonElement).disabled)).toBe(true)
 })
 
 test('x removes the reactor and the warning appears', () => {

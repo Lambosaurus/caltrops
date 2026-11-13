@@ -6,7 +6,6 @@ import { alertError, alertSuccess, alertWarning } from '../alerts'
 import { loadMech, normaliseMech } from './loadout'
 
 export const MECH_DOC_TYPE = 'mech'
-export const MECH_LOG_LIMIT = 100
 
 /** Owners and unowned mechs get full edit rights (play and loadout); anyone else is read only. */
 export function mechEditMode(owner: string | null | undefined, username: string | null | undefined): EditMode {
@@ -16,24 +15,12 @@ export function mechEditMode(owner: string | null | undefined, username: string 
   return EditMode.None
 }
 
-/** Prepend events (kept in the order given) to the log, keeping at most `limit` entries. */
-export function capLog(log: string[] | undefined, events: string[], limit: number = MECH_LOG_LIMIT): string[] {
-  return [...events, ...(log ?? [])].slice(0, limit)
-}
-
 /**
  * ObjectService.read returns undefined for falsy values, so EditMode.None (0) reads back as undefined.
  * Always read mechEditable through this helper (or use `?? EditMode.None`).
  */
 export function readMechEditable(view: View): EditMode {
   return view.read('mechEditable') ?? EditMode.None
-}
-
-export function logMech(view: View, events: string[]): void {
-  if (!events.length) {
-    return
-  }
-  view.publish('mechLog', capLog(view.read('mechLog'), events))
 }
 
 // Guards against an older, slower read overwriting a newer one.
@@ -77,7 +64,6 @@ export async function openMech(view: View, id: string): Promise<void> {
   }
   // Publish editability first so auto save never sees a stale value for the new mech.
   view.publish('mechEditable', editable)
-  view.publish('mechLog', [])
   // Tells MainPage this publish is a load, not an edit, so it must not trigger an auto save.
   view.publish('mechFresh', true)
   view.publish('mech', mech)

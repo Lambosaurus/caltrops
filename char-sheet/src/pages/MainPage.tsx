@@ -7,6 +7,7 @@ import MenuRibbon from '../components/MenuRibbon'
 import SheetView from '../components/SheetView'
 import AlertGroup from '../components/AlertGroup'
 import MechView from '../components/mech/MechView'
+import MechPanel from '../components/mech/MechPanel'
 
 // Internal imports
 import { EditMode, setTheme } from '../lib/util'
@@ -217,7 +218,6 @@ function MainPage(): JSX.Element {
 
     const mechId = new URLSearchParams(window.location.search).get("mech")
     view.publish('mode', mechId ? 'mech' : 'sheet')
-    view.publish('mechLog', [])
     view.publish('mechEditable', EditMode.None)
 
     view.publish('token', loadToken())
@@ -267,7 +267,7 @@ function MainPage(): JSX.Element {
         {
           mode === 'mech' ?
           (
-            mechId !== undefined ? <MechView view={view} editable={mechEditable}/> : <LoadingSpinner size={100}/>
+            mechId !== undefined ? <><MechPanel view={view} editable={mechEditable}/><MechView view={view} editable={mechEditable}/></> : <LoadingSpinner size={100}/>
           ) :
           sheetId !== undefined ?
           <SheetView
