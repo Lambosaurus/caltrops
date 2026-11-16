@@ -7,19 +7,13 @@ function caltrops_launch() {
 async function caltrops_recieve(data) {
   // data.text: string
   // data.dice: number
-  // data.location: boolean (optional) - also roll a d12 hit-location die (mech attacks)
-
+  
   let rollstring = `${data.dice}d4cs=4`
 
   let roll = await new Roll(rollstring).evaluate();
   //game.dice3d?.showForRoll(roll);
 
   await roll.toMessage( { flavor: data.text } )
-
-  if (data.location) {
-    let location = await new Roll("1d12").evaluate();
-    await location.toMessage( { flavor: `${data.text} · Hit location (d12)` } )
-  }
 }
 
 Hooks.once('ready', () => {

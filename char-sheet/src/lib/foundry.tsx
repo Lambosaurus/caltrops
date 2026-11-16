@@ -6,21 +6,15 @@ function isPresent(): boolean {
     return window.opener != null
 }
 
-/**
- * Sends a roll to the Foundry module. `detail` is appended to the chat flavour text; `location` asks the module to
- * also roll a d12 hit-location die (modules before 1.0.5 ignore it and roll the d4s only).
- */
-function submitRoll(roll: RollInfo, opts: { detail?: string, location?: boolean } = {}): void {
+/** Sends a roll to the Foundry module, which rolls the d4s. `detail` is appended to the chat flavour text. */
+function submitRoll(roll: RollInfo, opts: { detail?: string } = {}): void {
     let text = caltrops.rollDescribe(roll)
     if (opts.detail) {
         text = `${text} · ${opts.detail}`
     }
-    const body: { dice: number, text: string, location?: boolean } = {
+    const body = {
         dice: Math.max(0, caltrops.rollDiceCount(roll)),
         text: text,
-    }
-    if (opts.location) {
-        body.location = true
     }
     window.opener.postMessage(body, "*")
 }

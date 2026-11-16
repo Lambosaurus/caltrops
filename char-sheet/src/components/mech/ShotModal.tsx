@@ -42,8 +42,8 @@ function ShotModal({ rules, view, target, close }: {
   const [counts, setCounts] = useState({} as AttackCounts)
   const [band, setBand] = useState(null as RangeBand | null)
   const [bonus, setBonus] = useState(0)
-  // dice null: the roll went to the VTT, which rolls the d4s and the d12 itself.
-  const [done, setDone] = useState(null as { dice: number[] | null, d12: number | null, lines: string[], tags: string[] } | null)
+  // dice null: the d4s were rolled in the VTT. The d12 is always rolled here and, for the VTT, sent in the chat line.
+  const [done, setDone] = useState(null as { dice: number[] | null, d12: number, lines: string[], tags: string[] } | null)
 
   useEffect(() => {
     setCounts(target?.key ? { [target.key]: 1 } : {})
@@ -93,14 +93,15 @@ function ShotModal({ rules, view, target, close }: {
     const roll = { ...base, bonus: (base.bonus ?? 0) + bonus }
     const tags = shotTags(mr, res.parts)
     const lines = res.parts.length < parts.length ? [`Only ${res.parts.length} of ${parts.length} activations could fire.`] : []
+    const d12 = rollD12()
     if (toVtt && foundry.isPresent()) {
       const weapons = Array.from(new Set(res.parts.map(p => p.name))).join(', ')
       const what = kind === 'shot' ? `Ranged shot at ${shotBand}` : 'Melee strike'
-      foundry.submitRoll(roll, { detail: [what, weapons, tags.join(', ')].filter(Boolean).join(' · '), location: true })
-      setDone({ dice: null, d12: null, lines, tags })
+      foundry.submitRoll(roll, { detail: [what, weapons, tags.join(', '), `Hit location d12: ${d12}`].filter(Boolean).join(' · ') })
+      setDone({ dice: null, d12, lines, tags })
       return
     }
-    setDone({ dice: caltrops.rollDice(roll), d12: rollD12(), lines, tags })
+    setDone({ dice: caltrops.rollDice(roll), d12, lines, tags })
   }
 
   const actions: ModalActionInfo[] = done
@@ -119,8 +120,8 @@ function ShotModal({ rules, view, target, close }: {
       {done.dice ? <>
         <DiceResult dice={done.dice}/>
         <div className='text-center font-bold'>{hits} success{hits === 1 ? '' : 'es'}</div>
-        <div className='text-center font-bold text-lg mt-2' data-testid='shot-d12'>Location d12: {done.d12}</div>
-      </> : <div className='text-center font-bold' data-testid='shot-vtt'>Sent to the VTT: the d4s and the d12 location are rolled there.</div>}
+      </> : <div className='text-center font-bold' data-testid='shot-vtt'>Sent to the VTT: the d4s are rolled there, with this d12 in the chat line.</div>}
+      <div className='text-center font-bold text-lg mt-2' data-testid='shot-d12'>Location d12: {done.d12}</div>
       {done.tags.length ? <div className='text-center opacity-70 mt-1'>{done.tags.join(', ')}</div> : null}
       {done.lines.map(l => <div key={l} className='text-center text-warning'>{l}</div>)}
     </> : <div className='my-2 flex flex-col gap-1'>
