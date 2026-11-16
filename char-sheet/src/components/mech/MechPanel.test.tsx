@@ -121,7 +121,7 @@ describe('Pilot tab', () => {
     expect(screen.queryByText(/Repair & rearm/)).toBeNull()
   })
 
-  test('mech widget sits in the pilot container beside the Equipment column; Stowage is in the Equipment column', () => {
+  test('mech widget sits in the pilot container just before the Equipment column; Stowage is in the Equipment column', () => {
     const { container } = sheet(scrapLancerRuleset, true)
     const widget = screen.getByText(/^Sprint/).closest('section')!
     expect(widget.className).toContain('w-[62rem]')
@@ -130,7 +130,7 @@ describe('Pilot tab', () => {
     const equipmentColumn = stowageHeader.closest('section')!
     expect(equipmentColumn).not.toBe(widget)
     expect(equipmentColumn.parentElement).toBe(widget.parentElement)
-    expect(equipmentColumn.nextElementSibling).toBe(widget)
+    expect(widget.nextElementSibling).toBe(equipmentColumn)
     expect(widget.contains(stowageHeader)).toBe(false)
     expect(equipmentColumn.querySelectorAll('table').length).toBe(scrapLancerRuleset.containers.length + 1)
     expect(container.querySelectorAll('.w-full > .table').length).toBeGreaterThan(0)

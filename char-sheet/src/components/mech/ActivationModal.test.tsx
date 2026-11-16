@@ -20,14 +20,44 @@ function setup(mode: 'sheet' | 'mech' = 'sheet') {
   return { view, energy: mech.turn.energy }
 }
 
-test('Autocannon shows 8 dice (default Mid, no penalty) and confirming pays energy and rolls', () => {
+test('clicking a weapon opens the attack dialog with it selected; Fire pays and rolls once with a d12', () => {
   const { view, energy } = setup()
   fireEvent.click(screen.getAllByText(/^2E \+2H/)[0])
+  expect(screen.getByRole('heading', { name: 'Ranged shot' })).toBeTruthy()
+  expect(screen.getByTestId('count-larm:1').textContent).toBe('1')
   expect(view.read('mech').turn.energy).toBe(energy)
-  fireEvent.click(screen.getByText('Roll 8 dice & activate'))
+  // Precision 3 + Gunnery 2 + Autocannon 3
+  fireEvent.click(screen.getByText('Fire: 8d4 + d12'))
   expect(view.read('mech').turn.energy).toBe(energy - 2)
+  expect(view.read('mech').turn.fired.shot).toBe(true)
   expect(document.querySelectorAll('svg polygon').length).toBeGreaterThanOrEqual(8)
-  expect(screen.getByText('Done')).toBeTruthy()
+  const d12 = Number(/Location d12: (\d+)/.exec(screen.getByTestId('shot-d12').textContent!)![1])
+  expect(d12).toBeGreaterThanOrEqual(1)
+  expect(d12).toBeLessThanOrEqual(12)
+})
+
+test('the attack dialog takes counts per weapon and one bonus', () => {
+  const { view, energy } = setup()
+  fireEvent.click(screen.getByText('Attack'))
+  fireEvent.click(screen.getByText('Short', { selector: 'button' }))
+  fireEvent.click(screen.getByLabelText('Autocannon more'))
+  fireEvent.click(screen.getByLabelText('Machine Gun more'))
+  fireEvent.click(screen.getByLabelText('Machine Gun more'))
+  expect(screen.getByTestId('count-rarm:1').textContent).toBe('2')
+  expect((screen.getByLabelText('Machine Gun more') as HTMLButtonElement).disabled).toBe(true) // Repeating 2
+  fireEvent.change(screen.getByLabelText('Bonus'), { target: { value: '-2' } })
+  // Reflex 0 + Gunnery 2 + Autocannon 3 − 1 (closer band) + Machine Gun 2 × 2 − 2
+  fireEvent.click(screen.getByText('Fire: 6d4 + d12'))
+  expect(view.read('mech').turn.energy).toBe(energy - 4)
+})
+
+test('melee goes through Strike, separate from the shot', () => {
+  const { view } = setup()
+  fireEvent.click(screen.getByText('Strike'))
+  expect(screen.getByRole('heading', { name: 'Melee strike' })).toBeTruthy()
+  fireEvent.click(screen.getByLabelText('Breaching Hammer more'))
+  fireEvent.click(screen.getByText(/^Fire: \d+d4 \+ d12$/))
+  expect(view.read('mech').turn.fired).toEqual({ strike: true })
 })
 
 test('Jump Jets show only Activate', () => {
@@ -45,33 +75,13 @@ test('Jump Jets show only Activate', () => {
   expect(screen.queryByRole('heading', { name: 'Jump Jets' })).toBeNull()
 })
 
-test('mech mode uses editable scores defaulting to 0', () => {
-  setup('mech')
-  fireEvent.click(screen.getAllByText(/^2E \+2H/)[0])
-  expect(screen.getByText(/Roll \d+ dice & activate/)).toBeTruthy()
-})
-
-function openByHeading(name: string, pattern: RegExp) {
-  for (const b of screen.getAllByText(pattern)) {
+test('Sensor Array still rolls on its own', () => {
+  setup()
+  fireEvent.click(screen.getAllByText(/^1E \+1H/).find(b => {
     fireEvent.click(b)
-    if (screen.queryByRole('heading', { name })) return
-    fireEvent.click(screen.getAllByText('Cancel').slice(-1)[0])
-  }
-  throw new Error(`no activation button opened ${name}`)
-}
-
-test('choosing Short for the Autocannon costs one die', () => {
-  setup()
-  openByHeading('Autocannon', /^2E \+2H/)
-  expect(screen.getByText('Roll 8 dice & activate')).toBeTruthy()
-  fireEvent.click(screen.getByText('Short', { selector: 'button' }))
-  expect(screen.getByText('Roll 7 dice & activate')).toBeTruthy()
-})
-
-test('Machine Gun at Mid is blocked beyond Short range', () => {
-  setup()
-  openByHeading('Machine Gun', /^1E \+1H/)
-  fireEvent.click(screen.getByText('Mid', { selector: 'button' }))
-  expect(screen.getByText('Target is beyond Short range.')).toBeTruthy()
-  expect((screen.getByText(/dice & activate/) as HTMLButtonElement).disabled).toBe(true)
+    const ok = !!screen.queryByRole('heading', { name: /Sensor Array/ })
+    if (!ok) fireEvent.click(screen.getAllByText('Cancel').slice(-1)[0])
+    return ok
+  }) ?? document.body)
+  expect(screen.getByText(/Roll \d+ dice & activate/)).toBeTruthy()
 })

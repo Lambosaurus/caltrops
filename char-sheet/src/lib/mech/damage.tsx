@@ -11,7 +11,7 @@ export function cloneMech(mech: Mech): Mech {
   for (const [id, s] of Object.entries(mech.sections)) {
     sections[id] = {
       armour: s.armour ? { ...s.armour } : null,
-      mounts: s.mounts.map(m => ({ ...m })),
+      mounts: s.mounts.map(m => ({ ...m, ...(m.state ? { state: { ...m.state } } : {}) })),
       wounds: [...s.wounds],
     }
   }
@@ -39,9 +39,11 @@ export function markOut(mech: Mech, notices: string[]) {
   notices.push('Mech is out of action.')
 }
 
+/** Cook-off dice: an ammo bin's rounds left × volatility, or a Volatile (X) part's X until it has cooked off once. */
 export function cookoffDice(rules: MechRules, mount: Mount): number {
-  const bin = findAttachment(rules, mount.name)?.bin
-  const volatility = rules.ammo.find(a => a.name === bin)?.volatility ?? 1
+  const att = findAttachment(rules, mount.name)
+  if (!att?.bin) return att?.volatile && !mount.state?.cooked ? att.volatile : 0
+  const volatility = rules.ammo.find(a => a.name === att.bin)?.volatility ?? 1
   return Math.max(0, mount.ammo ?? 0) * volatility
 }
 
@@ -93,20 +95,22 @@ function apply(rules: MechRules, mech: Mech, startId: string, count: number, ign
 function checkCookoffs(rules: MechRules, mech: Mech, sectionId: string, opts: Opts, events: string[], notices: string[]) {
   for (const m of mech.sections[sectionId].mounts) {
     const att = findAttachment(rules, m.name)
-    if (!att?.bin || !(m.ammo && m.ammo > 0) || !mountDisabled(rules, mech, sectionId, m)) continue
     const dice = cookoffDice(rules, m)
+    if (!att || !dice || !mountDisabled(rules, mech, sectionId, m)) continue
+    const what = att.bin ? `${m.ammo} rounds × ${dice / (m.ammo ?? 1)}` : `Volatile (${att.volatile})`
+    // A Volatile part cooks off once; repairing it re-arms it (see toggleWound).
+    if (!att.bin) m.state = { ...(m.state ?? {}), cooked: true }
     if (!opts.cookoff) {
-      events.push(`  ${m.name} disabled with ${m.ammo} rounds: cook-off is ${dice}d4 to this section, ignoring armour. Apply by hand.`)
+      events.push(`  ${m.name} disabled${att.bin ? ` with ${m.ammo} rounds` : ''}: cook-off is ${dice}d4 to this section, ignoring armour. Apply by hand.`)
       notices.push(`${m.name} cook-off: roll ${dice}d4 on this section, ignoring armour. Apply by hand.`)
       continue
     }
-    const vol = dice / m.ammo
     const rolled = opts.roller(dice)
     const k = rolled.filter(x => x === 4).length
-    const line = `COOK-OFF: ${m.name}, ${m.ammo} rounds × ${vol} = ${dice}d4 [${rolled.join(' ')}] → ${plural(k, 'wound')}, ignoring armour.`
+    const line = `COOK-OFF: ${m.name}, ${what} = ${dice}d4 [${rolled.join(' ')}] → ${plural(k, 'wound')}, ignoring armour.`
     events.push(`  ${line}`)
     notices.push(line)
-    m.ammo = 0
+    if (att.bin) m.ammo = 0
     if (k) apply(rules, mech, sectionId, k, true, opts, events, notices)
   }
 }
@@ -144,7 +148,12 @@ export function markWounds(rules: MechRules, mech: Mech, sectionId: string, coun
 export function toggleWound(rules: MechRules, mech: Mech, sectionId: string, slot: number): Mech {
   const s = mech.sections[sectionId]
   if (!s || slot < 0 || slot >= s.wounds.length) return mech
-  const next = withSection(mech, sectionId, sec => ({ ...sec, wounds: sec.wounds.map((w, i) => (i === slot ? !w : w)) }))
+  let next = withSection(mech, sectionId, sec => ({ ...sec, wounds: sec.wounds.map((w, i) => (i === slot ? !w : w)) }))
+  // A repaired Volatile part can cook off again.
+  next = withSection(next, sectionId, sec => ({
+    ...sec,
+    mounts: sec.mounts.map(m => (m.state?.cooked && !mountDisabled(rules, next, sectionId, m) ? { ...m, state: { ...m.state, cooked: false } } : m)),
+  }))
   return { ...next, turn: { ...next.turn, out: coreDestroyed(rules, next) } }
 }
 

@@ -1,7 +1,7 @@
 // Pure popover text for the mech sheet. Components render these; nothing here touches React.
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
-import { aimCost, deriveStats, hitLabel, mountDisabled, sectionDestroyed, slotsOf } from '../../lib/mech/derive'
-import { activationBlocker } from '../../lib/mech/turn'
+import { aimCost, deriveStats, hitLabel, mountDisabled, sectionDestroyed, slotsOf, turnEnergy } from '../../lib/mech/derive'
+import { activationBlocker, isWeapon, shotKindOf, SHOT_LABEL } from '../../lib/mech/turn'
 import type { ChassisSection, Mech, MechAttachment, MechRules, Mount } from '../../lib/mech/types'
 
 export interface PopText { title: string, sub?: string, lines: string[] }
@@ -20,11 +20,13 @@ export function costText(att: MechAttachment): string {
 /** Passive value shown in place of an action button, or null if the part has none. */
 export function passiveText(att: MechAttachment): string | null {
   if (att.reactor) return `+${att.reactor.energy}E +${att.reactor.heat}H`
-  if (att.cooling) return `−${att.cooling}H`
+  if (att.cooling) return `−${att.cooling}H${att.upkeep ? ` −${att.upkeep}E` : ''}`
   if (att.capacitor) return `store ${att.capacitor}`
   if (att.heatSink) return `+${att.heatSink} max`
   if (att.stowage) return `+${att.stowage} stow`
   if (att.hand) return 'Hand'
+  // Other passive parts (rangefinders, meshes): their first real tag.
+  if (att.energy === undefined && att.tags) return att.tags.split(',').map(x => x.trim()).find(x => x !== 'Passive') ?? null
   return null
 }
 
@@ -33,19 +35,38 @@ export const binCapacity = (rules: MechRules, att: MechAttachment): number =>
 
 export function rollText(att: MechAttachment, rules: MechRules): string {
   if (!att.roll) return att.effect ?? ''
+  if (isWeapon(att)) return `adds ${signed(att.roll.bonus ?? 0)} dice${att.repeat ? ' per activation' : ''} to the ${SHOT_LABEL[shotKindOf(att)]}`
   const aspect = att.roll.aspect ?? (att.range ? rules.rangeAspects[att.range === 'Melee' ? 'Short' : att.range] : undefined)
-  return `${att.effect ? att.effect + ': ' : ''}${aspect ? aspect + ' + ' : ''}${att.roll.skill}${att.roll.bonus ? ` +${att.roll.bonus}` : ''}`
+  return `${att.effect ? att.effect + ': ' : ''}${aspect ? aspect + ' + ' : ''}${att.roll.skill}${att.roll.bonus ? ` ${signed(att.roll.bonus)}` : ''}`
+}
+
+/** The rule for each of a part's tags that the ruleset defines, as 'Tag: rule'. */
+export function tagRules(rules: MechRules, tags: string | undefined): string[] {
+  if (!tags || !rules.tags) return []
+  const out: string[] = []
+  for (const raw of tags.split(',')) {
+    const tag = raw.trim().replace(/ \(while it has points\)$/, '')
+    const base = tag.replace(/ \(.*\)$/, '').replace(/ vs \w+$/, '')
+    const rule = rules.tags[base]
+    if (rule && !out.some(l => l.startsWith(base + ':') || l.startsWith(tag + ':'))) out.push(`${tag}: ${rule}`)
+  }
+  return out
 }
 
 /** Stat lines for an attachment (catalogue style, no mount state). */
 export function attachmentStats(rules: MechRules, att: MechAttachment): string[] {
   const L: string[] = []
   const size = att.size ?? 1
+  const make = [att.kind, att.tier, att.price ? `${att.price.toLocaleString()} Solari` : ''].filter(Boolean).join(' · ')
+  if (make) L.push(make)
   L.push(att.type === 'Armour' ? `Armour · ${att.armour ?? 0} points`
     : `Size ${size} · ${att.type === 'Generic' ? 'Generic: fits any slot' : `${att.type} slot${size > 1 ? 's' : ''}`}${size > 1 ? ' (consecutive)' : ''}`)
   if (att.reactor) L.push(`Passive: +${att.reactor.energy} energy every turn, +${att.reactor.heat} heat at end of turn.`)
-  if (att.cooling) L.push(`Passive: −${att.cooling} heat at end of turn.`)
-  if (att.capacitor) L.push(`Passive: keeps up to ${att.capacitor} unspent energy into next turn.`)
+  if (att.cooling) L.push(`Passive: −${att.cooling} heat at end of turn.${att.upkeep ? ` Its pump draws ${att.upkeep} energy every turn.` : ''}`)
+  if (att.capacitor) L.push(`Passive: keeps up to ${att.capacitor} unspent energy into next turn${att.capacitorHeat ? `; +${att.capacitorHeat} heat on a turn that draws it` : ''}.`)
+  if (att.heavy) L.push(`Heavy: −${att.heavy} Speed while fitted.`)
+  if (att.volatile) L.push(`Volatile: when disabled, ${att.volatile}d4 to this section, ignoring armour.`)
+  if (att.selfRepair) L.push('Self-repairing: regains 1 point each New turn.')
   if (att.hand) L.push('Passive: this arm provides Hand.')
   if (att.heatSink) L.push(`Passive: +${att.heatSink} Heat Max while working.`)
   if (att.stowage) L.push(`Passive: +${att.stowage} stowage slots for pilot-scale gear.`)
@@ -56,8 +77,8 @@ export function attachmentStats(rules: MechRules, att: MechAttachment): string[]
   }
   if (att.energy !== undefined) {
     let c = `Activate: ${att.energy} energy, ${signed(att.heat ?? 0)} heat`
-    if (att.ammo) c += `, 1 ${att.ammo} ammo`
-    if (att.charges) c += `, 1 charge (of ${att.charges})`
+    if (att.ammo) c += `, ${att.ammoPer ?? 1} ${att.ammo} ammo`
+    if (att.charges) c += `, 1 charge (of ${att.charges}, refilled ${att.recharge === 'scene' ? 'each scene' : 'at a haven'})`
     L.push(c + '.')
     L.push(att.repeat ? `Repeating ${att.repeat}: up to ${att.repeat}× per turn.` : 'Once per turn.')
   }
@@ -66,6 +87,7 @@ export function attachmentStats(rules: MechRules, att: MechAttachment): string[]
   else if (att.effect) L.push(`Effect: ${att.effect}`)
   if (att.armour) L.push('Each point absorbs one wound to this section. Refilled only at a haven.')
   if (att.tags) L.push(`Tags: ${att.tags}`)
+  L.push(...tagRules(rules, att.tags))
   if (att.description) L.push(att.description)
   return L
 }
@@ -166,8 +188,9 @@ export function statPop(rules: MechRules, mech: Mech, kind: StatKind): PopText {
   const chassis = findChassis(rules, mech.chassis)
   switch (kind) {
     case 'energy':
-      return { title: `Energy ${t.energy}/${d.energyOut}`, lines: [
-        'Refilled to reactor output on each New turn. Spend it on activations and sprinting.',
+      return { title: `Energy ${t.energy}/${turnEnergy(d)}`, lines: [
+        `Refilled on each New turn: reactor ${d.energyOut}${d.upkeep ? ` − ${d.upkeep} cooler upkeep` : ''} = ${turnEnergy(d)}. Spend it on activations and sprinting.`,
+        'Use − / + or Adjust… to set it by hand.',
         `Unspent energy is lost${d.capacitor ? `, except up to ${d.capacitor} kept by capacitors` : ''}.`] }
     case 'heat': {
       const proj = t.shutdown ? t.heat : Math.max(0, t.heat + d.reactorHeat - d.cooling)
@@ -178,11 +201,13 @@ export function statPop(rules: MechRules, mech: Mech, kind: StatKind): PopText {
           : `Activations add heat now. At end of turn: ${t.heat} + ${d.reactorHeat} reactor − ${d.cooling} cooling = ${proj}.`]
       if (proj > d.heatMax) lines.push(`That is over Heat Max by ${proj - d.heatMax}: you will start next turn overheated.`)
       lines.push('Above Heat Max you are Overheated: every further action rolls d4s equal to the overage after it; each 4 wounds that part.')
+      lines.push('Use − / + or Adjust… for heat damage, water and other GM rulings.')
       return { title: `Heat ${t.heat}/${d.heatMax}`, lines }
     }
     case 'speed':
       return { title: `Speed ${d.speed}`, lines: [
         ...(chassis?.sections ?? []).filter(s => s.provides?.speed).map(s => `${s.name}: ${sectionDestroyed(mech, s.id) ? 'destroyed' : s.provides?.speed}`),
+        ...(d.heavy ? [`Heavy parts: −${d.heavy}`] : []),
         `Sum of surviving legs/treads. Moving is free; sprint for ${rules.sprint.energy} energy, +${rules.sprint.heat} heat.`] }
     case 'evasion':
       return { title: `Evasion ${d.evasion}`, lines: ['Sum of surviving legs/treads.'] }

@@ -23,7 +23,7 @@ const BANDS: RangeBand[] = ['Short', 'Mid', 'Long']
 const signed = (n: number) => (n >= 0 ? '+' : '') + n
 
 /**
- * One modal per activation. Costs are paid only when the user confirms; then the activation roll (if any)
+ * One modal per non-weapon activation (weapons use the attack dialog). Costs are paid only when the user confirms; then the activation roll (if any)
  * is made and shown. `mountKey` null means closed.
  */
 function ActivationModal({ rules, view, mountKey, close }: {
@@ -66,7 +66,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
 
   const mechMode = mode === 'mech'
   const ranged = !!att.range && att.range !== 'Melee'
-  // Defaults to the weapon's own band (no penalty); Melee is fixed to Short (engaged).
+  // Defaults to the part's own band (no penalty); Melee is fixed to Short (engaged).
   const band: RangeBand = !ranged ? 'Short' : chosen ?? att.range as RangeBand
   const names = activationRoll(rules, att, band, {})
   const scores: Dictionary<number> = mechMode && names
@@ -82,7 +82,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
   const selfDamage = Math.max(0, mech.turn.heat + heat - deriveStats(mechRules, mech).heatMax)
 
   const costs = [`${att.energy ?? 0} energy`, `${signed(heat)} heat`]
-  if (att.ammo) costs.push(`1 ${att.ammo} ammo`)
+  if (att.ammo) costs.push(`${att.ammoPer ?? 1} ${att.ammo} ammo`)
   if (att.charges) costs.push('1 charge')
 
   const parts: { label: string, value: number }[] = []

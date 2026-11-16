@@ -19,7 +19,9 @@ function NewMechModal({open, close, rules, setMech}:{
   }): JSX.Element | null {
 
   const chassisNames = rules.mechs?.chassis.map(c => c.name) ?? []
+  const prefabs = rules.mechs?.prefabs ?? []
   const [chassis, setChassis] = useState("")
+  const [prefab, setPrefab] = useState("")
   const [name, setName] = useState("")
 
   if (!open || !rules.mechs) {
@@ -27,6 +29,9 @@ function NewMechModal({open, close, rules, setMech}:{
   }
 
   const selected = chassisNames.includes(chassis) ? chassis : chassisNames[0]
+  const fits = prefabs.filter(p => p.chassis === selected)
+  const loadout = fits.some(p => p.name === prefab) ? prefab : ''
+  const info = rules.mechs?.chassis.find(c => c.name === selected)
 
   function closeModal() {
     close()
@@ -42,7 +47,7 @@ function NewMechModal({open, close, rules, setMech}:{
         name: "Create",
         type: "primary",
         disabled: name.length === 0 || !selected,
-        callback: () => { setMech(newMech(rules, selected, name)); setName("") }
+        callback: () => { setMech(newMech(rules, selected, name, loadout || undefined)); setName("") }
       }
     ]}
     >
@@ -64,6 +69,19 @@ function NewMechModal({open, close, rules, setMech}:{
       <select className="select select-bordered" value={selected} onChange={e=>setChassis(e.target.value)}>
         { chassisNames.map( c => <option key={c}>{c}</option> ) }
       </select>
+      {info?.tier ? <div className="text-xs opacity-70 mt-1">
+        {info.class} · {info.tier} · {info.price?.toLocaleString()} Solari · Heat Max {info.heatMax}
+        {info.trait ? <div>Trait: {info.trait}</div> : null}
+      </div> : null}
+
+      <label className="label">
+        <span className="label-text">Loadout</span>
+      </label>
+      <select className="select select-bordered" value={loadout} onChange={e=>setPrefab(e.target.value)}>
+        <option value="">{fits.length ? 'Bare chassis' : 'Default'}</option>
+        { fits.map( p => <option key={p.name} value={p.name}>Prefab: {p.name}</option> ) }
+      </select>
+      {loadout ? <div className="text-xs opacity-70 mt-1">{fits.find(p => p.name === loadout)?.description}</div> : null}
     </div>
   </ActionModal>
 }

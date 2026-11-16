@@ -75,6 +75,13 @@ function SheetView( { view, editable=EditMode.Live }: {
           />
         </section>
 
+        {/* Mech widget, about three columns wide, before the items column (wraps to full width on narrow screens) */}
+        {rules.mechs && mechId !== undefined ?
+          <section className='flex gap-4 flex-col w-[62rem] max-w-full'>
+            <MechPanel view={view} editable={mechEditable} showStowage={false}/>
+          </section> : null
+        }
+
         {/* Equipment column */}
         <section className='flex gap-4 flex-col'>
         {
@@ -92,13 +99,6 @@ function SheetView( { view, editable=EditMode.Live }: {
           <MechStowage view={view} editable={mechEditable} title='Stowage (mech)'/> : null
         }
         </section>
-
-        {/* Mech widget, about three columns wide (wraps to full width on narrow screens) */}
-        {rules.mechs && mechId !== undefined ?
-          <section className='flex gap-4 flex-col w-[62rem] max-w-full'>
-            <MechPanel view={view} editable={mechEditable} showStowage={false}/>
-          </section> : null
-        }
 
         {/* Powers & Wounds */}
         <section className='flex gap-4 flex-col'>
