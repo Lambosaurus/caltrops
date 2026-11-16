@@ -2,7 +2,8 @@ import { v4 as uuidv4 } from 'uuid'
 import type { Rules } from '../rules'
 import {
   DEFAULT_MECH_SETTINGS,
-  type Chassis, type Mech, type MechAttachment, type MechRules, type MechSectionState, type MechTurn, type Mount,
+  type Chassis, type ChassisLoadout, type Mech, type MechAttachment, type MechPrefab, type MechRules, type MechSectionState,
+  type MechTurn, type Mount,
 } from './types'
 
 export function mountKey(sectionId: string, start: number): string {
@@ -27,6 +28,7 @@ export function freshTurn(): MechTurn {
   return {
     energy: 0, heat: 0, stored: 0, shutdown: false,
     used: {}, lastFired: null, out: false, pilotWounds: 0,
+    shot: [], strike: [], shotBand: null, fired: {},
   }
 }
 
@@ -110,12 +112,16 @@ export function setArmour(rules: MechRules, mech: Mech, sectionId: string, name:
   return withSection(mech, sectionId, s => ({ ...s, armour: att ? { name: att.name, points: att.armour ?? 0 } : null }))
 }
 
-function reactorOutput(rules: MechRules, mech: Mech): number {
+// Energy an undamaged mech starts a turn with: reactor output less pumped-cooler upkeep.
+function startEnergy(rules: MechRules, mech: Mech): number {
   let total = 0
   for (const s of Object.values(mech.sections)) {
-    for (const m of s.mounts) total += findAttachment(rules, m.name)?.reactor?.energy ?? 0
+    for (const m of s.mounts) {
+      const a = findAttachment(rules, m.name)
+      total += (a?.reactor?.energy ?? 0) - (a?.upkeep ?? 0)
+    }
   }
-  return total
+  return Math.max(0, total)
 }
 
 function emptySections(chassis: Chassis): Mech['sections'] {
@@ -131,19 +137,58 @@ function requireChassis(rules: Rules, chassisName: string): { mr: MechRules, cha
   return { mr, chassis }
 }
 
-export function newMech(rules: Rules, chassisName: string, name?: string): Mech {
+export function findPrefab(rules: MechRules, name: string): MechPrefab | undefined {
+  return rules.prefabs?.find(p => p.name === name)
+}
+
+// Fits a loadout onto an empty mech of its chassis (skipping parts that do not fit), then fills energy.
+function fitLoadout(rules: MechRules, mech: Mech, loadout: { [sectionId: string]: ChassisLoadout }): Mech {
+  for (const [sectionId, lo] of Object.entries(loadout)) {
+    if (!mech.sections[sectionId]) continue
+    if (lo.armour) mech = setArmour(rules, mech, sectionId, lo.armour)
+    for (const [attName, start] of lo.mounts) {
+      if (canMount(rules, mech, sectionId, attName, start)) mech = mount(rules, mech, sectionId, attName, start)
+    }
+  }
+  return { ...mech, turn: { ...mech.turn, energy: startEnergy(rules, mech) } }
+}
+
+/** A new mech of `chassisName` with the chassis' default loadout, or `prefab`'s loadout when it names a prefab of that chassis. */
+export function newMech(rules: Rules, chassisName: string, name?: string, prefab?: string): Mech {
   const { mr, chassis } = requireChassis(rules, chassisName)
-  let mech: Mech = {
+  const mech: Mech = {
     rules: rules.name, id: uuidv4(), owner: null, name: name ?? chassis.name, chassis: chassis.name,
     sections: emptySections(chassis), equipment: { Stowage: [] },
     turn: freshTurn(), settings: { ...DEFAULT_MECH_SETTINGS },
   }
-  for (const [sectionId, lo] of Object.entries(chassis.loadout ?? {})) {
-    if (!mech.sections[sectionId]) continue
-    if (lo.armour) mech = setArmour(mr, mech, sectionId, lo.armour)
-    for (const [attName, start] of lo.mounts) mech = mount(mr, mech, sectionId, attName, start)
+  const pre = prefab ? findPrefab(mr, prefab) : undefined
+  return fitLoadout(mr, mech, pre && pre.chassis === chassis.name ? pre.loadout : chassis.loadout ?? {})
+}
+
+/** Swaps a mech onto a prefab's chassis and loadout, fresh and undamaged. Keeps id, name, owner, rules, settings and stowage. */
+export function applyPrefab(rules: Rules, mech: Mech, prefabName: string): Mech {
+  const pre = rules.mechs && findPrefab(rules.mechs, prefabName)
+  if (!pre) return mech
+  const fresh = newMech(rules, pre.chassis, mech.name, prefabName)
+  return { ...fresh, id: mech.id, owner: mech.owner, rules: mech.rules, settings: mech.settings, equipment: mech.equipment }
+}
+
+/** Haven service: clears every wound, refills armour, ammo and charges, and starts a fresh turn. The loadout is kept. */
+export function refitMech(rules: MechRules, mech: Mech): Mech {
+  const sections: Mech['sections'] = {}
+  for (const [id, s] of Object.entries(mech.sections)) {
+    const armourAtt = s.armour ? findAttachment(rules, s.armour.name) : undefined
+    sections[id] = {
+      armour: s.armour ? { ...s.armour, points: armourAtt?.armour ?? s.armour.points } : null,
+      mounts: s.mounts.map(m => {
+        const att = findAttachment(rules, m.name)
+        return att ? newMount(rules, att, m.start) : { ...m }
+      }),
+      wounds: s.wounds.map(() => false),
+    }
   }
-  return { ...mech, turn: { ...mech.turn, energy: reactorOutput(mr, mech) } }
+  const next: Mech = { ...mech, sections, turn: freshTurn() }
+  return { ...next, turn: { ...next.turn, energy: startEnergy(rules, next) } }
 }
 
 export function changeChassis(rules: Rules, mech: Mech, chassisName: string): Mech {
@@ -152,7 +197,10 @@ export function changeChassis(rules: Rules, mech: Mech, chassisName: string): Me
 }
 
 // Reconcile a saved mech with its chassis: add missing sections, fit wounds to slots, drop mounts that no longer fit.
-export function normaliseMech(rules: MechRules, mech: Mech): Mech {
+export function normaliseMech(rules: MechRules, raw: Mech): Mech {
+  // Mechs saved under a chassis' old name load onto its new one.
+  const alias = findChassis(rules, raw.chassis) ? undefined : rules.chassisAliases?.[raw.chassis]
+  const mech = alias ? { ...raw, chassis: alias } : raw
   const chassis = findChassis(rules, mech.chassis)
   if (!chassis) return mech
   const sections: Mech['sections'] = {}
@@ -179,6 +227,9 @@ function loadTurn(raw: any): MechTurn {
   const t = raw ?? {}
   const out: any = { ...fresh }
   for (const k of Object.keys(fresh)) if (t[k] !== undefined) out[k] = t[k]
+  if (!Array.isArray(out.shot)) out.shot = []
+  if (!Array.isArray(out.strike)) out.strike = []
+  if (typeof out.fired !== 'object' || out.fired === null) out.fired = {}
   return out
 }
 

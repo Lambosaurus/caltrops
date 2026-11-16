@@ -4,6 +4,8 @@ import MechSection, { TypeTag } from './MechSection'
 import ChassisSilhouette from './ChassisSilhouette'
 import HitModal from './HitModal'
 import ActivationModal from './ActivationModal'
+import ShotModal from './ShotModal'
+import MechAdjustModal from './MechAdjustModal'
 import MechStowage from './MechStowage'
 import { statPop, StatKind } from './mechText'
 import { showNotices } from './notify'
@@ -13,11 +15,11 @@ import { useEffect, useState } from 'react'
 import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { findChassis } from '../../lib/mech/loadout'
-import { deriveStats, overheated } from '../../lib/mech/derive'
+import { deriveStats, overheated, turnEnergy } from '../../lib/mech/derive'
 import { adjustAmmo, setArmourPoints, toggleWound } from '../../lib/mech/damage'
-import { newTurn, shutdownPurge, sprint, sprintBlocker } from '../../lib/mech/turn'
+import { adjustTurn, clearShot, newTurn, shutdownPurge, sprint, sprintBlocker, SHOT_LABEL } from '../../lib/mech/turn'
 import { copyMechLink } from '../../lib/mech/store'
-import type { Mech, MechResult, MechRules } from '../../lib/mech/types'
+import type { Mech, MechResult, MechRules, ShotKind } from '../../lib/mech/types'
 import type { Rules } from '../../lib/rules'
 import { roller } from './roller'
 
@@ -36,6 +38,8 @@ function MechPanel({ view, editable, showStowage = true }: {
   const rules: Rules | undefined = useListener(view, 'rules')
   const [hitSection, setHitSection] = useState(null as string | null)
   const [activeKey, setActiveKey] = useState(null as string | null)
+  const [shotKind, setShotKind] = useState(null as ShotKind | null)
+  const [adjusting, setAdjusting] = useState(false)
   const mechRules: MechRules | undefined = rules?.mechs
   const chassis = mech && mechRules ? findChassis(mechRules, mech.chassis) : undefined
 
@@ -43,6 +47,8 @@ function MechPanel({ view, editable, showStowage = true }: {
   useEffect(() => {
     if (editable < EditMode.Live) {
       setActiveKey(null)
+      setShotKind(null)
+      setAdjusting(false)
     }
   }, [editable])
 
@@ -60,6 +66,7 @@ function MechPanel({ view, editable, showStowage = true }: {
   const t = mech.turn
   const hot = overheated(mechRules, mech)
   const projected = Math.max(0, t.shutdown ? t.heat : t.heat + stats.reactorHeat - stats.cooling)
+  const perTurn = turnEnergy(stats)
   const heatColor = hot ? 'bg-error' : t.heat > stats.heatMax * 0.7 ? 'bg-warning' : 'bg-primary'
   const warns: string[] = []
   if (!stats.hasReactor) warns.push('No reactor mounted')
@@ -81,6 +88,17 @@ function MechPanel({ view, editable, showStowage = true }: {
   const publish = (next: Mech) => view.publish('mech', next)
 
   const sprintDisabled = !play || sprintBlocker(mechRules, mech) !== null
+  // Inline −/+ for energy and heat; the Adjust dialog sets anything else.
+  const nudge = (field: 'energy' | 'heat', delta: number) => publish(adjustTurn(mech, { [field]: t[field] + delta }))
+  const step = (field: 'energy' | 'heat', delta: number) => play
+    ? <button
+        className='btn btn-xs btn-ghost px-1 min-h-0 h-4'
+        aria-label={`${field} ${delta < 0 ? 'minus' : 'plus'}`}
+        disabled={delta < 0 && t[field] <= 0}
+        onClick={() => nudge(field, delta)}
+      >{delta < 0 ? '−' : '+'}</button>
+    : null
+  const pools = (['shot', 'strike'] as ShotKind[]).filter(k => t[k].length)
   const purgeDisabled = !play || t.shutdown || t.out
 
   return <div className='w-full'>
@@ -98,12 +116,12 @@ function MechPanel({ view, editable, showStowage = true }: {
       <span className='px-2 border border-base-300 font-bold'>{mech.name}</span>
       <span className='px-2 border border-base-300'>{chassis.name}</span>
       {stat('energy', <>
-        Energy <b>{t.energy}</b>/{stats.energyOut}
+        Energy {step('energy', -1)}<b>{t.energy}</b>{step('energy', 1)}/{perTurn}
         {stats.capacitor ? <span className='opacity-60'> (+store {stats.capacitor})</span> : null}
         {' '}<Meter fraction={stats.energyOut ? t.energy / stats.energyOut : 0} color='bg-primary'/>
       </>)}
       {stat('heat', <>
-        Heat <b className={hot ? 'text-error' : ''}>{t.heat}</b>/{stats.heatMax}
+        Heat {step('heat', -1)}<b className={hot ? 'text-error' : ''}>{t.heat}</b>{step('heat', 1)}/{stats.heatMax}
         {' '}<Meter fraction={t.heat / (stats.heatMax * 1.5)} color={heatColor} mark={1 / 1.5}/>
         {' '}<span className='opacity-60'>end of turn → {projected}</span>
       </>)}
@@ -122,8 +140,26 @@ function MechPanel({ view, editable, showStowage = true }: {
         Shut down &amp; purge
       </button>
       <button className='btn btn-xs btn-success rounded-none' disabled={!play || t.out} onClick={() => run(newTurn(mechRules, mech))}>New turn ▶</button>
+      <button className='btn btn-xs btn-outline rounded-none' disabled={!play} onClick={() => setAdjusting(true)}>Adjust…</button>
       <button className='btn btn-xs btn-outline rounded-none' onClick={() => copyMechLink(mech.id)}>Copy mech link</button>
     </div>
+
+    {chassis.trait || chassis.tier ? <div className='opacity-80'>
+      {[chassis.class, chassis.tier, chassis.price ? `${chassis.price.toLocaleString()} Solari` : ''].filter(Boolean).join(' · ')}
+      {chassis.trait ? <> · <b>Trait:</b> {chassis.trait}</> : null}
+    </div> : null}
+
+    {/* Pending shot / strike: weapon activations add dice here; rolled once with the d12 location die */}
+    {pools.map(k => {
+      const total = t[k].reduce((n, p) => n + p.dice - p.penalty, 0)
+      return <div key={k} className='flex flex-wrap items-center gap-2 border border-warning bg-warning/10 p-2' data-testid={`pending-${k}`}>
+        <b>{k === 'shot' ? `Ranged shot${t.shotBand ? ` at ${t.shotBand}` : ''}` : 'Melee strike'}: +{total} dice</b>
+        <span className='opacity-80'>{t[k].map(p => `${p.name} +${p.dice - p.penalty}`).join(' · ')}</span>
+        <span className='flex-1'/>
+        <button className='btn btn-xs btn-warning rounded-none' disabled={!play} onClick={() => setShotKind(k)}>Roll {SHOT_LABEL[k]} + d12</button>
+        <button className='btn btn-xs btn-ghost rounded-none' disabled={!play} onClick={() => publish(clearShot(mech, k))}>Discard</button>
+      </div>
+    })}
 
     {warns.length ? <div className='border border-error bg-error/10 p-2'>⚠ {warns.join(' · ')}</div> : null}
 
@@ -170,6 +206,8 @@ function MechPanel({ view, editable, showStowage = true }: {
 
     <HitModal view={view} sectionId={hitSection} close={() => setHitSection(null)}/>
     {play && rules ? <ActivationModal rules={rules} view={view} mountKey={activeKey} close={() => setActiveKey(null)}/> : null}
+    {play && rules ? <ShotModal rules={rules} view={view} kind={shotKind} close={() => setShotKind(null)}/> : null}
+    {play && rules ? <MechAdjustModal rules={rules} view={view} open={adjusting} close={() => setAdjusting(false)}/> : null}
     </div>
   </div>
 }

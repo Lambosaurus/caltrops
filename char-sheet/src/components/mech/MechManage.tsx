@@ -13,7 +13,7 @@ import { useState } from 'react'
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
-import { changeChassis, dropOnCatalogue, dropPart, findChassis, setArmour, unmount, type PartDrag } from '../../lib/mech/loadout'
+import { applyPrefab, changeChassis, dropOnCatalogue, dropPart, findChassis, refitMech, setArmour, unmount, type PartDrag } from '../../lib/mech/loadout'
 import { deriveStats } from '../../lib/mech/derive'
 import { MECH_DOC_TYPE, copyMechLink, openMech } from '../../lib/mech/store'
 import server, { Document } from '../../lib/server'
@@ -41,6 +41,7 @@ function MechManage({ view, editable, sheetEditable }: {
   const sheetMechId: string | undefined = useListener(view, 'sheet/mech')
   const [loadout, setLoadout] = useState(false)
   const [newChassis, setNewChassis] = useState(null as string | null)
+  const [newPrefab, setNewPrefab] = useState(null as string | null)
   const [creating, setCreating] = useState(false)
   const [listing, setLoadingList] = useState(false)
   const [assigning, setAssigning] = useState(false)
@@ -151,6 +152,20 @@ function MechManage({ view, editable, sheetEditable }: {
             {mechRules.chassis.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
           </select>
         : <span className='px-2 border border-base-300'>{chassis.name}</span>}
+      {editable === EditMode.Full && mechRules.prefabs?.length
+        ? <select
+            className='select select-xs select-bordered rounded-none'
+            aria-label='Load prefab'
+            value=''
+            onChange={e => e.target.value && setNewPrefab(e.target.value)}
+          >
+            <option value=''>Load prefab…</option>
+            {mechRules.prefabs.map(p => <option key={p.name} value={p.name}>{p.name} ({p.chassis})</option>)}
+          </select>
+        : null}
+      {editable === EditMode.Full
+        ? <button className='btn btn-xs btn-outline rounded-none' title='Clear wounds, refill armour, ammo and charges, fresh turn' onClick={() => publish(refitMech(mechRules, mech))}>Refit</button>
+        : null}
       <span className='flex-1'/>
       <button className='btn btn-xs btn-outline rounded-none' onClick={() => copyMechLink(mech.id)}>Copy mech link</button>
       {actions}
@@ -224,6 +239,26 @@ function MechManage({ view, editable, sheetEditable }: {
       ]}
     >
       <p className='my-4'>Change chassis to {newChassis}? The current loadout, armour and turn state are cleared. Stowage is kept.</p>
+    </ActionModal>
+
+    <ActionModal
+      open={newPrefab !== null}
+      close={() => setNewPrefab(null)}
+      title='Load prefab'
+      actions={[
+        { name: 'Cancel', callback: () => {} },
+        { name: 'Load prefab', type: 'primary', callback: () => {
+          if (newPrefab && rules) {
+            publish(applyPrefab(rules, mech, newPrefab))
+          }
+        } },
+      ]}
+    >
+      <p className='my-4'>
+        Load {newPrefab} ({mechRules.prefabs?.find(p => p.name === newPrefab)?.chassis})? This mech's chassis, loadout, damage
+        and turn state are replaced; its name, owner, settings and stowage are kept.
+      </p>
+      <p className='opacity-70'>{mechRules.prefabs?.find(p => p.name === newPrefab)?.description}</p>
     </ActionModal>
   </div>
 }

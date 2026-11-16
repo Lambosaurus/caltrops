@@ -1,7 +1,8 @@
 import { cloneMech, applyWounds, markOut } from './damage'
-import { deriveStats, mountDisabled, mountWorking, sectionDestroyed, slotsOf } from './derive'
+import { deriveStats, mountDisabled, mountWorking, sectionDestroyed, slotsOf, turnEnergy } from './derive'
 import { findAttachment, findChassis, mountKey } from './loadout'
-import type { Mech, MechAttachment, MechRules, MechResult, Mount, RangeBand, Roller } from './types'
+import type { Dictionary, RollInfo, Rules } from '../rules'
+import type { Mech, MechAttachment, MechRules, MechResult, Mount, RangeBand, Roller, ShotKind, ShotPart } from './types'
 
 const BANDS: RangeBand[] = ['Short', 'Mid', 'Long']
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
@@ -27,14 +28,24 @@ function findMountByKey(mech: Mech, key: string): { sectionId: string, mount: Mo
   return undefined
 }
 
-function ammoSource(rules: MechRules, mech: Mech, ammo: string): { sectionId: string, mount: Mount } | undefined {
+// Working bins of `ammo` that still hold rounds, in loadout order.
+function ammoSources(rules: MechRules, mech: Mech, ammo: string): Mount[] {
+  const out: Mount[] = []
   for (const [sectionId, s] of Object.entries(mech.sections)) {
     for (const m of s.mounts) {
-      if (findAttachment(rules, m.name)?.bin === ammo && (m.ammo ?? 0) > 0 && mountWorking(rules, mech, sectionId, m)) return { sectionId, mount: m }
+      if (findAttachment(rules, m.name)?.bin === ammo && (m.ammo ?? 0) > 0 && mountWorking(rules, mech, sectionId, m)) out.push(m)
     }
   }
-  return undefined
+  return out
 }
+
+const roundsLeft = (rules: MechRules, mech: Mech, ammo: string): number =>
+  ammoSources(rules, mech, ammo).reduce((n, m) => n + (m.ammo ?? 0), 0)
+
+/** A weapon adds its dice to the turn's one ranged shot or one melee strike instead of rolling on its own. */
+export const isWeapon = (att: MechAttachment): boolean => !!att.range && !!att.roll
+export const shotKindOf = (att: MechAttachment): ShotKind => (att.range === 'Melee' ? 'strike' : 'shot')
+export const SHOT_LABEL: { [k in ShotKind]: string } = { shot: 'ranged shot', strike: 'melee strike' }
 
 // With `target` undefined the range check is skipped.
 export function activationBlocker(rules: MechRules, mech: Mech, key: string, target?: RangeBand): string | null {
@@ -47,11 +58,19 @@ export function activationBlocker(rules: MechRules, mech: Mech, key: string, tar
   if (sectionDestroyed(mech, found.sectionId)) return 'Section destroyed.'
   if (mountDisabled(rules, mech, found.sectionId, found.mount)) return 'Disabled: every slot it occupies is wounded.'
   if ((t.used[key] ?? 0) >= (att.repeat ?? 1)) return att.repeat ? `Already activated ${att.repeat}× this turn.` : 'Already activated this turn.'
+  const kind = shotKindOf(att)
+  if (isWeapon(att) && t.fired[kind]) return `This turn's ${SHOT_LABEL[kind]} is already made.`
   const energy = att.energy ?? 0
   if (t.energy < energy) return `Not enough energy: needs ${energy}, have ${t.energy}.`
   if (att.charges && !((found.mount.charges ?? 0) > 0)) return 'No charges left.'
-  if (att.ammo && !ammoSource(rules, mech, att.ammo)) return `No working ${att.ammo} ammo bin with rounds.`
+  const per = att.ammoPer ?? 1
+  if (att.ammo && roundsLeft(rules, mech, att.ammo) < per) {
+    return per === 1 ? `No working ${att.ammo} ammo bin with rounds.` : `Needs ${per} ${att.ammo} rounds from working ammo bins.`
+  }
   if (target && outOfRange(att, target)) return att.range === 'Melee' ? 'Melee only: target must be Short (engaged).' : `Target is beyond ${att.range} range.`
+  if (isWeapon(att) && kind === 'shot' && target && t.shot.length && t.shotBand && target !== t.shotBand) {
+    return `The pending shot is at ${t.shotBand} range.`
+  }
   return null
 }
 
@@ -120,15 +139,28 @@ export function activate(rules: MechRules, mech: Mech, key: string, roller: Roll
   t.lastFired = key
   let extra = ''
   if (att.ammo) {
+    const per = att.ammoPer ?? 1
     if (next.settings.autoAmmo) {
-      const src = ammoSource(rules, next, att.ammo)
-      if (src) src.mount.ammo = (src.mount.ammo ?? 0) - 1
-      extra = `, 1 ${att.ammo} ammo`
-    } else extra = `, spend 1 ${att.ammo} ammo by hand`
+      let left = per
+      for (const bin of ammoSources(rules, next, att.ammo)) {
+        const k = Math.min(left, bin.ammo ?? 0)
+        bin.ammo = (bin.ammo ?? 0) - k
+        left -= k
+        if (!left) break
+      }
+      extra = `, ${per} ${att.ammo} ammo`
+    } else extra = `, spend ${per} ${att.ammo} ammo by hand`
   }
   if (att.charges) {
     found.mount.charges = (found.mount.charges ?? 0) - 1
     extra = `, ${found.mount.charges} charges left`
+  }
+  if (isWeapon(att)) {
+    const kind = shotKindOf(att)
+    const part: ShotPart = { key, name: att.name, dice: att.roll!.bonus ?? 0, penalty: rangePenalty(att, target) }
+    t[kind] = [...t[kind], part]
+    if (kind === 'shot') t.shotBand = target
+    extra += `; ${signed(part.dice - part.penalty)} dice to the ${SHOT_LABEL[kind]}`
   }
   events.push(`${att.name}: −${energy}E ${signed(heat)}H${extra}.`)
   const notices: string[] = []
@@ -166,7 +198,7 @@ export function shutdownPurge(rules: MechRules, mech: Mech): MechResult {
   const d = deriveStats(rules, mech)
   const before = mech.turn.heat
   const heat = Math.max(0, before - d.cooling)
-  const next: Mech = { ...mech, turn: { ...mech.turn, heat, shutdown: true, stored: 0 } }
+  const next: Mech = { ...mech, turn: { ...mech.turn, heat, shutdown: true, stored: 0, shot: [], strike: [], shotBand: null } }
   return {
     mech: next,
     events: [`SHUT DOWN & PURGE: no reactor heat, cooling −${d.cooling}: heat ${before} → ${heat}. Shut down until New turn.`],
@@ -174,23 +206,133 @@ export function shutdownPurge(rules: MechRules, mech: Mech): MechResult {
   }
 }
 
+const TURN_RESET = { used: {}, shot: [], strike: [], shotBand: null, fired: {} }
+
+// Self-repairing armour regains a point each New turn.
+function selfRepair(rules: MechRules, mech: Mech, events: string[]): Mech['sections'] {
+  const sections: Mech['sections'] = { ...mech.sections }
+  for (const [id, s] of Object.entries(mech.sections)) {
+    const att = s.armour ? findAttachment(rules, s.armour.name) : undefined
+    if (s.armour && att?.selfRepair && s.armour.points < (att.armour ?? 0)) {
+      sections[id] = { ...s, armour: { ...s.armour, points: s.armour.points + 1 } }
+      events.push(`${att.name} self-repairs 1 point.`)
+    }
+  }
+  return sections
+}
+
 export function newTurn(rules: MechRules, mech: Mech): MechResult {
   if (mech.turn.out) return { mech, events: [], notices: [] }
   const d = deriveStats(rules, mech)
+  const repairs: string[] = []
+  const sections = selfRepair(rules, mech, repairs)
+  const fresh = turnEnergy(d)
+  const upkeep = d.upkeep ? ` (${d.energyOut} − ${d.upkeep} cooler upkeep)` : ''
   if (mech.turn.shutdown) {
     return {
-      mech: { ...mech, turn: { ...mech.turn, shutdown: false, used: {}, stored: 0, energy: d.energyOut } },
-      events: [`Rebooted after shutdown: energy ${d.energyOut}.`],
+      mech: { ...mech, sections, turn: { ...mech.turn, ...TURN_RESET, shutdown: false, stored: 0, energy: fresh } },
+      events: [`Rebooted after shutdown: energy ${fresh}${upkeep}.`, ...repairs],
       notices: [],
     }
   }
   const before = mech.turn.heat
-  const heat = Math.max(0, before + d.reactorHeat - d.cooling)
   const stored = Math.min(d.capacitor, mech.turn.energy)
-  const energy = d.energyOut + stored
+  const capHeat = stored > 0 ? d.capacitorHeat : 0
+  const heat = Math.max(0, before + d.reactorHeat - d.cooling) + capHeat
+  const energy = fresh + stored
   const events = [
-    `New turn: heat ${before} +${d.reactorHeat} reactor −${d.cooling} cooling = ${heat}.${heat > d.heatMax ? ' Still overheated.' : ''}`,
-    `Power up: energy ${energy}${stored ? ` (incl. ${stored} stored)` : ''}.`,
+    `New turn: heat ${before} +${d.reactorHeat} reactor −${d.cooling} cooling${capHeat ? ` +${capHeat} capacitor draw` : ''} = ${heat}.${heat > d.heatMax ? ' Still overheated.' : ''}`,
+    `Power up: energy ${energy}${upkeep}${stored ? `, incl. ${stored} stored` : ''}.`,
+    ...repairs,
   ]
-  return { mech: { ...mech, turn: { ...mech.turn, heat, stored: 0, energy, used: {} } }, events, notices: [] }
+  return { mech: { ...mech, sections, turn: { ...mech.turn, ...TURN_RESET, heat, stored: 0, energy } }, events, notices: [] }
+}
+
+/** The roll for the pending shot or strike: the pilot's aspect + skill once, plus every activation's dice. */
+export function shotRoll(rules: Rules, mech: Mech, kind: ShotKind, scores: Dictionary<number>): RollInfo | null {
+  const parts = mech.turn[kind]
+  const mr = rules.mechs
+  if (!parts.length || !mr) return null
+  const biggest = parts.reduce((a, b) => (b.dice > a.dice ? b : a))
+  const lead = findAttachment(mr, biggest.name)
+  const aspect = kind === 'shot' ? mr.rangeAspects[mech.turn.shotBand ?? 'Short'] : lead?.roll?.aspect ?? mr.rangeAspects.Short
+  const skill = lead?.roll?.skill ?? (kind === 'shot' ? 'Gunnery' : 'Melee')
+  return {
+    attribute: { name: aspect, score: scores[aspect] ?? 0 },
+    skill: { name: skill, score: scores[skill] ?? 0 },
+    bonus: parts.reduce((n, p) => n + p.dice - p.penalty, 0),
+  }
+}
+
+const POOL_ONLY_TAGS = /^(Repeating|Charges|Recharging|Hungry|Reload|Braced|Lobbed|Volatile|Heavy|Missile)\b/
+
+/** The tags a pending shot or strike carries: every weapon's tags once (numbered tags keep the highest). */
+export function shotTags(rules: MechRules, mech: Mech, kind: ShotKind): string[] {
+  const best: { [base: string]: { text: string, n: number } } = {}
+  for (const p of mech.turn[kind]) {
+    for (const raw of (findAttachment(rules, p.name)?.tags ?? '').split(',')) {
+      const tag = raw.trim()
+      if (!tag || POOL_ONLY_TAGS.test(tag)) continue
+      const base = tag.replace(/ \(.*\)$/, '')
+      const n = Number(/\((\d+)/.exec(tag)?.[1] ?? 0)
+      if (!best[base] || n > best[base].n) best[base] = { text: tag, n }
+    }
+  }
+  return Object.values(best).map(b => b.text)
+}
+
+/** Marks the pending shot or strike as rolled: the pool empties and no weapon can join that kind again this turn. */
+export function fireShot(mech: Mech, kind: ShotKind): Mech {
+  if (!mech.turn[kind].length) return mech
+  const band = kind === 'shot' ? { shotBand: null } : {}
+  return { ...mech, turn: { ...mech.turn, [kind]: [], ...band, fired: { ...mech.turn.fired, [kind]: true } } }
+}
+
+/** Drops the pending shot or strike without rolling it. Costs already paid stay paid. */
+export function clearShot(mech: Mech, kind: ShotKind): Mech {
+  const band = kind === 'shot' ? { shotBand: null } : {}
+  return { ...mech, turn: { ...mech.turn, [kind]: [], ...band } }
+}
+
+export interface TurnAdjust { energy?: number, heat?: number, stored?: number, pilotWounds?: number, shutdown?: boolean, out?: boolean }
+
+/** GM override: sets turn values directly (heat damage, a dunk in water, a power surge). Numbers floor at 0. */
+export function adjustTurn(mech: Mech, change: TurnAdjust): Mech {
+  const t = { ...mech.turn }
+  for (const k of ['energy', 'heat', 'stored', 'pilotWounds'] as const) {
+    const v = change[k]
+    if (v !== undefined) t[k] = Math.max(0, Math.floor(v) || 0)
+  }
+  if (change.shutdown !== undefined) t.shutdown = change.shutdown
+  if (change.out !== undefined) t.out = change.out
+  return { ...mech, turn: t }
+}
+
+/** Sets a mounted part's charges, clamped to 0..its maximum. */
+export function setCharges(rules: MechRules, mech: Mech, key: string, value: number): Mech {
+  const found = findMountByKey(mech, key)
+  const max = found ? findAttachment(rules, found.mount.name)?.charges : undefined
+  if (!found || !max) return mech
+  const v = Math.max(0, Math.min(max, Math.floor(value) || 0))
+  const s = mech.sections[found.sectionId]
+  const mounts = s.mounts.map(m => (m === found.mount ? { ...m, charges: v } : m))
+  return { ...mech, sections: { ...mech.sections, [found.sectionId]: { ...s, mounts } } }
+}
+
+/** New scene: Recharging parts refill their charges. */
+export function newScene(rules: MechRules, mech: Mech): MechResult {
+  const events: string[] = []
+  const sections: Mech['sections'] = {}
+  for (const [id, s] of Object.entries(mech.sections)) {
+    sections[id] = {
+      ...s,
+      mounts: s.mounts.map(m => {
+        const att = findAttachment(rules, m.name)
+        if (att?.recharge !== 'scene' || !att.charges || m.charges === att.charges) return m
+        events.push(`${att.name} recharges to ${att.charges}.`)
+        return { ...m, charges: att.charges }
+      }),
+    }
+  }
+  return { mech: { ...mech, sections }, events, notices: [] }
 }
