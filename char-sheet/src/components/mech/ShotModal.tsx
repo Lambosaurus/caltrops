@@ -8,6 +8,7 @@ import DiceResult from '../DiceResult'
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
 import caltrops from '../../lib/caltrops'
+import foundry from '../../lib/foundry'
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
 import { activationBlocker, attack, planCost, planParts, shotRoll, shotTags, weaponKeys, type AttackCounts } from '../../lib/mech/turn'
 import type { Mech, RangeBand, ShotKind } from '../../lib/mech/types'
@@ -41,7 +42,8 @@ function ShotModal({ rules, view, target, close }: {
   const [counts, setCounts] = useState({} as AttackCounts)
   const [band, setBand] = useState(null as RangeBand | null)
   const [bonus, setBonus] = useState(0)
-  const [done, setDone] = useState(null as { dice: number[], d12: number, lines: string[], tags: string[] } | null)
+  // dice null: the roll went to the VTT, which rolls the d4s and the d12 itself.
+  const [done, setDone] = useState(null as { dice: number[] | null, d12: number | null, lines: string[], tags: string[] } | null)
 
   useEffect(() => {
     setCounts(target?.key ? { [target.key]: 1 } : {})
@@ -81,31 +83,44 @@ function ShotModal({ rules, view, target, close }: {
     })
   }
 
-  function fire() {
+  function fire(toVtt: boolean) {
     if (!mech || !mr || !parts.length) return
     const res = attack(mr, mech, kind, shotBand, counts, roller)
     view.publish('mech', res.mech)
     showNotices(res.notices)
-    const roll = shotRoll(rules, res.parts, kind, shotBand, scores)
-    const n = roll ? Math.max(0, caltrops.rollDiceCount(roll) + bonus) : 0
-    const dice = caltrops.rollDice({ bonus: n })
+    const base = shotRoll(rules, res.parts, kind, shotBand, scores)
+    if (!base) return
+    const roll = { ...base, bonus: (base.bonus ?? 0) + bonus }
+    const tags = shotTags(mr, res.parts)
     const lines = res.parts.length < parts.length ? [`Only ${res.parts.length} of ${parts.length} activations could fire.`] : []
-    setDone({ dice, d12: rollD12(), lines, tags: shotTags(mr, res.parts) })
+    if (toVtt && foundry.isPresent()) {
+      const weapons = Array.from(new Set(res.parts.map(p => p.name))).join(', ')
+      const what = kind === 'shot' ? `Ranged shot at ${shotBand}` : 'Melee strike'
+      foundry.submitRoll(roll, { detail: [what, weapons, tags.join(', ')].filter(Boolean).join(' · '), location: true })
+      setDone({ dice: null, d12: null, lines, tags })
+      return
+    }
+    setDone({ dice: caltrops.rollDice(roll), d12: rollD12(), lines, tags })
   }
 
   const actions: ModalActionInfo[] = done
     ? [{ name: 'Done', type: 'primary', callback: () => {} }]
     : [
         { name: 'Cancel', callback: () => {} },
-        { name: `Fire: ${total}d4 + d12`, type: 'primary', disabled: !parts.length || firedAlready, callback: fire, stayOpen: true },
+        { name: `Fire: ${total}d4 + d12`, type: 'primary', disabled: !parts.length || firedAlready, callback: () => fire(false), stayOpen: true },
+        ...(foundry.isPresent()
+          ? [{ name: 'Send to VTT', type: 'primary', disabled: !parts.length || firedAlready, callback: () => fire(true), stayOpen: true } as ModalActionInfo]
+          : []),
       ]
-  const hits = done ? done.dice.filter(d => d >= 4).length : 0
+  const hits = done?.dice ? done.dice.filter(d => d >= 4).length : 0
 
   return <ActionModal open={true} close={close} title={kind === 'shot' ? 'Ranged shot' : 'Melee strike'} actions={actions}>
     {done ? <>
-      <DiceResult dice={done.dice}/>
-      <div className='text-center font-bold'>{hits} success{hits === 1 ? '' : 'es'}</div>
-      <div className='text-center font-bold text-lg mt-2' data-testid='shot-d12'>Location d12: {done.d12}</div>
+      {done.dice ? <>
+        <DiceResult dice={done.dice}/>
+        <div className='text-center font-bold'>{hits} success{hits === 1 ? '' : 'es'}</div>
+        <div className='text-center font-bold text-lg mt-2' data-testid='shot-d12'>Location d12: {done.d12}</div>
+      </> : <div className='text-center font-bold' data-testid='shot-vtt'>Sent to the VTT: the d4s and the d12 location are rolled there.</div>}
       {done.tags.length ? <div className='text-center opacity-70 mt-1'>{done.tags.join(', ')}</div> : null}
       {done.lines.map(l => <div key={l} className='text-center text-warning'>{l}</div>)}
     </> : <div className='my-2 flex flex-col gap-1'>

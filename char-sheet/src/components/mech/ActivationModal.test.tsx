@@ -85,3 +85,23 @@ test('Sensor Array still rolls on its own', () => {
   }) ?? document.body)
   expect(screen.getByText(/Roll \d+ dice & activate/)).toBeTruthy()
 })
+
+test('an attack can be sent to the VTT with a d12 location roll', () => {
+  const postMessage = jest.fn()
+  Object.defineProperty(window, 'opener', { value: { postMessage }, configurable: true })
+  try {
+    const { view, energy } = setup()
+    fireEvent.click(screen.getAllByText(/^2E \+2H/)[0])
+    fireEvent.click(screen.getByText('Send to VTT'))
+    expect(postMessage).toHaveBeenCalledTimes(1)
+    const body = postMessage.mock.calls[0][0]
+    expect(body).toMatchObject({ dice: 8, location: true })
+    expect(body.text).toContain('Gunnery: Precision +3')
+    expect(body.text).toContain('Ranged shot at Mid · Autocannon')
+    expect(view.read('mech').turn.energy).toBe(energy - 2)
+    expect(view.read('mech').turn.fired.shot).toBe(true)
+    expect(screen.getByTestId('shot-vtt')).toBeTruthy()
+  } finally {
+    Object.defineProperty(window, 'opener', { value: null, configurable: true })
+  }
+})
