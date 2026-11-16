@@ -1,9 +1,9 @@
-"""Builds src/data/scraplancerCatalogue.tsx from snapshots of the Scrap Lancer rules doc.
+"""Builds src/data/scraplancerCatalogue.tsx from the Scrap Lancer rules, kept as Markdown in docs/scrap-lancer/.
 
-Inputs (snapshots of the Claude Doc "Scrap Lancer Mech Rules (Draft)", re-export them to resync):
-  parts.json     the Parts tab tables, as [{heading, rows}] with the header row first
-  catalogue.txt  the Catalogue tab as text (chassis overview, chassis details, tag table, ammo table)
-  rules.txt      the Rules tab as text (core tags, the three starter chassis)
+Inputs (snapshots of the Claude Doc "Scrap Lancer Mech Rules (Draft)"; edit them or re-export the doc to resync):
+  parts.md      the Parts tab: one table per family under a '### Family' heading
+  catalogue.md  the Catalogue tab: chassis overview, chassis layouts, tag table, ammo table
+  rules.md      the Rules tab: core tags, the three starter chassis
 
 Run from char-sheet/:  python scripts/scraplancer/gen.py
 """
@@ -14,15 +14,40 @@ import re
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, '..', '..', 'src', 'data', 'scraplancerCatalogue.tsx')
 
-PARTS = json.load(open(os.path.join(HERE, 'parts.json'), encoding='utf-8'))
-CAT = open(os.path.join(HERE, 'catalogue.txt'), encoding='utf-8').read().splitlines()
-RULES = open(os.path.join(HERE, 'rules.txt'), encoding='utf-8').read().splitlines()
-
-DASH = ('—', '-', '', '–')
-
-
 def cells(line):
     return [c.strip() for c in line.strip().strip('|').split('|')]
+
+
+DOCS = os.path.join(HERE, '..', '..', '..', 'docs', 'scrap-lancer')
+SEP = re.compile(r'^\|[\s:|-]+\|$')  # Markdown table separator rows carry no data
+
+
+def read_md(name):
+    text = open(os.path.join(DOCS, name), encoding='utf-8').read()
+    return [l for l in text.splitlines() if not SEP.match(l.strip())]
+
+
+CAT = read_md('catalogue.md')
+RULES = read_md('rules.md')
+
+
+def md_tables(lines):
+    """[{heading, rows}] for each table, headed by the nearest '###' heading above it; the first row is the header."""
+    tables, heading, cur = [], '', None
+    for l in lines:
+        if l.startswith('|'):
+            if cur is None:
+                cur = {'heading': heading, 'rows': []}
+                tables.append(cur)
+            cur['rows'].append(cells(l))
+            continue
+        cur = None
+        m = re.match(r'#{2,3} (.+)', l)
+        if m:
+            heading = m.group(1).strip()
+    return tables
+
+DASH = ('—', '-', '', '–')
 
 
 def num(s):
@@ -153,6 +178,7 @@ def part(heading, d):
     return a
 
 
+PARTS = md_tables(read_md('parts.md'))
 attachments = []
 for t in PARTS:
     hd, rows = t['rows'][0], t['rows'][1:]

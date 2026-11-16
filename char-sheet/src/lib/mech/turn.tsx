@@ -248,14 +248,13 @@ export function newTurn(rules: MechRules, mech: Mech): MechResult {
   return { mech: { ...mech, sections, turn: { ...mech.turn, ...TURN_RESET, heat, stored: 0, energy } }, events, notices: [] }
 }
 
-/** The roll for the pending shot or strike: the pilot's aspect + skill once, plus every activation's dice. */
-export function shotRoll(rules: Rules, mech: Mech, kind: ShotKind, scores: Dictionary<number>): RollInfo | null {
-  const parts = mech.turn[kind]
+/** The roll for a shot or strike made of `parts`: the pilot's aspect + skill once, plus every activation's dice. */
+export function shotRoll(rules: Rules, parts: ShotPart[], kind: ShotKind, band: RangeBand, scores: Dictionary<number>): RollInfo | null {
   const mr = rules.mechs
   if (!parts.length || !mr) return null
   const biggest = parts.reduce((a, b) => (b.dice > a.dice ? b : a))
   const lead = findAttachment(mr, biggest.name)
-  const aspect = kind === 'shot' ? mr.rangeAspects[mech.turn.shotBand ?? 'Short'] : lead?.roll?.aspect ?? mr.rangeAspects.Short
+  const aspect = kind === 'shot' ? mr.rangeAspects[band] : lead?.roll?.aspect ?? mr.rangeAspects.Short
   const skill = lead?.roll?.skill ?? (kind === 'shot' ? 'Gunnery' : 'Melee')
   return {
     attribute: { name: aspect, score: scores[aspect] ?? 0 },
@@ -266,10 +265,10 @@ export function shotRoll(rules: Rules, mech: Mech, kind: ShotKind, scores: Dicti
 
 const POOL_ONLY_TAGS = /^(Repeating|Charges|Recharging|Hungry|Reload|Braced|Lobbed|Volatile|Heavy|Missile)\b/
 
-/** The tags a pending shot or strike carries: every weapon's tags once (numbered tags keep the highest). */
-export function shotTags(rules: MechRules, mech: Mech, kind: ShotKind): string[] {
+/** The tags a shot or strike carries: every weapon's tags once (numbered tags keep the highest). */
+export function shotTags(rules: MechRules, parts: ShotPart[]): string[] {
   const best: { [base: string]: { text: string, n: number } } = {}
-  for (const p of mech.turn[kind]) {
+  for (const p of parts) {
     for (const raw of (findAttachment(rules, p.name)?.tags ?? '').split(',')) {
       const tag = raw.trim()
       if (!tag || POOL_ONLY_TAGS.test(tag)) continue
@@ -279,6 +278,67 @@ export function shotTags(rules: MechRules, mech: Mech, kind: ShotKind): string[]
     }
   }
   return Object.values(best).map(b => b.text)
+}
+
+/** The weapons that can join a shot (ranged) or strike (melee), as mount keys, in loadout order. */
+export function weaponKeys(rules: MechRules, mech: Mech, kind: ShotKind): string[] {
+  const out: string[] = []
+  for (const [sectionId, s] of Object.entries(mech.sections)) {
+    for (const m of s.mounts) {
+      const att = findAttachment(rules, m.name)
+      if (att && isWeapon(att) && shotKindOf(att) === kind) out.push(mountKey(sectionId, m.start))
+    }
+  }
+  return out
+}
+
+/** How many activations of each weapon an attack uses: mount key -> count. */
+export type AttackCounts = { [mountKey: string]: number }
+
+/** The dice an attack would add, without paying anything: one part per activation. */
+export function planParts(rules: MechRules, mech: Mech, counts: AttackCounts, band: RangeBand): ShotPart[] {
+  const parts: ShotPart[] = []
+  for (const [key, n] of Object.entries(counts)) {
+    const found = findMountByKey(mech, key)
+    const att = found && findAttachment(rules, found.mount.name)
+    if (!att?.roll) continue
+    for (let i = 0; i < n; i++) parts.push({ key, name: att.name, dice: att.roll.bonus ?? 0, penalty: rangePenalty(att, band) })
+  }
+  return parts
+}
+
+/** Energy and heat an attack's activations would cost. */
+export function planCost(rules: MechRules, mech: Mech, counts: AttackCounts): { energy: number, heat: number } {
+  let energy = 0, heat = 0
+  for (const [key, n] of Object.entries(counts)) {
+    const found = findMountByKey(mech, key)
+    const att = found && findAttachment(rules, found.mount.name)
+    energy += (att?.energy ?? 0) * n
+    heat += (att?.heat ?? 0) * n
+  }
+  return { energy, heat }
+}
+
+/**
+ * Makes the turn's shot or strike: activates each weapon `counts[key]` times at `band` (paying energy, heat, ammo and
+ * charges, with overheat damage as usual), stopping a weapon early if it becomes blocked. Returns the mech with that
+ * attack marked as made, and the parts that actually fired, to roll with shotRoll.
+ */
+export function attack(rules: MechRules, mech: Mech, kind: ShotKind, band: RangeBand, counts: AttackCounts, roller: Roller): MechResult & { parts: ShotPart[] } {
+  let m = clearShot(mech, kind)
+  const events: string[] = []
+  const notices: string[] = []
+  for (const [key, n] of Object.entries(counts)) {
+    for (let i = 0; i < n; i++) {
+      if (activationBlocker(rules, m, key, band) !== null) break
+      const res = activate(rules, m, key, roller, band)
+      m = res.mech
+      events.push(...res.events)
+      notices.push(...res.notices)
+    }
+  }
+  const parts = m.turn[kind]
+  return { mech: fireShot(m, kind), events, notices, parts }
 }
 
 /** Marks the pending shot or strike as rolled: the pool empties and no weapon can join that kind again this turn. */

@@ -4,139 +4,163 @@ import { useEffect, useState } from 'react'
 // Components
 import ActionModal, { ModalActionInfo } from '../ActionModal'
 import DiceResult from '../DiceResult'
-import PointEntryBox from '../PointEntryBox'
 
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
 import caltrops from '../../lib/caltrops'
-import foundry from '../../lib/foundry'
-import { fireShot, shotRoll, shotTags, SHOT_LABEL } from '../../lib/mech/turn'
-import type { Mech, ShotKind } from '../../lib/mech/types'
-import type { Dictionary, RollInfo, Rules } from '../../lib/rules'
+import { findAttachment, findChassis } from '../../lib/mech/loadout'
+import { activationBlocker, attack, planCost, planParts, shotRoll, shotTags, weaponKeys, type AttackCounts } from '../../lib/mech/turn'
+import type { Mech, RangeBand, ShotKind } from '../../lib/mech/types'
+import type { Dictionary, Rules } from '../../lib/rules'
+import { roller } from './roller'
+import { showNotices } from './notify'
 
+const BANDS: RangeBand[] = ['Short', 'Mid', 'Long']
 const signed = (n: number) => (n >= 0 ? '+' : '') + n
 
 /** Rolls a d12 hit-location die. */
 export const rollD12 = (): number => Math.floor(Math.random() * 12) + 1
 
+export interface AttackTarget { kind: ShotKind, key?: string /* weapon to start with one activation selected */ }
+
 /**
- * Rolls the pending ranged shot or melee strike: the pilot's aspect + skill once, plus every weapon activation's
- * dice, with the d12 location die rolled alongside (or an aimed shot that pays dice to skip it). `kind` null = closed.
+ * The turn's ranged shot or melee strike in one dialog: choose the range and how many activations of each weapon,
+ * add one bonus (locks, Sitting Duck, aiming, or the pilot's dice on a standalone mech), and fire. Firing pays every
+ * activation's costs and rolls the pilot's dice + all weapon dice + the bonus once, with a d12 location die.
  */
-function ShotModal({ rules, view, kind, close }: {
+function ShotModal({ rules, view, target, close }: {
     rules: Rules,
     view: View, // root
-    kind: ShotKind | null,
+    target: AttackTarget | null,
     close(): void,
   }): JSX.Element | null {
   const mech: Mech | undefined = useListener(view, 'mech')
   const mode: string | undefined = useListener(view, 'mode')
   const attributes: Dictionary<number> | undefined = useListener(view, 'sheet/attributes')
   const skills: Dictionary<number> | undefined = useListener(view, 'sheet/skills')
-  const [aspectScore, setAspectScore] = useState(0)
-  const [skillScore, setSkillScore] = useState(0)
-  const [other, setOther] = useState(0)
-  const [aim, setAim] = useState(0) // 0 = roll the d12; otherwise dice paid to pick the section
-  const [location, setLocation] = useState(true)
-  const [done, setDone] = useState(null as { dice: number[], d12: number | null, parts: string[], tags: string[] } | null)
+  const [counts, setCounts] = useState({} as AttackCounts)
+  const [band, setBand] = useState(null as RangeBand | null)
+  const [bonus, setBonus] = useState(0)
+  const [done, setDone] = useState(null as { dice: number[], d12: number, lines: string[], tags: string[] } | null)
 
   useEffect(() => {
-    setOther(0)
-    setAim(0)
+    setCounts(target?.key ? { [target.key]: 1 } : {})
+    setBand(null)
+    setBonus(0)
     setDone(null)
-  }, [kind])
+  }, [target?.kind, target?.key])
 
-  const mechRules = rules.mechs
-  if (!kind || !mech || !mechRules) {
+  const mr = rules.mechs
+  if (!target || !mech || !mr) {
     return null
   }
-  const parts = mech.turn[kind]
-  if (!parts.length && !done) {
-    return null
+  const kind = target.kind
+  const chassis = findChassis(mr, mech.chassis)
+  const keys = weaponKeys(mr, mech, kind)
+  const attOf = (key: string) => {
+    const [sectionId, start] = key.split(':')
+    const m = mech.sections[sectionId]?.mounts.find(x => x.start === Number(start))
+    return { att: m ? findAttachment(mr, m.name) : undefined, mount: m, section: chassis?.sections.find(s => s.id === sectionId)?.name ?? sectionId }
+  }
+  // Default band: the first selected weapon's own band (no penalty).
+  const firstRange = Object.keys(counts).map(k => attOf(k).att?.range).find(r => r && r !== 'Melee') as RangeBand | undefined
+  const shotBand: RangeBand = kind === 'strike' ? 'Short' : band ?? firstRange ?? 'Mid'
+
+  const scores: Dictionary<number> = mode === 'mech' ? {} : { ...(attributes ?? {}), ...(skills ?? {}) }
+  const parts = planParts(mr, mech, counts, shotBand)
+  const info = shotRoll(rules, parts, kind, shotBand, scores)
+  const total = info ? Math.max(0, caltrops.rollDiceCount(info) + bonus) : 0
+  const cost = planCost(mr, mech, counts)
+  const firedAlready = !!mech.turn.fired[kind]
+
+  function setCount(key: string, n: number) {
+    setCounts(c => {
+      const next = { ...c, [key]: n }
+      if (!n) delete next[key]
+      return next
+    })
   }
 
-  const mechMode = mode === 'mech'
-  const names = shotRoll(rules, mech, kind, {})
-  const scores: Dictionary<number> = mechMode && names
-    ? { [names.attribute!.name]: aspectScore, [names.skill!.name]: skillScore }
-    : { ...(attributes ?? {}), ...(skills ?? {}) }
-  const base = shotRoll(rules, mech, kind, scores)
-  const info: RollInfo | null = base ? { ...base, bonus: (base.bonus ?? 0) + other - aim } : null
-  const count = info ? Math.max(0, caltrops.rollDiceCount(info)) : 0
-  const tags = shotTags(mechRules, mech, kind)
-  const title = kind === 'shot' ? `Ranged shot${mech.turn.shotBand ? ` at ${mech.turn.shotBand}` : ''}` : 'Melee strike'
-
-  function roll(toVtt: boolean) {
-    if (!mech || !kind || !info) return
-    const d12 = location && !aim ? rollD12() : null
-    const summary = parts.map(p => `${p.name} ${signed(p.dice - p.penalty)}`)
-    view.publish('mech', fireShot(mech, kind))
-    if (toVtt && foundry.isPresent()) {
-      foundry.submitRoll(info)
-    }
-    setDone({ dice: toVtt && foundry.isPresent() ? [] : caltrops.rollDice(info), d12, parts: summary, tags })
+  function fire() {
+    if (!mech || !mr || !parts.length) return
+    const res = attack(mr, mech, kind, shotBand, counts, roller)
+    view.publish('mech', res.mech)
+    showNotices(res.notices)
+    const roll = shotRoll(rules, res.parts, kind, shotBand, scores)
+    const n = roll ? Math.max(0, caltrops.rollDiceCount(roll) + bonus) : 0
+    const dice = caltrops.rollDice({ bonus: n })
+    const lines = res.parts.length < parts.length ? [`Only ${res.parts.length} of ${parts.length} activations could fire.`] : []
+    setDone({ dice, d12: rollD12(), lines, tags: shotTags(mr, res.parts) })
   }
 
-  const actions: ModalActionInfo[] = []
-  if (done) {
-    actions.push({ name: 'Done', type: 'primary', callback: () => {} })
-  } else {
-    actions.push({ name: 'Cancel', callback: () => {} })
-    actions.push({ name: `Roll ${count}d4${location && !aim ? ' + d12' : ''}`, type: 'primary', disabled: !info, callback: () => roll(false), stayOpen: true })
-    if (foundry.isPresent()) {
-      actions.push({ name: 'Send to VTT', type: 'primary', disabled: !info, callback: () => roll(true), stayOpen: true })
-    }
-  }
-
+  const actions: ModalActionInfo[] = done
+    ? [{ name: 'Done', type: 'primary', callback: () => {} }]
+    : [
+        { name: 'Cancel', callback: () => {} },
+        { name: `Fire: ${total}d4 + d12`, type: 'primary', disabled: !parts.length || firedAlready, callback: fire, stayOpen: true },
+      ]
   const hits = done ? done.dice.filter(d => d >= 4).length : 0
-  const shown = done ? done.parts : parts.map(p => `${p.name} ${signed(p.dice - p.penalty)}${p.penalty ? ` (−${p.penalty} closer band)` : ''}`)
-  const shownTags = done ? done.tags : tags
 
-  return <ActionModal open={true} close={close} title={title} actions={actions}>
-    <div className='my-2'>
-      <div className='opacity-70'>One {SHOT_LABEL[kind]}: the pilot's dice once, plus each activation's dice. All wounds go to one section.</div>
-      {shown.map((p, i) => <div key={i}>· {p}</div>)}
-      {shownTags.length ? <div className='mt-1'>Tags: {shownTags.join(', ')}</div> : null}
-    </div>
-    {info && !done ? <div className='my-2'>
-      {mechMode ? <>
-        <div className='flex justify-between items-center'>
-          <span>{info.attribute!.name} (aspect)</span>
-          <PointEntryBox value={aspectScore} setValue={setAspectScore} editable={true} min={0} max={9}/>
-        </div>
-        <div className='flex justify-between items-center'>
-          <span>{info.skill!.name} (skill)</span>
-          <PointEntryBox value={skillScore} setValue={setSkillScore} editable={true} min={0} max={9}/>
-        </div>
-      </> : <>
-        <div className='flex justify-between'><span>{info.attribute!.name} (aspect)</span><span>{signed(info.attribute!.score)}</span></div>
-        <div className='flex justify-between'><span>{info.skill!.name} (skill)</span><span>{signed(info.skill!.score)}</span></div>
-      </>}
-      <div className='flex justify-between'><span>Weapon dice</span><span>{signed(base?.bonus ?? 0)}</span></div>
-      <div className='flex justify-between items-center'>
-        <span>Other (locks +1, Sitting Duck +2, Evasion −X…)</span>
-        <PointEntryBox value={other} setValue={setOther} editable={true} min={-20} max={20}/>
-      </div>
-      <div className='flex justify-between items-center'>
-        <span>Aimed shot: dice paid (0 = roll the d12)</span>
-        <PointEntryBox value={aim} setValue={setAim} editable={true} min={0} max={4}/>
-      </div>
-      <label className='flex justify-between items-center cursor-pointer'>
-        <span>Roll the d12 location die</span>
-        <input type='checkbox' className='checkbox checkbox-sm' checked={location && !aim} disabled={!!aim} onChange={e => setLocation(e.target.checked)}/>
-      </label>
-      <div className='flex justify-between font-bold border-t border-base-300 mt-1 pt-1'>
-        <span>Roll</span><span>{count}d4{location && !aim ? ' + d12' : ''}</span>
-      </div>
-    </div> : null}
+  return <ActionModal open={true} close={close} title={kind === 'shot' ? 'Ranged shot' : 'Melee strike'} actions={actions}>
     {done ? <>
-      {done.dice.length ? <>
-        <DiceResult dice={done.dice}/>
-        <div className='text-center font-bold'>{hits} success{hits === 1 ? '' : 'es'}</div>
-      </> : <div className='text-center'>Sent to the VTT.</div>}
-      {done.d12 !== null ? <div className='text-center font-bold text-lg mt-2' data-testid='shot-d12'>Location d12: {done.d12}</div>
-        : aim ? <div className='text-center mt-2'>Aimed: the attacker names the section.</div> : null}
-    </> : null}
+      <DiceResult dice={done.dice}/>
+      <div className='text-center font-bold'>{hits} success{hits === 1 ? '' : 'es'}</div>
+      <div className='text-center font-bold text-lg mt-2' data-testid='shot-d12'>Location d12: {done.d12}</div>
+      {done.tags.length ? <div className='text-center opacity-70 mt-1'>{done.tags.join(', ')}</div> : null}
+      {done.lines.map(l => <div key={l} className='text-center text-warning'>{l}</div>)}
+    </> : <div className='my-2 flex flex-col gap-1'>
+      {firedAlready ? <div className='text-error'>This turn's {kind === 'shot' ? 'shot' : 'strike'} is already made.</div> : null}
+      {kind === 'shot' ? <div className='flex items-center gap-2'>
+        <span>Range</span>
+        {BANDS.map(b => <button
+          key={b}
+          type='button'
+          className={`btn btn-xs rounded-none ${b === shotBand ? 'btn-primary' : 'btn-outline'}`}
+          aria-pressed={b === shotBand}
+          onClick={() => setBand(b)}
+        >{b}</button>)}
+      </div> : null}
+
+      {keys.length ? keys.map(key => {
+        const { att, mount, section } = attOf(key)
+        if (!att || !mount) return null
+        const n = counts[key] ?? 0
+        const max = Math.min((att.repeat ?? 1) - (mech.turn.used[key] ?? 0), att.charges ? mount.charges ?? 0 : 99)
+        const blocker = activationBlocker(mr, mech, key, shotBand)
+        const canAdd = !blocker && n < max && cost.energy + (att.energy ?? 0) <= mech.turn.energy
+        const dice = (att.roll?.bonus ?? 0) - (planParts(mr, mech, { [key]: 1 }, shotBand)[0]?.penalty ?? 0)
+        return <div key={key} className='flex items-center gap-2 border-t border-dashed border-base-300 pt-1'>
+          <span className='flex-1 min-w-0'>
+            <span className={blocker && !n ? 'opacity-50' : ''}>{att.name}</span>
+            <span className='opacity-60'> · {section} · {signed(dice)} dice, {att.energy ?? 0}E {signed(att.heat ?? 0)}H{(att.repeat ?? 1) > 1 ? ` each, up to ${att.repeat}` : ''}</span>
+            {blocker && !n ? <div className='text-[10px] text-error'>{blocker}</div> : null}
+          </span>
+          <button className='btn btn-xs btn-outline px-2' aria-label={`${att.name} fewer`} disabled={!n} onClick={() => setCount(key, n - 1)}>−</button>
+          <span className='w-4 text-center' data-testid={`count-${key}`}>{n}</span>
+          <button className='btn btn-xs btn-outline px-2' aria-label={`${att.name} more`} disabled={!canAdd} onClick={() => setCount(key, n + 1)}>+</button>
+        </div>
+      }) : <div className='opacity-60'>No {kind === 'shot' ? 'ranged weapons' : 'melee weapons'} fitted.</div>}
+
+      <div className='flex items-center justify-between gap-2 border-t border-base-300 pt-2 mt-1'>
+        <span>Bonus <span className='opacity-60'>(+ or −)</span></span>
+        <span className='flex items-center gap-1'>
+          <button className='btn btn-xs btn-outline px-2' aria-label='Bonus minus' onClick={() => setBonus(bonus - 1)}>−</button>
+          <input
+            type='number'
+            className='input input-bordered input-xs w-16 text-center'
+            aria-label='Bonus'
+            value={bonus}
+            onChange={e => setBonus(Number(e.target.value) || 0)}
+          />
+          <button className='btn btn-xs btn-outline px-2' aria-label='Bonus plus' onClick={() => setBonus(bonus + 1)}>+</button>
+        </span>
+      </div>
+      <div className='flex justify-between font-bold'>
+        <span>{info && mode !== 'mech' ? `${info.attribute!.name} ${info.attribute!.score} + ${info.skill!.name} ${info.skill!.score} + weapons ${signed(info.bonus ?? 0)}` : `Weapons ${signed(info?.bonus ?? 0)}`}{bonus ? ` ${signed(bonus)}` : ''}</span>
+        <span>{total}d4 + d12</span>
+      </div>
+      <div className='opacity-60'>Costs {cost.energy} of {mech.turn.energy} energy, {signed(cost.heat)} heat.</div>
+    </div>}
   </ActionModal>
 }
 

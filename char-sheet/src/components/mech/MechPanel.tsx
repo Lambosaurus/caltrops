@@ -4,7 +4,7 @@ import MechSection, { TypeTag } from './MechSection'
 import ChassisSilhouette from './ChassisSilhouette'
 import HitModal from './HitModal'
 import ActivationModal from './ActivationModal'
-import ShotModal from './ShotModal'
+import ShotModal, { type AttackTarget } from './ShotModal'
 import MechAdjustModal from './MechAdjustModal'
 import MechStowage from './MechStowage'
 import { statPop, StatKind } from './mechText'
@@ -14,10 +14,10 @@ import { useEffect, useState } from 'react'
 // Internal imports
 import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
-import { findChassis } from '../../lib/mech/loadout'
 import { deriveStats, overheated, turnEnergy } from '../../lib/mech/derive'
 import { adjustAmmo, setArmourPoints, toggleWound } from '../../lib/mech/damage'
-import { adjustTurn, clearShot, newTurn, shutdownPurge, sprint, sprintBlocker, SHOT_LABEL } from '../../lib/mech/turn'
+import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, sprint, sprintBlocker, weaponKeys } from '../../lib/mech/turn'
+import { findAttachment, findChassis, mountCovering } from '../../lib/mech/loadout'
 import { copyMechLink } from '../../lib/mech/store'
 import type { Mech, MechResult, MechRules, ShotKind } from '../../lib/mech/types'
 import type { Rules } from '../../lib/rules'
@@ -38,7 +38,7 @@ function MechPanel({ view, editable, showStowage = true }: {
   const rules: Rules | undefined = useListener(view, 'rules')
   const [hitSection, setHitSection] = useState(null as string | null)
   const [activeKey, setActiveKey] = useState(null as string | null)
-  const [shotKind, setShotKind] = useState(null as ShotKind | null)
+  const [attackOn, setAttackOn] = useState(null as AttackTarget | null)
   const [adjusting, setAdjusting] = useState(false)
   const mechRules: MechRules | undefined = rules?.mechs
   const chassis = mech && mechRules ? findChassis(mechRules, mech.chassis) : undefined
@@ -47,7 +47,7 @@ function MechPanel({ view, editable, showStowage = true }: {
   useEffect(() => {
     if (editable < EditMode.Live) {
       setActiveKey(null)
-      setShotKind(null)
+      setAttackOn(null)
       setAdjusting(false)
     }
   }, [editable])
@@ -98,7 +98,15 @@ function MechPanel({ view, editable, showStowage = true }: {
         onClick={() => nudge(field, delta)}
       >{delta < 0 ? '−' : '+'}</button>
     : null
-  const pools = (['shot', 'strike'] as ShotKind[]).filter(k => t[k].length)
+  const canAttack = (kind: ShotKind) => play && !t.out && !t.shutdown && !t.fired[kind] && weaponKeys(mechRules, mech, kind).length > 0
+  // Weapon buttons open the attack dialog with that weapon selected; other parts use the activation dialog.
+  function onActivate(key: string) {
+    const [sectionId, start] = key.split(':')
+    const m = mountCovering(mechRules!, mech!, sectionId, Number(start))
+    const att = m && findAttachment(mechRules!, m.name)
+    if (att && isWeapon(att)) setAttackOn({ kind: shotKindOf(att), key })
+    else setActiveKey(key)
+  }
   const purgeDisabled = !play || t.shutdown || t.out
 
   return <div className='w-full'>
@@ -133,6 +141,12 @@ function MechPanel({ view, editable, showStowage = true }: {
         : t.shutdown ? <span className='badge badge-error rounded-none font-bold'>SHUT DOWN</span>
         : hot ? <span className='badge badge-error rounded-none font-bold'>OVERHEATED</span> : null}
       <span className='flex-1'/>
+      <button className='btn btn-xs btn-warning rounded-none' disabled={!canAttack('shot')} onClick={() => setAttackOn({ kind: 'shot' })}>
+        {t.fired.shot ? 'Shot made' : 'Attack'}
+      </button>
+      <button className='btn btn-xs btn-warning btn-outline rounded-none' disabled={!canAttack('strike')} onClick={() => setAttackOn({ kind: 'strike' })}>
+        {t.fired.strike ? 'Strike made' : 'Strike'}
+      </button>
       <button className='btn btn-xs btn-outline rounded-none' disabled={sprintDisabled} onClick={() => run(sprint(mechRules, mech, roller))}>
         Sprint ({mechRules.sprint.energy}E +{mechRules.sprint.heat}H)
       </button>
@@ -143,23 +157,6 @@ function MechPanel({ view, editable, showStowage = true }: {
       <button className='btn btn-xs btn-outline rounded-none' disabled={!play} onClick={() => setAdjusting(true)}>Adjust…</button>
       <button className='btn btn-xs btn-outline rounded-none' onClick={() => copyMechLink(mech.id)}>Copy mech link</button>
     </div>
-
-    {chassis.trait || chassis.tier ? <div className='opacity-80'>
-      {[chassis.class, chassis.tier, chassis.price ? `${chassis.price.toLocaleString()} Solari` : ''].filter(Boolean).join(' · ')}
-      {chassis.trait ? <> · <b>Trait:</b> {chassis.trait}</> : null}
-    </div> : null}
-
-    {/* Pending shot / strike: weapon activations add dice here; rolled once with the d12 location die */}
-    {pools.map(k => {
-      const total = t[k].reduce((n, p) => n + p.dice - p.penalty, 0)
-      return <div key={k} className='flex flex-wrap items-center gap-2 border border-warning bg-warning/10 p-2' data-testid={`pending-${k}`}>
-        <b>{k === 'shot' ? `Ranged shot${t.shotBand ? ` at ${t.shotBand}` : ''}` : 'Melee strike'}: +{total} dice</b>
-        <span className='opacity-80'>{t[k].map(p => `${p.name} +${p.dice - p.penalty}`).join(' · ')}</span>
-        <span className='flex-1'/>
-        <button className='btn btn-xs btn-warning rounded-none' disabled={!play} onClick={() => setShotKind(k)}>Roll {SHOT_LABEL[k]} + d12</button>
-        <button className='btn btn-xs btn-ghost rounded-none' disabled={!play} onClick={() => publish(clearShot(mech, k))}>Discard</button>
-      </div>
-    })}
 
     {warns.length ? <div className='border border-error bg-error/10 p-2'>⚠ {warns.join(' · ')}</div> : null}
 
@@ -183,7 +180,7 @@ function MechPanel({ view, editable, showStowage = true }: {
             view={mv}
             editable={editable}
             onHit={setHitSection}
-            onActivate={key => { setActiveKey(key) }}
+            onActivate={onActivate}
             onWound={(id, i) => publish(toggleWound(mechRules, mech, id, i))}
             onArmour={(id, points) => {
               const cur = mech.sections[id]?.armour?.points
@@ -206,7 +203,7 @@ function MechPanel({ view, editable, showStowage = true }: {
 
     <HitModal view={view} sectionId={hitSection} close={() => setHitSection(null)}/>
     {play && rules ? <ActivationModal rules={rules} view={view} mountKey={activeKey} close={() => setActiveKey(null)}/> : null}
-    {play && rules ? <ShotModal rules={rules} view={view} kind={shotKind} close={() => setShotKind(null)}/> : null}
+    {play && rules ? <ShotModal rules={rules} view={view} target={attackOn} close={() => setAttackOn(null)}/> : null}
     {play && rules ? <MechAdjustModal rules={rules} view={view} open={adjusting} close={() => setAdjusting(false)}/> : null}
     </div>
   </div>

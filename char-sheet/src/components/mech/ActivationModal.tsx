@@ -12,7 +12,7 @@ import caltrops from '../../lib/caltrops'
 import foundry from '../../lib/foundry'
 import { findAttachment, mountKey as keyOf } from '../../lib/mech/loadout'
 import { overheated, deriveStats } from '../../lib/mech/derive'
-import { activate, activationBlocker, isWeapon, shotKindOf, SHOT_LABEL } from '../../lib/mech/turn'
+import { activate, activationBlocker } from '../../lib/mech/turn'
 import { activationRoll } from '../../lib/mech/roll'
 import type { Mech, RangeBand } from '../../lib/mech/types'
 import type { Dictionary, RollInfo, Rules } from '../../lib/rules'
@@ -23,7 +23,7 @@ const BANDS: RangeBand[] = ['Short', 'Mid', 'Long']
 const signed = (n: number) => (n >= 0 ? '+' : '') + n
 
 /**
- * One modal per activation. Costs are paid only when the user confirms; then the activation roll (if any)
+ * One modal per non-weapon activation (weapons use the attack dialog). Costs are paid only when the user confirms; then the activation roll (if any)
  * is made and shown. `mountKey` null means closed.
  */
 function ActivationModal({ rules, view, mountKey, close }: {
@@ -66,12 +66,8 @@ function ActivationModal({ rules, view, mountKey, close }: {
 
   const mechMode = mode === 'mech'
   const ranged = !!att.range && att.range !== 'Melee'
-  const weapon = isWeapon(att)
-  const kind = shotKindOf(att)
-  // A shot already being built fixes the target band for every weapon that joins it.
-  const lockedBand = weapon && kind === 'shot' && mech.turn.shot.length ? mech.turn.shotBand : null
-  // Defaults to the weapon's own band (no penalty); Melee is fixed to Short (engaged).
-  const band: RangeBand = !ranged ? 'Short' : lockedBand ?? chosen ?? att.range as RangeBand
+  // Defaults to the part's own band (no penalty); Melee is fixed to Short (engaged).
+  const band: RangeBand = !ranged ? 'Short' : chosen ?? att.range as RangeBand
   const names = activationRoll(rules, att, band, {})
   const scores: Dictionary<number> = mechMode && names
     ? { [names.attribute!.name]: aspectScore, [names.skill!.name]: skillScore }
@@ -106,10 +102,6 @@ function ActivationModal({ rules, view, mountKey, close }: {
     }
     view.publish('mech', res.mech)
     showNotices(res.notices)
-    if (weapon) {
-      close() // its dice wait in the pending shot / strike, rolled from the status bar
-      return
-    }
     if (info) {
       if (toVtt && foundry.isPresent()) {
         foundry.submitRoll(info)
@@ -128,15 +120,14 @@ function ActivationModal({ rules, view, mountKey, close }: {
     actions.push({ name: 'Done', type: 'primary', callback: () => {} })
   } else {
     actions.push({ name: 'Cancel', callback: () => {} })
-    const dice = base?.bonus ?? 0
     actions.push({
-      name: weapon ? `Activate: ${signed(dice)} dice to the ${SHOT_LABEL[kind]}` : info ? `Roll ${count} dice & activate` : 'Activate',
+      name: info ? `Roll ${count} dice & activate` : 'Activate',
       type: 'primary',
       disabled: blocker !== null,
       callback: () => confirm(false),
-      stayOpen: !weapon,
+      stayOpen: true,
     })
-    if (!weapon && info && foundry.isPresent()) {
+    if (info && foundry.isPresent()) {
       actions.push({ name: 'Send to VTT', type: 'primary', disabled: blocker !== null, callback: () => confirm(true), stayOpen: true })
     }
   }
@@ -154,18 +145,13 @@ function ActivationModal({ rules, view, mountKey, close }: {
         key={b}
         type='button'
         className={`btn btn-xs rounded-none ${b === band ? 'btn-primary' : 'btn-outline'}`}
-        disabled={!ranged || !!done || !!lockedBand}
+        disabled={!ranged || !!done}
         aria-pressed={b === band}
         onClick={() => setChosen(b)}
       >{b}</button>)}
     </div> : null}
     {blocker ? <div className='my-2 text-error' role='alert'>{blocker}</div> : null}
-    {lockedBand ? <div className='my-2 opacity-70'>The pending shot is at {lockedBand}; every weapon in it fires at that band.</div> : null}
-    {weapon ? <div className='my-2'>
-      <div>Adds {signed(att.roll?.bonus ?? 0)} dice{band !== att.range && ranged ? `, ${signed((base?.bonus ?? 0) - (att.roll?.bonus ?? 0))} for a closer band` : ''} to this turn's {SHOT_LABEL[kind]}.</div>
-      <div className='opacity-70'>Activate every weapon you want in it, then roll it once from the status bar (pilot dice + all weapon dice + d12 location).</div>
-      {att.repeat ? <div className='opacity-70'>Repeating: each activation adds its dice again and pays again.</div> : null}
-    </div> : info ? <div className='my-2'>
+    {info ? <div className='my-2'>
       {mechMode ? <>
         <div className='flex justify-between items-center'>
           <span>{info.attribute!.name} (aspect)</span>

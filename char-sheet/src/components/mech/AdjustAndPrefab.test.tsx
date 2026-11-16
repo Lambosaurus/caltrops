@@ -32,9 +32,10 @@ test('heat and energy step inline and can be typed in Adjust', () => {
   expect(view.read('mech').turn).toMatchObject({ heat: 0, energy: 5 })
 })
 
-test('the chassis trait shows on the play panel', () => {
+test('the play panel does not show chassis price, tier, class or trait', () => {
   panel()
-  expect(screen.getByText(/Workhorse: field repairs on it roll \+1 die/)).toBeTruthy()
+  expect(screen.queryByText(/Workhorse: field repairs/)).toBeNull()
+  expect(screen.queryByText(/Solari/)).toBeNull()
 })
 
 test('New mech can start from a prefab', () => {
