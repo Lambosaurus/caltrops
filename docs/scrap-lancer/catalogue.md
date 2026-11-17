@@ -98,7 +98,7 @@ How the tiers show up in the frame:
 
 Cheap frames are slot-poor or Hull-padded. The Ox Mk II has 21 slots, but 8 are Hull and only one takes a gun.
 
-Better frames trade Hull for working slots and Heat Max. The Wraith S9 has no Hull at all: every wound costs it a part, in exchange for 5 Tech slots and Evasion 6.
+Better frames have more slots and more Heat Max. Slots rise with tier within each size class (Scrap 2 to 4 below Standard, Military and Elite 2 to 6 above), every frame has some Hull, and OHS and Greenward frames carry 2 extra Hull. The Wraith S9 keeps only two Hull slots, in exchange for 6 Tech slots and Evasion 6.
 
 Reactor bays and gun mounts grow with the frame. The Tinpot R0 runs on one reactor slot and most frames have two. Heavy frames have three, and the Bastion VX-12 has four, plus a five-slot gun mount for Siege-size weapons. Elite reactors fit more output into fewer slots.
 
