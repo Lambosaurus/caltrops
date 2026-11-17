@@ -70,6 +70,9 @@ def parse_roll(s):
     if not s or s in DASH:
         return None
     s = s.replace('−', '-')
+    d = re.match(r'(\w+) \+ (\w+) \+ Evasion$', s.strip())
+    if d:  # the dodge roll: aspect + skill + the mech's Evasion
+        return {'skill': d.group(2), 'bonus': 0, 'aspect': d.group(1), 'evasion': True}
     m = re.match(r'(?:(\w+) \+ )?(\w+) ([+-]\d+)$', s.strip())
     if not m:
         raise ValueError('roll ' + s)

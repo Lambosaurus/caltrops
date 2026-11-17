@@ -7376,7 +7376,13 @@ export const ATTACHMENTS: MechAttachment[] = [
   "type": "Generic",
   "tags": "Jump, Evasive",
   "energy": 1,
-  "heat": 2
+  "heat": 2,
+  "roll": {
+   "skill": "Mobility",
+   "bonus": 0,
+   "aspect": "Reflex",
+   "evasion": true
+  }
  },
  {
   "name": "MAS Flicker FL1",
@@ -7391,7 +7397,13 @@ export const ATTACHMENTS: MechAttachment[] = [
   "type": "Generic",
   "tags": "Evasive",
   "energy": 2,
-  "heat": 2
+  "heat": 2,
+  "roll": {
+   "skill": "Mobility",
+   "bonus": 0,
+   "aspect": "Reflex",
+   "evasion": true
+  }
  },
  {
   "name": "MAS Heavy Jets JJ6",

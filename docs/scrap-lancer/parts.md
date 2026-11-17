@@ -398,8 +398,8 @@ Parts that make the mech useful between fights or help the lance. A roll is list
 | KR | Rocket Pack RJ1 | Strap-on rockets | Scrap | Generic | 1 | 0 | 4 | Jump, Charges (3), Volatile (2) | — | 600 |
 | MAS | Jump Jets JJ2 | Jump jets | Salvage | Generic | 1 | 2 | 3 | Jump | — | 2,000 |
 | MAS | Jump Jets JJ3 | Jump jets | Standard | Generic | 1 | 2 | 1 | Jump | — | 4,000 |
-| MAS | Vector VT2 | Vectored thrusters | Military | Generic | 1 | 1 | 2 | Jump, Evasive | — | 6,000 |
-| MAS | Flicker FL1 | Evasion jets | Military | Generic | 1 | 2 | 2 | Evasive | — | 6,000 |
+| MAS | Vector VT2 | Vectored thrusters | Military | Generic | 1 | 1 | 2 | Jump, Evasive | Reflex + Mobility + Evasion | 6,000 |
+| MAS | Flicker FL1 | Evasion jets | Military | Generic | 1 | 2 | 2 | Evasive | Reflex + Mobility + Evasion | 6,000 |
 | MAS | Heavy Jets JJ6 | Jump jets | Military | Generic | 2 | 4 | 4 | Jump, Repeating (2) | — | 9,000 |
 
 ### Sensors and targeting

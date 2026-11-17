@@ -15,6 +15,13 @@ describe('activationRoll', () => {
   it('uses the explicit Violence aspect for the Manipulator', () => {
     expect(activationRoll(RULES, att('Manipulator'), 'Short', {})?.attribute?.name).toBe('Violence')
   })
+  it('adds the mech Evasion for a dodge roll (Evasive parts)', () => {
+    const evasive = { ...att('Jump Jets'), roll: { aspect: 'Reflex', skill: 'Mobility', bonus: 0, evasion: true } }
+    expect(activationRoll(RULES, evasive, 'Short', { Reflex: 2, Mobility: 1 }, 3)).toEqual({
+      attribute: { name: 'Reflex', score: 2 }, skill: { name: 'Mobility', score: 1 }, bonus: 3,
+    })
+    expect(activationRoll(RULES, att('Autocannon'), 'Mid', {}, 3)?.bonus).toBe(3) // only dodge rolls add Evasion
+  })
   it('returns null without a roll', () => {
     expect(activationRoll(RULES, att('Jump Jets'), 'Short', {})).toBeNull()
   })

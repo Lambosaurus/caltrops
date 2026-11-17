@@ -26,7 +26,7 @@ export interface MechAttachment {
   name: string, type: string /* slot type name, 'Generic', or 'Armour' */, group: string, size?: number,
   description?: string, tags?: string, effect?: string,
   energy?: number, heat?: number, ammo?: string, repeat?: number, charges?: number,
-  range?: RangeBand | 'Melee', roll?: { aspect?: string, skill: string, bonus?: number },
+  range?: RangeBand | 'Melee', roll?: { aspect?: string, skill: string, bonus?: number, evasion?: boolean /* dodge roll: + the mech's Evasion */ },
   reactor?: { energy: number, heat: number }, cooling?: number, heatSink?: number,
   capacitor?: number, hand?: boolean, stowage?: number, bin?: string /* ammo name */, armour?: number,
   make?: string, model?: string, tier?: string, price?: number, kind?: string, family?: string,

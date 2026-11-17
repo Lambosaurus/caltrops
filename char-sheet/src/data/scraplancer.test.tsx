@@ -77,6 +77,12 @@ describe('Scrap Lancer pilot skills', () => {
     expect(mechs.attachments.find(a => a.name === 'OHS Welding Rig WR1')!.roll).toMatchObject({ aspect: 'Knowledge', skill: 'Repair' })
   })
 
+  it('gives every Evasive part the dodge roll', () => {
+    const evasive = mechs.attachments.filter(a => (a.tags ?? '').split(',').some(t => t.trim() === 'Evasive'))
+    expect(evasive.map(a => a.name).sort()).toEqual(['MAS Flicker FL1', 'MAS Vector VT2'])
+    for (const a of evasive) expect([a.name, a.roll]).toEqual([a.name, { aspect: 'Reflex', skill: 'Mobility', bonus: 0, evasion: true }])
+  })
+
   it('keeps pilot skills when a sheet loads', () => {
     expect(caltrops.importSheet({ pilotSkills: { Tech: 2, Melee: 0 } }).pilotSkills).toEqual({ Tech: 2 })
     expect(caltrops.importSheet({}).pilotSkills).toEqual({})
