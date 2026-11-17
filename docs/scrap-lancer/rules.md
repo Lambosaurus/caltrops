@@ -34,7 +34,7 @@ Each section defines:
 |---|---|---|
 | Location range | Faces of the d12 location die that hit this section | 1–2 |
 | Slots | Ordered list of typed slots; each slot is also one wound | Armour, Hull, untyped, untyped |
-| Provides | What the section adds while it is not destroyed | Speed 30, Evasion 1 |
+| Provides | What the section adds while it is not destroyed | Speed 6, Evasion 1 |
 | Transfers to | Where hits go once the section is destroyed | Core |
 
 Location numbers run left to right, bottom up: legs get the low numbers, the cockpit gets 12.
@@ -49,7 +49,7 @@ Legs — each provides Speed. Mech speed is the sum of surviving legs; no legs, 
 
 Arms — only matter for what is mounted on them. An arm with a working Manipulator provides Hand (grab, carry, use handheld gear).
 
-Nothing is special-cased: a tracked chassis has one Treads section providing Speed 40, a quad has four legs. The tool sums what surviving sections provide.
+Nothing is special-cased: a tracked chassis has one Treads section providing Speed 8, a quad has four legs. The tool sums what surviving sections provide.
 
 ### Slot types (call)
 
@@ -116,38 +116,61 @@ A full bin of any type averages about 4 wounds, so where you put ammo matters. T
 
 | Tag | Rule |
 |---|---|
-| Repeating (X) | May be activated up to X times per turn; on a weapon, each activation adds its dice to the shot |
+| Repeating (X) | May be activated up to X times per turn; on a weapon, each activation adds its dice to that weapon's roll |
 | Passive | Always on, never activated |
 | Powerful | +1 success if the roll already scores at least one |
 | Armoured vs Y | Incoming attacks of damage type Y lose 1 success |
 | Weak vs Y | Incoming attacks of damage type Y gain 1 success |
 | Deflection (X) | Gain X deflection until your next turn; each cancels one incoming success |
 | Indirect | May fire without line of sight at a locked target |
-| Area (X) | Roll once against every target within X of the point of impact |
+| Area (X) | Roll once against every target within X tiles of the point of impact |
 | Volatile | Cooks off when disabled (see Ammo bins). Other parts use Volatile (X), defined on the Catalogue tab with about forty more tags |
 | Kinetic / Thermal / Explosive / EM | Damage types, used by Armoured and Weak |
 
+### Scale
+
+One tile is 10 m, about one mech wide. One turn is 6 seconds. So 1 tile per turn is 6 km/h: multiply Speed by 6 for km/h.
+
+| Speed | Per turn | km/h | Sprinting |
+|---|---|---|---|
+| 4 (super-heavy) | 40 m | 24 | 8 tiles, 48 km/h |
+| 12 (medium) | 120 m | 72 | 24 tiles, 144 km/h |
+| 18 (fast light) | 180 m | 108 | 36 tiles, 216 km/h |
+
+Out of combat, Speed in tiles × 6 is also the travel speed in km/h. Start fights around the Mid/Long boundary (25–30 tiles apart); a medium mech closes from Long to Short in about five turns walking, two or three sprinting.
+
 ### Range
 
-Each weapon has one range band: Short, Mid or Long. Short weapons roll Reflex + Gunnery; Mid and Long weapons roll Precision + Gunnery.
+A target is in one of four bands. The map is about 120 tiles (1,200 m) square, so Long reaches about half way across it.
+
+| Band | Tiles | Distance | Used by |
+|---|---|---|---|
+| Engaged | Adjacent | Base to base | Melee. Guns treat it as Short. |
+| Short | 1–6 | Up to 60 m | Machine guns, flamers, short-range missiles |
+| Mid | 7–25 | 61–250 m | Autocannons, lasers, most guns |
+| Long | 26–65 | 251–650 m | Cannons, rails, long-range missiles |
+
+Each weapon has one range band: Short, Mid or Long. Ranged attacks roll Reflex + Gunnery at Engaged or Short and Precision + Gunnery at Mid or Long.
 
 Target beyond the weapon's band: cannot fire.
 
-Target in a closer band: −1 die per band closer (call).
+Target in a closer band: −1 die per band closer, once per roll (call).
 
-Melee attachments (punch, hammer, saw) need the target at Short, i.e. engaged.
+Melee attachments (punch, hammer, saw) need an Engaged target.
 
-### Shots (call)
+### Attacks (call)
 
-Each turn a mech makes at most one ranged shot and one melee strike. A shot is one roll against one target: the pilot's aspect + skill once, plus the dice of every weapon activation spent on it. Firing an AC-30 (+5) and an HC-40 (+8) at the same target is one roll of Precision + Gunnery + 13. Each activation still pays its own energy, heat and ammo, so a Repeating weapon adds its dice once for each activation you pay for.
+Each weapon fires on its own. Its roll is the pilot's aspect + skill, plus the weapon's dice for each shot, against one target, with its own d12 hit location. Firing an AC-30 (+5) and an HC-40 (+8) at the same target is two rolls: Precision + Gunnery + 5, and Precision + Gunnery + 8.
 
-Reach: every weapon in a shot must reach the target's band, and each takes its own −1 die per band closer. The aspect is Reflex at Short and Precision at Mid or Long; a melee strike uses the aspect named by the weapon adding the most dice.
+Shots: a weapon fires once a turn, or up to X times if it is Repeating (X). Pick how many shots before rolling; each shot pays its own energy, heat and ammo, and adds the weapon's dice to that weapon's one roll. An M12 firing both shots rolls Reflex + Gunnery + 2.
 
-Tags: the shot carries every tag of the weapons in it (for numbered tags, the highest). Its damage type is that of the weapon that added the most dice, attacker's choice on a tie.
+Several weapons can fire in the same turn, at the same target or different ones, as long as the energy, heat and ammo last.
 
-Wounds: all of a shot's wounds go to one section, so one big shot wrecks a section where scattered fire would not.
+Tags: each roll carries only its own weapon's tags. Piercing from one gun never combines with Area from another.
 
-Jams: if the shot scores no successes, every Jams weapon in it jams.
+Wounds: each roll's wounds go to the section its own d12 picks, so a volley spreads its damage unless the pilot aims.
+
+Jams: a Jams weapon jams when its own roll scores no successes.
 
 Other rolls: activations that roll for something other than an attack (Targeting, Repair, Tow) roll on their own as usual.
 
@@ -161,7 +184,7 @@ Act, in any order.
 
 Move up to the mech's Speed (sum of surviving legs) for free. Any movement removes Sitting Duck.
 
-Sprint: spend 2 energy and gain 2 heat to move Speed again, and gain Evasion until your next turn (call: amounts).
+Sprint: spend energy and gain heat equal to the chassis Size to move Speed again, and gain Evasion until your next turn. Size follows the chassis class: Ultralight 1, Light 2, Medium 3, Heavy 4, Heavy assault and Super-heavy 5. Small mechs sprint cheaply; a heavy one pays for every dash, which is what evasion jets are for.
 
 Activate attachments: pay energy, gain heat, draw ammo, apply the effect. Each attachment once, unless Repeating.
 
@@ -171,11 +194,11 @@ End the turn, one of two ways:
 
 End turn: add the reactor's passive heat, subtract passive cooling (never below 0).
 
-Shut down & purge (an action, any time): the reactor adds no heat, cooling applies, and the mech is stunned until its next turn.
+Shut down & purge (an action, any time): the reactor adds no heat, cooling applies, and the mech stays shut down, stunned, through its whole next turn.
 
 ### Shut down & purge
 
-Shutting down is an action the pilot can take at any point in their turn, and it ends the turn. The reactor adds no heat that end of turn; passive cooling still applies. Until its next turn the mech is stunned (+1 die to attacks against it) and, unless it moved first, a Sitting Duck. It reboots at the start of its next turn with full energy; if still above Heat Max, it starts that turn overheated.
+Shutting down is an action the pilot can take at any point in their turn, and it ends the turn. The reactor adds no heat that end of turn; passive cooling still applies. The mech then stays shut down through its whole next turn, like a stun: no energy, no actions, no movement, and it is stunned (+1 die to attacks against it) and a Sitting Duck. The reactor adds no heat at the end of that turn either, and cooling applies again. It reboots at the start of the turn after, with full energy; if still above Heat Max, it starts that turn overheated. Because it costs a whole turn, pilots usually shut down at the end of a turn, after they have acted.
 
 ### Overheated
 
@@ -189,7 +212,7 @@ What a mech did with its legs this turn changes how hard it is to hit, until its
 |---|---|---|
 | Sitting Duck | Did not move (including while shut down, or with no legs left) | +2 dice |
 | Moved | Moved up to Speed | No change |
-| Sprinting | Sprinted (2 energy, +2 heat) | − dice equal to Evasion |
+| Sprinting | Sprinted (energy and heat equal to Size) | − dice equal to Evasion |
 
 Legs provide Evasion the way they provide Speed: the sum over surviving legs. A medium mech's legs give 2 in total. Example values: Jackal 4, Mule 2, Bulwark treads 1 (call: light and heavy values). A shut-down mech is also stunned (+1 die), so it suffers +3 in total (call: they stack).
 
@@ -238,12 +261,12 @@ Three starting frames, all numbers (call) and untested. Every section also has o
 
 ### MAS Jackal J-7 — light scout
 
-Heat Max 5. 13 slots, 4 of them Hull. Fast, with an exposed canopy that is easy to snipe and a left arm that is a hand and little else.
+Heat Max 6. 13 slots, 4 of them Hull. Fast, with an exposed canopy that is easy to snipe and a left arm that is a hand and little else.
 
 | Section | d12 | Aim cost | Slots | Provides | Transfers to |
 |---|---|---|---|---|---|
-| Left leg | 1–2 | 3 | Hull, untyped | Speed 40, Evasion 2 | Core |
-| Right leg | 3–4 | 3 | Hull, untyped | Speed 40, Evasion 2 | Core |
+| Left leg | 1–2 | 3 | Hull, untyped | Speed 8, Evasion 2 | Core |
+| Right leg | 3–4 | 3 | Hull, untyped | Speed 8, Evasion 2 | Core |
 | Left arm | 5 | 4 | Hand, Weapon | Hand (with Manipulator) | Core |
 | Core | 6–9 | 1 | Hull, Reactor ×2, untyped | — | — |
 | Right arm | 10 | 4 | Weapon, Weapon | — | Core |
@@ -255,8 +278,8 @@ Heat Max 7. 21 slots, 4 of them Hull. Two working hands, a lighter right arm, a 
 
 | Section | d12 | Aim cost | Slots | Provides | Transfers to |
 |---|---|---|---|---|---|
-| Left leg | 1–2 | 3 | Hull, untyped ×2 | Speed 30, Evasion 1 | Core |
-| Right leg | 3–4 | 3 | Hull, untyped ×2 | Speed 30, Evasion 1 | Core |
+| Left leg | 1–2 | 3 | Hull, untyped ×2 | Speed 6, Evasion 1 | Core |
+| Right leg | 3–4 | 3 | Hull, untyped ×2 | Speed 6, Evasion 1 | Core |
 | Left arm | 5–6 | 3 | Hand, Weapon ×2 | Hand (with Manipulator) | Core |
 | Core | 7–9 | 2 | Hull, Reactor ×2, Tech, untyped ×2 | — | — |
 | Right arm | 10 | 4 | Hand, Weapon | Hand (with Manipulator) | Core |
@@ -269,7 +292,7 @@ Heat Max 11. 25 slots, 7 of them Hull. One treads section: a lucky hit there imm
 
 | Section | d12 | Aim cost | Slots | Provides | Transfers to |
 |---|---|---|---|---|---|
-| Treads | 1–2 | 3 | Hull ×2, untyped ×3 | Speed 40, Evasion 1 | Core |
+| Treads | 1–2 | 3 | Hull ×2, untyped ×3 | Speed 8, Evasion 1 | Core |
 | Left arm | 3–4 | 3 | Hull, Weapon ×3 | — | Core |
 | Core | 5–9 | 1 | Hull ×2, Reactor ×3, untyped ×4 | — | — |
 | Right arm | 10–11 | 3 | Hull, Weapon ×3 | — | Core |
@@ -346,7 +369,7 @@ A Mule brawling at Short range with everything ends turn 1 just under Heat Max a
 | Cockpit | AWP Plate P2 (2) | Hull, SBL Sensor SA1 |
 | Right shoulder | AWP Plate P2 (2) | CMS SRM-2 (Weapon), Ammo Bin: Missile (5) |
 
-Derived: 6 energy per turn, of which the exchanger's pump draws 1, so 5 to spend. Passive heat +3 (reactor) −4 (exchanger 3, fins 1) = net −1 per turn. Heat Max 7 + 2 (heat sink) = 9, Speed 60, Hand. Losing the heat sink drops Heat Max back to 7 mid-fight.
+Derived: 6 energy per turn, of which the exchanger's pump draws 1, so 5 to spend. Passive heat +3 (reactor) −4 (exchanger 3, fins 1) = net −1 per turn. Heat Max 7 + 2 (heat sink) = 9, Speed 12, Hand. Losing the heat sink drops Heat Max back to 7 mid-fight.
 
 ### Heat over two turns
 
@@ -361,7 +384,7 @@ With heat at 11 and 2 energy left, the pilot can:
 
 End turn: heat settles to 10, still over Max, so it starts turn 3 overheated and every action risks damage until it cools.
 
-Shut down & purge: heat drops to 7, but the mech is stunned and a Sitting Duck through the enemy phase (+3 dice against it).
+Shut down & purge: heat drops to 7, but the mech stays shut down, stunned and a Sitting Duck (+3 dice against it), through the enemy phase and all of turn 3. Cooling takes it to 3 by the end of turn 3, and it reboots in turn 4.
 
 Keep fighting: the second M12 burst (+2 heat, to 13) would roll 4d4 (13 − 9), each 4 wounding the M12.
 
@@ -383,8 +406,6 @@ Categorical skills: replace the placeholder names (Gunnery, Tech, Mobility, Mele
 
 Enemy mechs: full sheets like the players, or Caltrops foe notation with a short slot list?
 
-Range bands: distances for Short / Mid / Long and the penalty for firing outside them.
-
 Economy: Solari prices are drafted on the Catalogue and Parts tabs; Scrap costs, armour refills and section rebuilds still need play-testing.
 
 Ejection and pilots on foot once a mech is lost.
@@ -400,13 +421,16 @@ Ejection and pilots on foot once a mech is lost.
 | Missile bin holds 5 (so a full bin cooks off at 15d4, close to the others' 16d4); cook-off wounds ignore armour | Attachments |
 | Stowage Rack: Size 1 Generic, +3 stowage slots; items lost or unreachable while it is destroyed | Attachments |
 | Inside a weapon's range band: −1 die per band closer | Attachments |
-| Melee needs a Short (engaged) target | Attachments |
+| Melee needs an Engaged (base-to-base) target; guns treat Engaged as Short | Attachments |
+| Each weapon rolls on its own with the full pilot dice; repeat shots add to that weapon's roll | Attacks |
+| Range bands: Short to 60 m, Mid 61–250 m, Long 251–650 m | Range |
+| Scale: 1 tile = 10 m, 1 turn = 6 s; Speed in tiles per turn (old values ÷ 5) | Scale |
 | Unspent energy is lost unless stored in a Capacitor | Mech turn |
-| Sprint costs 2 energy and +2 heat | Mech turn |
+| Sprint costs energy and heat equal to chassis Size (1–5) | Mech turn |
 | Reactor heat and passive cooling both applied at end of turn | Mech turn |
 | Overheat roll uses the overage after the action; sprint damage lands in the legs | Mech turn |
 | No forced shutdown: a mech can stay overheated across turns | Mech turn |
-| Shut-down mechs are stunned: +1 die to attacks against them | Mech turn |
+| Shut down & purge holds the mech shut down, stunned, through its next turn: +1 die to attacks against it | Mech turn |
 | Evasion per chassis (Jackal 4, Mule 2, Bulwark 1); Sitting Duck +2 and Evasion change attacker dice, not successes | Mobility |
 | Stunned (+1) and Sitting Duck (+2) stack on a shut-down mech | Mobility |
 | All wounds from one hit go to one section | Damage |
@@ -415,5 +439,5 @@ Ejection and pilots on foot once a mech is lost.
 | Aim cost minimum 1 die | Damage |
 | Field repair: 1 Scrap + check, one wound per success; no armour or section restore | Damage |
 | Mech wounds are not fresh or locked | Damage |
-| Chassis Heat Max values (Jackal 5, Mule 7, Bulwark 11) and Heat Sink at +2 | Examples |
+| Chassis Heat Max values (Jackal 6, Mule 7, Bulwark 11) and Heat Sink at +2 | Examples |
 | All other chassis and attachment numbers | Examples |

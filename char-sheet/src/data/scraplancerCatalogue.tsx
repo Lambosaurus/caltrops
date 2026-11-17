@@ -7,11 +7,12 @@ export const CHASSIS: Chassis[] = [
   "make": "KR",
   "model": "Tinpot R0",
   "class": "Ultralight",
+  "size": 1,
   "tier": "Scrap",
   "price": 800,
-  "heatMax": 3,
+  "heatMax": 5,
   "trait": "Tiny: attacks against it from Long range roll −1 die",
-  "description": "A one-seat walker built round a car engine. It runs on a single small reactor and a heat bank of 3, so every shot is a decision.",
+  "description": "A one-seat walker built round a car engine. It runs on a single small reactor and a heat bank of 5, so every shot is a decision.",
   "shape": "biped",
   "sections": [
    {
@@ -28,7 +29,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 25,
+     "speed": 5,
      "evasion": 1
     }
    },
@@ -46,7 +47,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 25,
+     "speed": 5,
      "evasion": 1
     }
    },
@@ -99,9 +100,10 @@ export const CHASSIS: Chassis[] = [
   "make": "KR",
   "model": "Rattler R1",
   "class": "Light",
+  "size": 2,
   "tier": "Scrap",
   "price": 1200,
-  "heatMax": 4,
+  "heatMax": 6,
   "trait": "Open cab: an Area attack that hits the cockpit also hits the pilot",
   "description": "A cargo loader with a roll cage and a gun welded to one claw. With no Tech slot, it cools with fins alone.",
   "shape": "biped",
@@ -120,7 +122,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -138,7 +140,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -205,9 +207,10 @@ export const CHASSIS: Chassis[] = [
   "make": "KR",
   "model": "Hulk R3",
   "class": "Medium",
+  "size": 3,
   "tier": "Scrap",
   "price": 2200,
-  "heatMax": 5,
+  "heatMax": 7,
   "trait": "Junker: rebuilding a destroyed section costs only Scrap, never Solari",
   "description": "A dead OHS Mule rebuilt with slabs of Hull and a second gun arm. Ugly, slow and cheap to keep running.",
   "shape": "biped",
@@ -226,7 +229,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 25,
+     "speed": 5,
      "evasion": 1
     }
    },
@@ -244,7 +247,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 25,
+     "speed": 5,
      "evasion": 1
     }
    },
@@ -314,9 +317,10 @@ export const CHASSIS: Chassis[] = [
   "make": "OHS",
   "model": "Ox Mk II",
   "class": "Medium quad",
+  "size": 3,
   "tier": "Scrap",
   "price": 2500,
-  "heatMax": 5,
+  "heatMax": 6,
   "trait": "Unshakeable: cannot be knocked down, shoved or grappled",
   "description": "A four-legged freight walker with a crane arm. Tough and roomy, but it carries one gun and cannot dodge. Losing a leg costs only 15 Speed.",
   "shape": "quad",
@@ -335,7 +339,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "4 / 1 / 5 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -352,7 +356,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "4 / 4 / 5 / 7",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -369,7 +373,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 1 / 4 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -386,7 +390,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 7",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -445,9 +449,10 @@ export const CHASSIS: Chassis[] = [
   "make": "OHS",
   "model": "Ox Mk III",
   "class": "Medium quad",
+  "size": 3,
   "tier": "Salvage",
   "price": 4000,
-  "heatMax": 6,
+  "heatMax": 7,
   "trait": "Unshakeable",
   "description": "The current Ox. It has the Mk II's legs and cargo bed, plus a second gun on the crane arm and a cab with two Tech slots.",
   "shape": "quad",
@@ -466,7 +471,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "4 / 1 / 5 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -483,7 +488,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "4 / 4 / 5 / 7",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -500,7 +505,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 1 / 4 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -517,7 +522,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 7",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -578,6 +583,7 @@ export const CHASSIS: Chassis[] = [
   "make": "OHS",
   "model": "Mule Mk II",
   "class": "Medium",
+  "size": 3,
   "tier": "Salvage",
   "price": 6000,
   "heatMax": 7,
@@ -600,7 +606,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -619,7 +625,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -705,6 +711,7 @@ export const CHASSIS: Chassis[] = [
   "make": "OHS",
   "model": "Mastodon Mk I",
   "class": "Heavy tracked",
+  "size": 4,
   "tier": "Salvage",
   "price": 8000,
   "heatMax": 9,
@@ -729,7 +736,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 6",
     "provides": {
-     "speed": 30
+     "speed": 6
     }
    },
    {
@@ -803,6 +810,7 @@ export const CHASSIS: Chassis[] = [
   "make": "HCA",
   "model": "Picket Block 1",
   "class": "Light",
+  "size": 2,
   "tier": "Salvage",
   "price": 5000,
   "heatMax": 5,
@@ -824,7 +832,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 35,
+     "speed": 7,
      "evasion": 2
     }
    },
@@ -842,7 +850,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 35,
+     "speed": 7,
      "evasion": 2
     }
    },
@@ -911,6 +919,7 @@ export const CHASSIS: Chassis[] = [
   "make": "HCA",
   "model": "Warden Block 2",
   "class": "Medium",
+  "size": 3,
   "tier": "Standard",
   "price": 10000,
   "heatMax": 8,
@@ -933,7 +942,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -952,7 +961,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -1026,6 +1035,7 @@ export const CHASSIS: Chassis[] = [
   "make": "HCA",
   "model": "Bulwark Block 4",
   "class": "Heavy tracked",
+  "size": 4,
   "tier": "Standard",
   "price": 14000,
   "heatMax": 11,
@@ -1050,7 +1060,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 6",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 1
     }
    },
@@ -1129,6 +1139,7 @@ export const CHASSIS: Chassis[] = [
   "make": "HCA",
   "model": "Rampart Block 6",
   "class": "Heavy",
+  "size": 4,
   "tier": "Standard",
   "price": 20000,
   "heatMax": 13,
@@ -1151,7 +1162,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -1169,7 +1180,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -1245,10 +1256,11 @@ export const CHASSIS: Chassis[] = [
   "make": "MAS",
   "model": "Jackal J-7",
   "class": "Light",
+  "size": 2,
   "tier": "Salvage",
   "price": 4000,
-  "heatMax": 5,
-  "trait": "Light frame: Sprint costs 1 energy instead of 2",
+  "heatMax": 6,
+  "trait": "Light frame: Sprint costs 1 less energy",
   "description": "Fast, with an exposed canopy that is easy to snipe and a left arm that is a hand and little else.",
   "shape": "biped",
   "sections": [
@@ -1266,7 +1278,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 2
     }
    },
@@ -1284,7 +1296,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 2
     }
    },
@@ -1352,6 +1364,7 @@ export const CHASSIS: Chassis[] = [
   "make": "MAS",
   "model": "Kestrel K-12",
   "class": "Light",
+  "size": 2,
   "tier": "Military",
   "price": 18000,
   "heatMax": 7,
@@ -1374,7 +1387,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 45,
+     "speed": 9,
      "evasion": 2
     }
    },
@@ -1393,7 +1406,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 45,
+     "speed": 9,
      "evasion": 2
     }
    },
@@ -1463,6 +1476,7 @@ export const CHASSIS: Chassis[] = [
   "make": "MAS",
   "model": "Harrier H-3",
   "class": "Medium",
+  "size": 3,
   "tier": "Military",
   "price": 22000,
   "heatMax": 8,
@@ -1485,7 +1499,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 2
     }
    },
@@ -1504,7 +1518,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 2
     }
    },
@@ -1576,6 +1590,7 @@ export const CHASSIS: Chassis[] = [
   "make": "VDG",
   "model": "Halberd VX-6",
   "class": "Medium",
+  "size": 3,
   "tier": "Military",
   "price": 20000,
   "heatMax": 10,
@@ -1598,7 +1613,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -1617,7 +1632,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -1693,6 +1708,7 @@ export const CHASSIS: Chassis[] = [
   "make": "VDG",
   "model": "Monolith VX-9",
   "class": "Heavy assault",
+  "size": 5,
   "tier": "Military",
   "price": 30000,
   "heatMax": 14,
@@ -1716,7 +1732,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 20
+     "speed": 4
     }
    },
    {
@@ -1735,7 +1751,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 20
+     "speed": 4
     }
    },
    {
@@ -1828,6 +1844,7 @@ export const CHASSIS: Chassis[] = [
   "make": "VDG",
   "model": "Bastion VX-12",
   "class": "Super-heavy tracked",
+  "size": 5,
   "tier": "Military",
   "price": 48000,
   "heatMax": 20,
@@ -1851,7 +1868,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 1 / 4 / 4",
     "provides": {
-     "speed": 10
+     "speed": 2
     }
    },
    {
@@ -1870,7 +1887,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 7",
     "provides": {
-     "speed": 10
+     "speed": 2
     }
    },
    {
@@ -1969,6 +1986,7 @@ export const CHASSIS: Chassis[] = [
   "make": "GWC",
   "model": "Thornback Pattern 3",
   "class": "Medium",
+  "size": 3,
   "tier": "Standard",
   "price": 9000,
   "heatMax": 8,
@@ -1991,7 +2009,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -2010,7 +2028,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -2084,6 +2102,7 @@ export const CHASSIS: Chassis[] = [
   "make": "GWC",
   "model": "Ironbark Pattern 5",
   "class": "Heavy",
+  "size": 4,
   "tier": "Military",
   "price": 24000,
   "heatMax": 12,
@@ -2107,7 +2126,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 25
+     "speed": 5
     }
    },
    {
@@ -2126,7 +2145,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 25
+     "speed": 5
     }
    },
    {
@@ -2203,6 +2222,7 @@ export const CHASSIS: Chassis[] = [
   "make": "CLF",
   "model": "Wraith S9",
   "class": "Light",
+  "size": 2,
   "tier": "Elite",
   "price": 45000,
   "heatMax": 8,
@@ -2224,7 +2244,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 45,
+     "speed": 9,
      "evasion": 3
     }
    },
@@ -2242,7 +2262,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 45,
+     "speed": 9,
      "evasion": 3
     }
    },
@@ -2312,6 +2332,7 @@ export const CHASSIS: Chassis[] = [
   "make": "CLF",
   "model": "Paragon S11",
   "class": "Heavy",
+  "size": 4,
   "tier": "Elite",
   "price": 70000,
   "heatMax": 15,
@@ -2334,7 +2355,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -2353,7 +2374,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -2473,7 +2494,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "group": "Power",
   "family": "Reactors",
   "kind": "Fission pile",
-  "description": "Was Salvage Fission Pile",
   "size": 2,
   "type": "Reactor",
   "tags": "Volatile (8)",
@@ -2605,7 +2625,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "group": "Power",
   "family": "Reactors",
   "kind": "Fusion reactor",
-  "description": "The baseline. Was Dipole Fusion Reactor",
+  "description": "The baseline",
   "size": 2,
   "type": "Reactor",
   "tags": "",
@@ -2641,7 +2661,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "group": "Power",
   "family": "Reactors",
   "kind": "Fusion reactor",
-  "description": "Was Arc-point Fusion Reactor",
   "size": 3,
   "type": "Reactor",
   "tags": "",
@@ -2991,7 +3010,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "group": "Cooling",
   "family": "Passive cooling",
   "kind": "Radiator fins",
-  "description": "The cheapest cooling. Was Radiator Fins",
+  "description": "The cheapest cooling",
   "size": 1,
   "type": "Generic",
   "tags": "",
@@ -3026,7 +3045,8 @@ export const ATTACHMENTS: MechAttachment[] = [
   "size": 1,
   "type": "Generic",
   "tags": "",
-  "cooling": 1
+  "cooling": 1,
+  "heatSink": 1
  },
  {
   "name": "CWF Array RA3",
@@ -3115,7 +3135,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "group": "Cooling",
   "family": "Passive cooling",
   "kind": "Heat exchanger",
-  "description": "Was Heat Exchanger",
   "size": 1,
   "type": "Tech",
   "tags": "",
@@ -3256,9 +3275,9 @@ export const ATTACHMENTS: MechAttachment[] = [
   "description": "Two blocks",
   "size": 3,
   "type": "Generic",
-  "tags": "Heavy (5)",
+  "tags": "Heavy (1)",
   "heatSink": 4,
-  "heavy": 5
+  "heavy": 1
  },
  {
   "name": "HTC Halcyon HS-2",
@@ -3269,7 +3288,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "group": "Cooling",
   "family": "Heat sinks",
   "kind": "Heat sink",
-  "description": "Was Heat Sink",
   "size": 1,
   "type": "Generic",
   "tags": "",
@@ -3414,7 +3432,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "group": "Cooling",
   "family": "Active cooling",
   "kind": "Coolant flush",
-  "description": "Was Coolant Flush. Refills cost 100 each",
+  "description": "Refills cost 100 each",
   "size": 1,
   "type": "Generic",
   "tags": "Charges (2)",
@@ -3498,7 +3516,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "group": "Cooling",
   "family": "Active cooling",
   "kind": "Active cooling",
-  "description": "Was Active Cooling",
   "size": 1,
   "type": "Tech",
   "tags": "",
@@ -3647,7 +3664,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 800,
   "group": "Machine guns",
   "family": "Machine guns",
-  "description": "Was Machine Gun",
   "size": 1,
   "type": "Weapon",
   "tags": "Repeating (2), Kinetic, Suppressive",
@@ -3885,7 +3901,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 2500,
   "group": "Autocannons",
   "family": "Autocannons",
-  "description": "The baseline. Was Autocannon",
+  "description": "The baseline",
   "size": 2,
   "type": "Weapon",
   "tags": "Kinetic",
@@ -4121,7 +4137,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 6000,
   "group": "Cannons",
   "family": "Cannons",
-  "description": "Was Heavy Cannon",
   "size": 3,
   "type": "Weapon",
   "tags": "Kinetic, Concussive",
@@ -4616,7 +4631,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 4000,
   "group": "Lasers",
   "family": "Lasers",
-  "description": "Was Laser",
   "size": 2,
   "type": "Weapon",
   "tags": "Thermal, Accurate",
@@ -4989,7 +5003,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 5000,
   "group": "EM weapons",
   "family": "EM weapons",
-  "description": "Was Arc Lance",
   "size": 2,
   "type": "Weapon",
   "tags": "EM, Disruptor",
@@ -5106,7 +5119,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 1000,
   "group": "Flamers",
   "family": "Flamers",
-  "description": "A gas-flare tool. Was Flamer",
+  "description": "A gas-flare tool",
   "size": 1,
   "type": "Weapon",
   "tags": "Area (1), Thermal, Searing (1)",
@@ -5275,7 +5288,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 1500,
   "group": "Rockets and missiles",
   "family": "Rockets and missiles",
-  "description": "Was SRM Rack",
   "size": 1,
   "type": "Weapon",
   "tags": "Missile, Repeating (2), Explosive",
@@ -5361,7 +5373,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 4000,
   "group": "Rockets and missiles",
   "family": "Rockets and missiles",
-  "description": "Was Missile Rack",
   "size": 2,
   "type": "Weapon",
   "tags": "Missile, Guided, Repeating (3), Indirect, Explosive",
@@ -5572,7 +5583,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 500,
   "group": "Claws and hands",
   "family": "Claws and hands",
-  "description": "Was Manipulator",
   "size": 1,
   "type": "Hand",
   "tags": "Kinetic, Hand, Dextrous (1)",
@@ -5697,7 +5707,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 1000,
   "group": "Blades and saws",
   "family": "Blades and saws",
-  "description": "Was Rotary Saw",
   "size": 1,
   "type": "Hand",
   "tags": "Kinetic, Grinding, Cutter",
@@ -5881,7 +5890,6 @@ export const ATTACHMENTS: MechAttachment[] = [
   "price": 1200,
   "group": "Hammers and drivers",
   "family": "Hammers and drivers",
-  "description": "Was Breaching Hammer",
   "size": 1,
   "type": "Hand",
   "tags": "Kinetic, Overcharge (2)",
@@ -6654,10 +6662,10 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Tower shield",
   "size": 2,
   "type": "Hand",
-  "tags": "Deflection (2), Frontal, Heavy (10)",
+  "tags": "Deflection (2), Frontal, Heavy (2)",
   "energy": 1,
   "heat": 0,
-  "heavy": 10
+  "heavy": 2
  },
  {
   "name": "SBL Field Generator FG2",
@@ -6744,8 +6752,8 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Scrap plate",
   "type": "Armour",
   "armour": 2,
-  "tags": "Heavy (5)",
-  "heavy": 5
+  "tags": "Heavy (1)",
+  "heavy": 1
  },
  {
   "name": "KR Slab SB4",
@@ -6758,8 +6766,8 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Slab armour",
   "type": "Armour",
   "armour": 4,
-  "tags": "Heavy (10)",
-  "heavy": 10
+  "tags": "Heavy (2)",
+  "heavy": 2
  },
  {
   "name": "AWP Plate P2",
@@ -6798,8 +6806,8 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Plating",
   "type": "Armour",
   "armour": 3,
-  "tags": "Heavy (5)",
-  "heavy": 5
+  "tags": "Heavy (1)",
+  "heavy": 1
  },
  {
   "name": "AWP Reactive RX2",
@@ -6864,8 +6872,8 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Bulkhead plate",
   "type": "Armour",
   "armour": 6,
-  "tags": "Heavy (10)",
-  "heavy": 10
+  "tags": "Heavy (2)",
+  "heavy": 2
  },
  {
   "name": "AWP Lightweave LW4",
@@ -7062,15 +7070,15 @@ export const AMMO: MechAmmo[] = [
 ]
 
 export const TAGS: { [tag: string]: string } = {
- "Repeating": "May be activated up to X times per turn; on a weapon, each activation adds its dice to the shot",
+ "Repeating": "May be activated up to X times per turn; on a weapon, each activation adds its dice to that weapon's roll",
  "Passive": "Always on, never activated",
  "Powerful": "+1 success if the roll already scores at least one",
  "Armoured": "Incoming attacks of damage type Y lose 1 success",
  "Weak": "Incoming attacks of damage type Y gain 1 success",
  "Deflection": "Gain X deflection until your next turn; each cancels one incoming success",
  "Indirect": "May fire without line of sight at a locked target",
- "Area": "Roll once against every target within X of the point of impact",
- "Volatile": "Replaces plain Volatile on non-ammo parts: when disabled, roll Xd4, each success a wound to that section that ignores armour. Ammo bins keep rounds × volatility",
+ "Area": "Roll once against every target within X tiles of the point of impact",
+ "Volatile": "when disabled, roll Xd4, each success a wound to that section that ignores armour. Ammo bins keep rounds × volatility",
  "Kinetic": "Damage types, used by Armoured and Weak",
  "Thermal": "Damage types, used by Armoured and Weak",
  "Explosive": "Damage types, used by Armoured and Weak",
@@ -7080,8 +7088,8 @@ export const TAGS: { [tag: string]: string } = {
  "Accurate": "Aimed shots with it cost 1 fewer die (minimum 1). Stacks with Fire control",
  "Scatter": "Against a target at Short, it also has Area (1)",
  "Disruptor": "Ignores deflection. Successes can be spent to disrupt an attachment in the hit section instead of wounding: spend 1 success per slot it occupies (a size-3 part costs 3). A disrupted part is disabled until it is repaired, but takes no wounds. Analog parts cannot be disrupted",
- "Knockback": "Successes can be spent on movement instead of wounds: each one pushes the target one range band away, or moves this mech one band after it. The first success must push the target, and a pushed target is Staggered: its next roll is −1 die and it cannot Sprint until the end of its next turn (call). The rest are wounds as normal",
- "Suppressive": "Successes can be spent to suppress instead of wounding: each gives the target −1 die on its next roll, to a maximum of −3 from all sources (call). Machine guns pin a target down rather than wreck it",
+ "Knockback": "Successes can be spent on movement instead of wounds: each one pushes the target one range band away, or moves this mech one band after it. The first success must push the target, and a pushed target is Staggered: its next roll is −1 die and it cannot Sprint until the end of its next turn. The rest are wounds as normal",
+ "Suppressive": "Successes can be spent to suppress instead of wounding: each gives the target −1 die on its next roll, to a maximum of −3 from all sources. Machine guns pin a target down rather than wreck it",
  "Concussive": "If the attack deals at least one wound, the target is Staggered (see Knockback)",
  "Grapple": "Spend a success to grab the target instead of wounding: it cannot move away from this mech until it breaks free or this part is disabled. Breaking free is an action: roll Violence + Melee and spend a success. While it is held, spend a success from any of this part's later attacks to drag it one range band with you",
  "Grinding": "+1 die for each consecutive turn it has attacked the same target",
@@ -7091,11 +7099,11 @@ export const TAGS: { [tag: string]: string } = {
  "Reload": "After activation, it cannot be activated again until X of your turns have passed",
  "Hungry": "Each activation draws X rounds instead of one",
  "Lobbed": "Cannot target anything at Short",
- "Charges": "X activations, refilled at a haven. Was already used by Coolant Flush",
+ "Charges": "X activations, refilled at a haven",
  "Recharging": "X activations, refilled at the start of each scene",
  "Renewable": "Its Charges also refill for free, out of combat, wherever what it uses can be found: open water for a spray or quench tank",
  "Missile": "The attack is a missile: Point-defence and Spoofing work against it",
- "Guided": "Against a locked target, each activation adds 1 extra die to the shot",
+ "Guided": "Against a locked target, each activation adds 1 extra die to its roll",
  "Seeking": "Ignores Evasion, and Spoofing does not stop its Guided dice",
  "Targeting": "Activation: roll the listed Roll; each success places a lock on a target in line of sight until your next turn. Attacks against a locked target roll +1 die, and Indirect and Guided weapons use locks",
  "Datalink": "Locks it places count for every mech in your lance",
@@ -7125,7 +7133,7 @@ export const TAGS: { [tag: string]: string } = {
  "Analog": "It cannot be disrupted by Disruptor attacks",
  "Shielded": "Disrupting this part costs X more successes",
  "Faraday": "Passive: while it works, every other part in its section has Shielded (X). Faraday (X, mech) covers every part on the mech instead",
- "Heavy": "−X mech Speed while it is fitted",
+ "Heavy": "−X tiles of mech Speed while it is fitted",
  "Cheap recharge": "Refilling it costs half price: armour points on armour, or Charges on a part that has them",
  "Self-repairing": "Armour only: regains 1 point at the start of each of your turns, up to its maximum",
  "Dextrous": "+X dice to fine work with this hand: field repairs, locks, salvage"

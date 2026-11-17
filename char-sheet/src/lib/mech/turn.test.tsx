@@ -1,7 +1,7 @@
 import { DEFAULT_RULES } from '../rules'
 import { FIXTURE_RULES } from './fixture'
 import { newMech } from './loadout'
-import { activate, activationBlocker, newTurn, outOfRange, rangePenalty, shutdownPurge, sprint, sprintBlocker } from './turn'
+import { activate, activationBlocker, adjustTurn, newTurn, outOfRange, rangePenalty, shutdownPurge, sprint, sprintBlocker, travel } from './turn'
 import type { Mech, MechSettings } from './types'
 
 const RULES = { ...DEFAULT_RULES, name: 'Test', mechs: FIXTURE_RULES }
@@ -75,9 +75,10 @@ describe('ammo', () => {
 
 describe('blockers', () => {
   it('range is checked against the given target', () => {
-    expect(activationBlocker(R, mule(), MG, 'Mid')).toBe('Target is beyond Short range.')
+    expect(activationBlocker(R, mule(), MG, 'Mid')).toBe('Out of range: reaches Short, target is Mid.')
     expect(activationBlocker(R, mule(), HAMMER, 'Mid')).toContain('Melee')
-    expect(activationBlocker(R, mule(), HAMMER, 'Short')).toBeNull()
+    expect(activationBlocker(R, mule(), HAMMER, 'Short')).toContain('Engaged')
+    expect(activationBlocker(R, mule(), HAMMER, 'Engaged')).toBeNull()
     expect(activationBlocker(R, mule(), MG)).toBeNull()
     expect(activationBlocker(R, mule(), MG, 'Short')).toBeNull()
   })
@@ -111,16 +112,22 @@ describe('blockers', () => {
 describe('shutdown, new turn, sprint', () => {
   const shut = () => { const m = mule(); return shutdownPurge(R, { ...m, turn: { ...m.turn, heat: 13 } }).mech }
   it('shutdown & purge', () => {
-    expect(shut().turn).toMatchObject({ heat: 9, shutdown: true, stored: 0 })
+    expect(shut().turn).toMatchObject({ heat: 9, energy: 0, shutdown: true, holdShutdown: true, stored: 0 })
   })
   it('blocks actions while shut down', () => {
     const m = shut()
-    expect(activationBlocker(R, m, MG)).toBe('Shut down until New turn.')
-    expect(sprintBlocker(R, m)).toBe('Shut down until New turn.')
+    expect(activationBlocker(R, m, MG)).toBe('Shut down: stays down through the next turn.')
+    expect(sprintBlocker(R, m)).toBe('Shut down: stays down through the next turn.')
   })
-  it('new turn after shutdown only reboots and refills', () => {
-    const m = newTurn(R, shut()).mech
-    expect(m.turn).toMatchObject({ shutdown: false, energy: 6, used: {}, heat: 9 })
+  it('stays shut down through the next turn, then cools and reboots', () => {
+    const held = newTurn(R, shut()).mech
+    expect(held.turn).toMatchObject({ shutdown: true, holdShutdown: false, energy: 0, heat: 9 })
+    expect(activationBlocker(R, held, MG)).toBe('Shut down: reboots at New turn.')
+    const up = newTurn(R, held).mech
+    expect(up.turn).toMatchObject({ shutdown: false, energy: 6, used: {}, heat: 5 })
+  })
+  it('unticking shutdown by hand clears the hold', () => {
+    expect(adjustTurn(shut(), { shutdown: false }).turn).toMatchObject({ shutdown: false, holdShutdown: false })
   })
   it('normal new turn', () => {
     let m = mule()
@@ -174,5 +181,12 @@ describe('notices', () => {
   it('sprint when overheated notifies', () => {
     const m = mule({ autoHeatDamage: false })
     expect(sprint(R, { ...m, turn: { ...m.turn, heat: 10 } }, never).notices).toHaveLength(1)
+  })
+})
+
+describe('scale', () => {
+  it('speed is tiles per turn: 1 tile = 10 m, 1 turn = 6 s', () => {
+    expect(travel(12)).toEqual({ metres: 120, mps: '20', kmh: '72', kmPerMin: '1.2' })
+    expect(travel(4)).toEqual({ metres: 40, mps: '6.7', kmh: '24', kmPerMin: '0.4' })
   })
 })

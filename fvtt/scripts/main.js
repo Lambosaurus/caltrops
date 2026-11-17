@@ -4,17 +4,26 @@ function caltrops_launch() {
   window.open(CALTROPS_URI)
 }
 
+function caltrops_escape(text) {
+  return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+}
+
 async function caltrops_recieve(data) {
-  // data.text: string
-  // data.dice: number
-  // data.location: boolean (optional) - also roll a d12 hit-location die (mech attacks)
+  // data.text: string     - chat flavour for the roll
+  // data.dice: number     - roll this many d4s, successes on a 4
+  // data.location: bool   - also roll a d12 hit-location die (mech attacks)
+  // data.chat: string     - post a plain chat line instead (a roll the sheet has already made and applied)
 
-  let rollstring = `${data.dice}d4cs=4`
+  if (typeof data.chat === "string") {
+    await ChatMessage.create({ content: caltrops_escape(data.chat), speaker: ChatMessage.getSpeaker() })
+    return
+  }
 
-  let roll = await new Roll(rollstring).evaluate();
-  //game.dice3d?.showForRoll(roll);
-
-  await roll.toMessage( { flavor: data.text } )
+  if (typeof data.dice === "number") {
+    let roll = await new Roll(`${data.dice}d4cs=4`).evaluate();
+    //game.dice3d?.showForRoll(roll);
+    await roll.toMessage( { flavor: data.text } )
+  }
 
   if (data.location) {
     let location = await new Roll("1d12").evaluate();

@@ -19,8 +19,8 @@ export const FIXTURE_RULES: MechRules = {
       { id: 'core', name: 'Core', range: [7, 9], slots: ['Hull', 'Reactor', 'Reactor', 'Tech', '', ''], transfer: null, area: '2 / 3 / 3 / 5' },
       { id: 'rarm', name: 'Right arm', range: [10, 10], slots: ['Hand', 'Weapon'], transfer: 'core', area: '2 / 5 / 3 / 7' },
       { id: 'shoulder', name: 'Right shoulder', range: [12, 12], slots: ['Weapon', ''], transfer: 'core', area: '1 / 5 / 2 / 7' },
-      { id: 'lleg', name: 'Left leg', range: [1, 2], slots: ['Hull', '', ''], transfer: 'core', provides: { speed: 30, evasion: 1 }, area: '3 / 2 / 4 / 4' },
-      { id: 'rleg', name: 'Right leg', range: [3, 4], slots: ['Hull', '', ''], transfer: 'core', provides: { speed: 30, evasion: 1 }, area: '3 / 4 / 4 / 6' },
+      { id: 'lleg', name: 'Left leg', range: [1, 2], slots: ['Hull', '', ''], transfer: 'core', provides: { speed: 6, evasion: 1 }, area: '3 / 2 / 4 / 4' },
+      { id: 'rleg', name: 'Right leg', range: [3, 4], slots: ['Hull', '', ''], transfer: 'core', provides: { speed: 6, evasion: 1 }, area: '3 / 4 / 4 / 6' },
     ],
     loadout: {
       core: { armour: 'Composite Plating', mounts: [['Dipole Fusion Reactor', 1], ['Heat Exchanger', 3], ['Ammo Bin: Light', 4], ['Ammo Bin: Standard', 5]] },

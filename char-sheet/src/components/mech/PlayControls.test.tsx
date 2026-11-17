@@ -61,15 +61,19 @@ test('Sprint pays energy and heat; New turn clears used marks', () => {
   expect(view.read('mech').turn.used).toEqual({})
 })
 
-test('Shut down & purge disables itself and Sprint until New turn', () => {
+test('Shut down & purge holds the mech down through the next turn', () => {
   const view = makeView()
   render(withDnd(<MechPanel view={view} editable={EditMode.Live}/>))
   fireEvent.click(screen.getByText('Shut down & purge'))
   expect(view.read('mech').turn.shutdown).toBe(true)
+  expect(screen.getByText('SHUT DOWN: next turn too')).toBeTruthy()
   expect((screen.getByText('Shut down & purge') as HTMLButtonElement).disabled).toBe(true)
   expect((screen.getByText('Sprint (2E +2H)') as HTMLButtonElement).disabled).toBe(true)
-  expect((screen.getByText(/New turn/) as HTMLButtonElement).disabled).toBe(false)
-  fireEvent.click(screen.getByText(/New turn/))
+  expect((screen.getByText('New turn ▶') as HTMLButtonElement).disabled).toBe(false)
+  fireEvent.click(screen.getByText('New turn ▶'))
+  expect(view.read('mech').turn.shutdown).toBe(true)
+  expect(screen.getByText('SHUT DOWN: reboots at New turn')).toBeTruthy()
+  fireEvent.click(screen.getByText('New turn ▶'))
   expect(view.read('mech').turn.shutdown).toBeFalsy()
 })
 

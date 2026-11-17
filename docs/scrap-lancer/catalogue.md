@@ -52,35 +52,37 @@ For parts, the number in a model name is the part's headline stat: energy for a 
 
 ## Chassis overview
 
-Twenty-one frames from seven makes, grouped by make. Prices run from 800 to 70,000, and Heat Max from 3 to 20: junk frames scrape by on small numbers, while super-heavies run big reactors, big coolers and big guns. Jackal J-7, Mule Mk II and Bulwark Block 4 are the original Jackal, Mule and Bulwark under their makers' names; only their Heat Max has changed.
+Twenty-one frames from seven makes, grouped by make. Prices run from 800 to 70,000, and Heat Max from 5 to 20: junk frames scrape by on small numbers, while super-heavies run big reactors, big coolers and big guns. Jackal J-7, Mule Mk II and Bulwark Block 4 are the original Jackal, Mule and Bulwark under their makers' names; only their Heat Max has changed.
 
 Slot counts exclude each section's Armour slot.
 
+Size follows the class and sets the cost of a Sprint, in both energy and heat: Ultralight 1, Light 2, Medium 3, Heavy 4, Heavy assault and Super-heavy 5.
+
 Hardpoints are Reactor / Weapon / Tech / Hand / untyped slots.
 
-| Make | Model | Class | Tier | Price | Heat Max | Slots (Hull) | Speed / Evasion | Hardpoints R/W/T/H/U | Trait (call) |
+| Make | Model | Class | Tier | Price | Heat Max | Slots (Hull) | Speed (tiles) / Evasion | Hardpoints R/W/T/H/U | Trait (call) |
 |---|---|---|---|---|---|---|---|---|---|
-| KR | Tinpot R0 | Ultralight | Scrap | 800 | 3 | 10 (3) | 50 / 2 | 1 / 1 / 0 / 1 / 4 | Tiny: attacks against it from Long range roll −1 die |
-| KR | Rattler R1 | Light | Scrap | 1,200 | 4 | 12 (3) | 60 / 2 | 2 / 1 / 0 / 2 / 4 | Open cab: an Area attack that hits the cockpit also hits the pilot |
-| KR | Hulk R3 | Medium | Scrap | 2,200 | 5 | 15 (5) | 50 / 2 | 2 / 3 / 0 / 1 / 4 | Junker: rebuilding a destroyed section costs only Scrap, never Solari |
-| OHS | Ox Mk II | Medium quad | Scrap | 2,500 | 5 | 21 (8) | 60 / 0 | 2 / 1 / 2 / 1 / 7 | Unshakeable: cannot be knocked down, shoved or grappled |
-| OHS | Ox Mk III | Medium quad | Salvage | 4,000 | 6 | 23 (8) | 60 / 0 | 2 / 2 / 3 / 1 / 7 | Unshakeable |
-| OHS | Mule Mk II | Medium | Salvage | 6,000 | 7 | 21 (4) | 60 / 2 | 2 / 4 / 2 / 2 / 6 | Workhorse: field repairs on it roll +1 die |
-| OHS | Mastodon Mk I | Heavy tracked | Salvage | 8,000 | 9 | 21 (6) | 30 / 0 | 3 / 1 / 2 / 2 / 7 | Hauler: each Stowage part on it holds +2 |
-| HCA | Picket Block 1 | Light | Salvage | 5,000 | 5 | 14 (3) | 70 / 4 | 2 / 3 / 3 / 1 / 2 | Spotter: its target locks also count for allies' attacks |
-| HCA | Warden Block 2 | Medium | Standard | 10,000 | 8 | 21 (5) | 60 / 2 | 2 / 5 / 3 / 1 / 5 | Militia standard: armour refills at half price in any colony town |
-| HCA | Bulwark Block 4 | Heavy tracked | Standard | 14,000 | 11 | 25 (7) | 40 / 1 | 3 / 6 / 2 / 0 / 7 | Stable platform: Long weapons roll +1 die if it did not move this turn |
-| HCA | Rampart Block 6 | Heavy | Standard | 20,000 | 13 | 24 (7) | 30 / 0 | 3 / 6 / 3 / 1 / 4 | Gun platform: a size-4 weapon on its cannon arm ignores Braced |
-| MAS | Jackal J-7 | Light | Salvage | 4,000 | 5 | 13 (3) | 80 / 4 | 2 / 3 / 1 / 1 / 3 | Light frame: Sprint costs 1 energy instead of 2 |
-| MAS | Kestrel K-12 | Light | Military | 18,000 | 7 | 17 (3) | 90 / 4 | 2 / 4 / 4 / 0 / 4 | Gyro-stabilised: Sprint and jump parts cost 1 less heat |
-| MAS | Harrier H-3 | Medium | Military | 22,000 | 8 | 19 (3) | 80 / 4 | 2 / 5 / 3 / 1 / 5 | Built to jump: jump parts cost 1 less energy |
-| VDG | Halberd VX-6 | Medium | Military | 20,000 | 10 | 23 (6) | 60 / 2 | 2 / 5 / 3 / 1 / 6 | Fire control: once per turn, one weapon ignores the −1 die for a closer band |
-| VDG | Monolith VX-9 | Heavy assault | Military | 30,000 | 14 | 31 (10) | 40 / 0 | 3 / 7 / 3 / 1 / 7 | Siege frame: cannot Sprint; gains Deflection (1) on any turn it does not move |
-| VDG | Bastion VX-12 | Super-heavy tracked | Military | 48,000 | 20 | 37 (11) | 20 / 0 | 4 / 11 / 4 / 1 / 6 | Emplacement: its Braced weapons can still fire after it moves up to 10 |
-| GWC | Thornback Pattern 3 | Medium | Standard | 9,000 | 8 | 21 (10) | 60 / 2 | 2 / 3 / 1 / 1 / 4 | Analog: EM cannot disable its parts and it is never Weak vs EM; cannot mount CLF parts |
-| GWC | Ironbark Pattern 5 | Heavy | Military | 24,000 | 12 | 27 (10) | 50 / 0 | 3 / 4 / 2 / 2 / 6 | Analog; Hull wounds on it can be field-repaired without Scrap |
-| CLF | Wraith S9 | Light | Elite | 45,000 | 8 | 15 (0) | 90 / 6 | 2 / 3 / 5 / 1 / 4 | Ghost skin: until it fires a weapon this turn, attacks from beyond Short range roll −2 dice |
-| CLF | Paragon S11 | Heavy | Elite | 70,000 | 15 | 24 (4) | 60 / 2 | 3 / 6 / 4 / 2 / 5 | Neural link: once per turn, reroll one die on any mech roll |
+| KR | Tinpot R0 | Ultralight | Scrap | 800 | 5 | 10 (3) | 10 / 2 | 1 / 1 / 0 / 1 / 4 | Tiny: attacks against it from Long range roll −1 die |
+| KR | Rattler R1 | Light | Scrap | 1,200 | 6 | 12 (3) | 12 / 2 | 2 / 1 / 0 / 2 / 4 | Open cab: an Area attack that hits the cockpit also hits the pilot |
+| KR | Hulk R3 | Medium | Scrap | 2,200 | 7 | 15 (5) | 10 / 2 | 2 / 3 / 0 / 1 / 4 | Junker: rebuilding a destroyed section costs only Scrap, never Solari |
+| OHS | Ox Mk II | Medium quad | Scrap | 2,500 | 6 | 21 (8) | 12 / 0 | 2 / 1 / 2 / 1 / 7 | Unshakeable: cannot be knocked down, shoved or grappled |
+| OHS | Ox Mk III | Medium quad | Salvage | 4,000 | 7 | 23 (8) | 12 / 0 | 2 / 2 / 3 / 1 / 7 | Unshakeable |
+| OHS | Mule Mk II | Medium | Salvage | 6,000 | 7 | 21 (4) | 12 / 2 | 2 / 4 / 2 / 2 / 6 | Workhorse: field repairs on it roll +1 die |
+| OHS | Mastodon Mk I | Heavy tracked | Salvage | 8,000 | 9 | 21 (6) | 6 / 0 | 3 / 1 / 2 / 2 / 7 | Hauler: each Stowage part on it holds +2 |
+| HCA | Picket Block 1 | Light | Salvage | 5,000 | 5 | 14 (3) | 14 / 4 | 2 / 3 / 3 / 1 / 2 | Spotter: its target locks also count for allies' attacks |
+| HCA | Warden Block 2 | Medium | Standard | 10,000 | 8 | 21 (5) | 12 / 2 | 2 / 5 / 3 / 1 / 5 | Militia standard: armour refills at half price in any colony town |
+| HCA | Bulwark Block 4 | Heavy tracked | Standard | 14,000 | 11 | 25 (7) | 8 / 1 | 3 / 6 / 2 / 0 / 7 | Stable platform: Long weapons roll +1 die if it did not move this turn |
+| HCA | Rampart Block 6 | Heavy | Standard | 20,000 | 13 | 24 (7) | 6 / 0 | 3 / 6 / 3 / 1 / 4 | Gun platform: a size-4 weapon on its cannon arm ignores Braced |
+| MAS | Jackal J-7 | Light | Salvage | 4,000 | 6 | 13 (3) | 16 / 4 | 2 / 3 / 1 / 1 / 3 | Light frame: Sprint costs 1 less energy |
+| MAS | Kestrel K-12 | Light | Military | 18,000 | 7 | 17 (3) | 18 / 4 | 2 / 4 / 4 / 0 / 4 | Gyro-stabilised: Sprint and jump parts cost 1 less heat |
+| MAS | Harrier H-3 | Medium | Military | 22,000 | 8 | 19 (3) | 16 / 4 | 2 / 5 / 3 / 1 / 5 | Built to jump: jump parts cost 1 less energy |
+| VDG | Halberd VX-6 | Medium | Military | 20,000 | 10 | 23 (6) | 12 / 2 | 2 / 5 / 3 / 1 / 6 | Fire control: once per turn, one weapon ignores the −1 die for a closer band |
+| VDG | Monolith VX-9 | Heavy assault | Military | 30,000 | 14 | 31 (10) | 8 / 0 | 3 / 7 / 3 / 1 / 7 | Siege frame: cannot Sprint; gains Deflection (1) on any turn it does not move |
+| VDG | Bastion VX-12 | Super-heavy tracked | Military | 48,000 | 20 | 37 (11) | 4 / 0 | 4 / 11 / 4 / 1 / 6 | Emplacement: its Braced weapons can still fire after it moves up to 10 |
+| GWC | Thornback Pattern 3 | Medium | Standard | 9,000 | 8 | 21 (10) | 12 / 2 | 2 / 3 / 1 / 1 / 4 | Analog: EM cannot disable its parts and it is never Weak vs EM; cannot mount CLF parts |
+| GWC | Ironbark Pattern 5 | Heavy | Military | 24,000 | 12 | 27 (10) | 10 / 0 | 3 / 4 / 2 / 2 / 6 | Analog; Hull wounds on it can be field-repaired without Scrap |
+| CLF | Wraith S9 | Light | Elite | 45,000 | 8 | 15 (0) | 18 / 6 | 2 / 3 / 5 / 1 / 4 | Ghost skin: until it fires a weapon this turn, attacks from beyond Short range roll −2 dice |
+| CLF | Paragon S11 | Heavy | Elite | 70,000 | 15 | 24 (4) | 12 / 2 | 3 / 6 / 4 / 2 / 5 | Neural link: once per turn, reroll one die on any mech roll |
 
 How the tiers show up in the frame:
 
@@ -102,12 +104,12 @@ Arms, legs and shoulders transfer hits to the core; the cockpit transfers them t
 
 ### KR Tinpot R0 — ultralight, Scrap
 
-A one-seat walker built round a car engine. It runs on a single small reactor and a heat bank of 3, so every shot is a decision.
+A one-seat walker built round a car engine. It runs on a single small reactor and a heat bank of 5, so every shot is a decision.
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–3 | Hull, untyped | Speed 25, Evasion 1 |
-| Right leg | 4–6 | Hull, untyped | Speed 25, Evasion 1 |
+| Left leg | 1–3 | Hull, untyped | Speed 5, Evasion 1 |
+| Right leg | 4–6 | Hull, untyped | Speed 5, Evasion 1 |
 | Core | 7–10 | Reactor, untyped ×2 | — |
 | Arm | 11 | Hand, Weapon | Hand (with Manipulator) |
 | Cockpit | 12 | Hull | — |
@@ -118,8 +120,8 @@ A cargo loader with a roll cage and a gun welded to one claw. With no Tech slot,
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull, untyped | Speed 30, Evasion 1 |
-| Right leg | 3–4 | Hull, untyped | Speed 30, Evasion 1 |
+| Left leg | 1–2 | Hull, untyped | Speed 6, Evasion 1 |
+| Right leg | 3–4 | Hull, untyped | Speed 6, Evasion 1 |
 | Left arm | 5–6 | Hand, Weapon | Hand (with Manipulator) |
 | Core | 7–10 | Reactor ×2, untyped | — |
 | Right arm | 11 | Hand, untyped | Hand (with Manipulator) |
@@ -131,8 +133,8 @@ A dead OHS Mule rebuilt with slabs of Hull and a second gun arm. Ugly, slow and 
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull, untyped | Speed 25, Evasion 1 |
-| Right leg | 3–4 | Hull, untyped | Speed 25, Evasion 1 |
+| Left leg | 1–2 | Hull, untyped | Speed 5, Evasion 1 |
+| Right leg | 3–4 | Hull, untyped | Speed 5, Evasion 1 |
 | Left arm | 5–6 | Hand, Weapon | Hand (with Manipulator) |
 | Core | 7–9 | Hull ×2, Reactor ×2, untyped ×2 | — |
 | Right arm | 10–11 | Weapon ×2 | — |
@@ -140,14 +142,14 @@ A dead OHS Mule rebuilt with slabs of Hull and a second gun arm. Ugly, slow and 
 
 ### OHS Ox Mk II — medium quad, Scrap
 
-A four-legged freight walker with a crane arm. Tough and roomy, but it carries one gun and cannot dodge. Losing a leg costs only 15 Speed.
+A four-legged freight walker with a crane arm. Tough and roomy, but it carries one gun and cannot dodge. Losing a leg costs only 3 tiles of Speed.
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Rear left leg | 1 | Hull, untyped | Speed 15 |
-| Rear right leg | 2 | Hull, untyped | Speed 15 |
-| Front left leg | 3 | Hull, untyped | Speed 15 |
-| Front right leg | 4 | Hull, untyped | Speed 15 |
+| Rear left leg | 1 | Hull, untyped | Speed 3 |
+| Rear right leg | 2 | Hull, untyped | Speed 3 |
+| Front left leg | 3 | Hull, untyped | Speed 3 |
+| Front right leg | 4 | Hull, untyped | Speed 3 |
 | Cargo bed (core) | 5–9 | Hull ×2, Reactor ×2, Tech, untyped ×3 | — |
 | Crane arm | 10–11 | Hull, Hand, Weapon | Hand (with Manipulator) |
 | Cockpit | 12 | Hull, Tech | — |
@@ -158,10 +160,10 @@ The current Ox. It has the Mk II's legs and cargo bed, plus a second gun on the 
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Rear left leg | 1 | Hull, untyped | Speed 15 |
-| Rear right leg | 2 | Hull, untyped | Speed 15 |
-| Front left leg | 3 | Hull, untyped | Speed 15 |
-| Front right leg | 4 | Hull, untyped | Speed 15 |
+| Rear left leg | 1 | Hull, untyped | Speed 3 |
+| Rear right leg | 2 | Hull, untyped | Speed 3 |
+| Front left leg | 3 | Hull, untyped | Speed 3 |
+| Front right leg | 4 | Hull, untyped | Speed 3 |
 | Cargo bed (core) | 5–9 | Hull ×2, Reactor ×2, Tech, untyped ×3 | — |
 | Crane arm | 10–11 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
 | Cockpit | 12 | Hull, Tech ×2 | — |
@@ -172,7 +174,7 @@ A tracked mining crawler with a drill arm and a crane. It has a heavy reactor ba
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Treads | 1–3 | Hull ×2, untyped ×3 | Speed 30 |
+| Treads | 1–3 | Hull ×2, untyped ×3 | Speed 6 |
 | Core | 4–8 | Hull ×2, Reactor ×3, Tech, untyped ×3 | — |
 | Drill arm | 9–10 | Hull, Hand, Weapon | Hand (with Manipulator) |
 | Crane arm | 11 | Hand, untyped | Hand (with Manipulator) |
@@ -186,8 +188,8 @@ The militia's scout: a sensor head on fast legs, with a hand for field work. Che
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull, untyped | Speed 35, Evasion 2 |
-| Right leg | 3–4 | Hull, untyped | Speed 35, Evasion 2 |
+| Left leg | 1–2 | Hull, untyped | Speed 7, Evasion 2 |
+| Right leg | 3–4 | Hull, untyped | Speed 7, Evasion 2 |
 | Left arm | 5 | Hand, Weapon | Hand (with Manipulator) |
 | Core | 6–9 | Hull, Reactor ×2, Tech | — |
 | Right arm | 10 | Weapon ×2 | — |
@@ -199,8 +201,8 @@ The colony militia's line mech: nothing special, nothing missing. A gun arm on t
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull, untyped ×2 | Speed 30, Evasion 1 |
-| Right leg | 3–4 | Hull, untyped ×2 | Speed 30, Evasion 1 |
+| Left leg | 1–2 | Hull, untyped ×2 | Speed 6, Evasion 1 |
+| Right leg | 3–4 | Hull, untyped ×2 | Speed 6, Evasion 1 |
 | Left arm | 5–6 | Hand, Weapon ×2 | Hand (with Manipulator) |
 | Core | 7–9 | Hull, Reactor ×2, Tech ×2, untyped | — |
 | Right arm | 10–11 | Hull, Weapon ×3 | — |
@@ -212,8 +214,8 @@ The militia's answer to Sol siege frames: a slow heavy biped with a four-slot ca
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull ×2, untyped | Speed 15 |
-| Right leg | 3–4 | Hull ×2, untyped | Speed 15 |
+| Left leg | 1–2 | Hull ×2, untyped | Speed 3 |
+| Right leg | 3–4 | Hull ×2, untyped | Speed 3 |
 | Core | 5–8 | Hull, Reactor ×3, Tech ×2, untyped ×2 | — |
 | Cannon arm | 9–10 | Hull, Weapon ×4 | — |
 | Left arm | 11 | Hand, Weapon ×2 | Hand (with Manipulator) |
@@ -225,8 +227,8 @@ A front-line skirmisher with gun pods for arms and a sensor head. No hands: it f
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull, untyped ×2 | Speed 45, Evasion 2 |
-| Right leg | 3–4 | Hull, untyped ×2 | Speed 45, Evasion 2 |
+| Left leg | 1–2 | Hull, untyped ×2 | Speed 9, Evasion 2 |
+| Right leg | 3–4 | Hull, untyped ×2 | Speed 9, Evasion 2 |
 | Left arm | 5 | Weapon ×2 | — |
 | Core | 6–9 | Hull, Reactor ×2, Tech ×2 | — |
 | Right arm | 10 | Weapon ×2 | — |
@@ -238,8 +240,8 @@ The Kestrel's bigger sibling, built around jump packs: a hand, a three-gun arm a
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull, untyped ×2 | Speed 40, Evasion 2 |
-| Right leg | 3–4 | Hull, untyped ×2 | Speed 40, Evasion 2 |
+| Left leg | 1–2 | Hull, untyped ×2 | Speed 8, Evasion 2 |
+| Right leg | 3–4 | Hull, untyped ×2 | Speed 8, Evasion 2 |
 | Left arm | 5–6 | Hand, Weapon ×2 | Hand (with Manipulator) |
 | Core | 7–9 | Hull, Reactor ×2, Tech ×2, untyped | — |
 | Right arm | 10–11 | Weapon ×3 | — |
@@ -251,8 +253,8 @@ Vantor's main battle frame: a Warden with Hull in every section, more Heat Max a
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull, untyped ×2 | Speed 30, Evasion 1 |
-| Right leg | 3–4 | Hull, untyped ×2 | Speed 30, Evasion 1 |
+| Left leg | 1–2 | Hull, untyped ×2 | Speed 6, Evasion 1 |
+| Right leg | 3–4 | Hull, untyped ×2 | Speed 6, Evasion 1 |
 | Left arm | 5–6 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
 | Core | 7–9 | Hull, Reactor ×2, Tech ×2, untyped ×2 | — |
 | Right arm | 10–11 | Hull, Weapon ×3 | — |
@@ -264,8 +266,8 @@ A walking gun emplacement with a missile shoulder. Slow, with no Evasion, but 10
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull ×2, untyped ×2 | Speed 20 |
-| Right leg | 3–4 | Hull ×2, untyped ×2 | Speed 20 |
+| Left leg | 1–2 | Hull ×2, untyped ×2 | Speed 4 |
+| Right leg | 3–4 | Hull ×2, untyped ×2 | Speed 4 |
 | Left arm | 5–6 | Hull, Weapon ×3 | — |
 | Core | 7–9 | Hull ×2, Reactor ×3, Tech ×2, untyped ×2 | — |
 | Right arm | 10 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
@@ -278,8 +280,8 @@ A tracked fortress with a four-slot reactor bay and a five-slot main gun mount. 
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left tread | 1–2 | Hull ×2, untyped ×2 | Speed 10 |
-| Right tread | 3–4 | Hull ×2, untyped ×2 | Speed 10 |
+| Left tread | 1–2 | Hull ×2, untyped ×2 | Speed 2 |
+| Right tread | 3–4 | Hull ×2, untyped ×2 | Speed 2 |
 | Core | 5–7 | Hull ×2, Reactor ×4, Tech ×3, untyped ×2 | — |
 | Main gun mount | 8–9 | Hull, Weapon ×5 | — |
 | Left arm | 10 | Hull, Weapon ×3 | — |
@@ -296,8 +298,8 @@ A Naturalist militia frame: hand-built, armoured in Hull, with one Tech slot and
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull ×2, untyped | Speed 30, Evasion 1 |
-| Right leg | 3–4 | Hull ×2, untyped | Speed 30, Evasion 1 |
+| Left leg | 1–2 | Hull ×2, untyped | Speed 6, Evasion 1 |
+| Right leg | 3–4 | Hull ×2, untyped | Speed 6, Evasion 1 |
 | Left arm | 5–6 | Hull, Hand, Weapon | Hand (with Manipulator) |
 | Core | 7–9 | Hull ×2, Reactor ×2, Tech, untyped ×2 | — |
 | Right arm | 10–11 | Hull, Weapon ×2 | — |
@@ -309,8 +311,8 @@ Greenward's answer to Elite frames: a slow two-handed brawler with a three-slot 
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull ×2, untyped ×2 | Speed 25 |
-| Right leg | 3–4 | Hull ×2, untyped ×2 | Speed 25 |
+| Left leg | 1–2 | Hull ×2, untyped ×2 | Speed 5 |
+| Right leg | 3–4 | Hull ×2, untyped ×2 | Speed 5 |
 | Left arm | 5–6 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
 | Core | 7–9 | Hull ×2, Reactor ×3, Tech, untyped ×2 | — |
 | Right arm | 10–11 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
@@ -322,8 +324,8 @@ An Elite recon and electronic-warfare frame. Five Tech slots and Evasion 6, but 
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | untyped ×2 | Speed 45, Evasion 3 |
-| Right leg | 3–4 | untyped ×2 | Speed 45, Evasion 3 |
+| Left leg | 1–2 | untyped ×2 | Speed 9, Evasion 3 |
+| Right leg | 3–4 | untyped ×2 | Speed 9, Evasion 3 |
 | Left arm | 5 | Hand, Weapon | Hand (with Manipulator) |
 | Core | 6–9 | Reactor ×2, Tech ×3 | — |
 | Right arm | 10 | Weapon ×2 | — |
@@ -335,8 +337,8 @@ An Elite command frame with two hands, two three-gun arms, a three-slot reactor 
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull, untyped ×2 | Speed 30, Evasion 1 |
-| Right leg | 3–4 | Hull, untyped ×2 | Speed 30, Evasion 1 |
+| Left leg | 1–2 | Hull, untyped ×2 | Speed 6, Evasion 1 |
+| Right leg | 3–4 | Hull, untyped ×2 | Speed 6, Evasion 1 |
 | Left arm | 5–6 | Hand, Weapon ×3 | Hand (with Manipulator) |
 | Core | 7–9 | Hull, Reactor ×3, Tech ×2, untyped | — |
 | Right arm | 10–11 | Hand, Weapon ×3 | Hand (with Manipulator) |
@@ -375,7 +377,7 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 | Renewable | Its Charges also refill for free, out of combat, wherever what it uses can be found: open water for a spray or quench tank |
 | Missiles |  |
 | Missile | The attack is a missile: Point-defence and Spoofing work against it |
-| Guided | Against a locked target, each activation adds 1 extra die to the shot |
+| Guided | Against a locked target, each activation adds 1 extra die to its roll |
 | Seeking | Ignores Evasion, and Spoofing does not stop its Guided dice |
 | Locks and sensors |  |
 | Targeting | Activation: roll the listed Roll; each success places a lock on a target in line of sight until your next turn. Attacks against a locked target roll +1 die, and Indirect and Guided weapons use locks |
@@ -411,7 +413,7 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 | Analog | It cannot be disrupted by Disruptor attacks |
 | Shielded (X) | Disrupting this part costs X more successes |
 | Faraday (X) | Passive: while it works, every other part in its section has Shielded (X). Faraday (X, mech) covers every part on the mech instead |
-| Heavy (X) | −X mech Speed while it is fitted |
+| Heavy (X) | −X tiles of mech Speed while it is fitted |
 | Cheap recharge | Refilling it costs half price: armour points on armour, or Charges on a part that has them |
 | Self-repairing | Armour only: regains 1 point at the start of each of your turns, up to its maximum |
 | Ammo | Rounds per bin | Volatility | Full-bin cook-off | Refill price per bin |

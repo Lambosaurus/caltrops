@@ -23,7 +23,7 @@ PARTS = {a['name']: a for a in block('ATTACHMENTS')}
 P2, C3 = 'AWP Plate P2', 'AWP Composite C3'
 
 PREFABS = [
-    ('Kettle', 'KR Tinpot R0', 'The Parts tab\'s junk-mech example: one Smokestack, one Nailer, a heat bank of 3. Potters about and picks its moments.', {
+    ('Kettle', 'KR Tinpot R0', 'The Parts tab\'s junk-mech example: one Smokestack, one Nailer, a heat bank of 5. Potters about and picks its moments.', {
         'lleg': ('KR Scrap Plate SP1', [('CWF Fin-1', 1)]),
         'rleg': ('KR Scrap Plate SP1', [('Ammo Bin: Light', 1)]),
         'core': ('KR Scrap Plate SP1', [('KR Smokestack G2', 0), ('CWF Array RA3', 1)]),
@@ -85,11 +85,11 @@ PREFABS = [
         'rarm': (P2, [('CMS LRM-3', 0)]),
         'cockpit': (P2, [('SBL Sensor SA1', 0), ('SBL Rangefinder RF1', 1)]),
     }),
-    ('Militia Line', 'HCA Warden Block 2', 'The colony baseline: an AC-30 and an HC-40 in one shot, two exchangers, nothing fancy.', {
+    ('Militia Line', 'HCA Warden Block 2', 'The colony baseline: an AC-30 and an HC-40 in one shot, an exchanger and fins, nothing fancy.', {
         'lleg': (P2, [('Ammo Bin: Heavy', 1), ('HTC Halcyon HS-2', 2)]),
         'rleg': (P2, [('CWF Array RA4', 1)]),
         'larm': (P2, [('OHS Manipulator MH3', 0), ('BRO AC-30', 1)]),
-        'core': (C3, [('HRW Dipole D6', 1), ('HTC Halcyon HX-3', 3), ('HTC Halcyon HX-3', 4), ('Ammo Bin: Standard', 5)]),
+        'core': (C3, [('HRW Dipole D6', 1), ('HTC Halcyon HX-3', 3), ('CWF Fin-2', 4), ('Ammo Bin: Standard', 5)]),
         'rarm': (P2, [('BRO HC-40', 1)]),
         'cockpit': (P2, [('SBL Sensor SA1', 1)]),
     }),
@@ -112,15 +112,15 @@ PREFABS = [
         'lleg': ('AWP Lightweave LW4', [('MAS Flicker FL1', 1), ('Ammo Bin: Missile', 2)]),
         'rleg': ('AWP Lightweave LW4', [('MAS Vector VT2', 1), ('CWF Fin-2', 2)]),
         'larm': ('AWP Lightweave LW4', [('LDE LZ-4', 0)]),
-        'core': ('AWP Laminate L4', [('HRW Flash F7', 1), ('HTC Halcyon CX-4', 3), ('HTC Halcyon CX-4', 4)]),
+        'core': ('AWP Laminate L4', [('HRW Flash F7', 1), ('HTC Halcyon CX-4', 3), ('HTC Halcyon GS-3', 4)]),
         'rarm': ('AWP Lightweave LW4', [('LDE Pulse PL2', 0), ('CMS Dart DT2', 1)]),
         'cockpit': ('AWP Lightweave LW4', [('SBL Sensor SA2', 0), ('SBL Fire Control FC1', 1)]),
     }),
-    ('Jumper', 'MAS Harrier H-3', 'Jump-and-shoot: a Twin AC-33 and an AC-30, heavy jump jets and a shear for landing hits.', {
+    ('Jumper', 'MAS Harrier H-3', 'Jump-and-shoot: hop on the light jets and fire the Twin AC-33 and AC-30; the heavy jets are for getting out.', {
         'lleg': ('AWP Lightweave LW4', [('MAS Heavy Jets JJ6', 1)]),
         'rleg': ('AWP Lightweave LW4', [('MAS Jump Jets JJ3', 1), ('Ammo Bin: Standard', 2)]),
         'larm': ('AWP Lightweave LW4', [('VCC Shear SB3', 0), ('BRO AC-30', 1)]),
-        'core': ('AWP Laminate L4', [('HRW Flash F7', 1), ('HTC Halcyon CX-4', 3), ('HTC Halcyon CX-4', 4), ('Ammo Bin: Standard', 5)]),
+        'core': ('AWP Laminate L4', [('HRW Flash F7', 1), ('HTC Halcyon CX-4', 3), ('HTC Halcyon GS-3', 4), ('Ammo Bin: Standard', 5)]),
         'rarm': ('AWP Lightweave LW4', [('BRO Twin AC-33', 0)]),
         'cockpit': ('AWP Lightweave LW4', [('SBL Sensor SA2', 0)]),
     }),
@@ -132,11 +132,11 @@ PREFABS = [
         'rarm': ('AWP Laminate L4', [('BRO HC-45', 1)]),
         'cockpit': ('AWP Laminate L4', [('SBL Fire Control FC1', 1)]),
     }),
-    ('Missile Wall', 'VDG Monolith VX-9', 'Siege frame: LRM-5 and Swarm racks plus a coil gun. Lock first, then bury the target.', {
+    ('Missile Wall', 'VDG Monolith VX-9', 'Siege frame on a Twin-core TC13: LRM-5 and Swarm racks plus a coil gun. Lock first, then bury the target.', {
         'lleg': ('AWP Laminate L4', [('CWF Array RA4', 2)]),
         'rleg': ('AWP Laminate L4', [('Ammo Bin: Slug', 2), ('HTC Halcyon HS-2', 3)]),
         'larm': ('AWP Laminate L4', [('CMS LRM-5', 1)]),
-        'core': ('AWP Laminate L5', [('HRW Twin-core TC10', 2), ('HTC Halcyon CX-5', 5), ('HTC Halcyon CX-5', 6), ('Ammo Bin: Missile', 7), ('Ammo Bin: Missile', 8)]),
+        'core': ('AWP Laminate L5', [('HRW Twin-core TC13', 2), ('HTC Halcyon CX-5', 5), ('HTC Halcyon CX-5', 6), ('Ammo Bin: Missile', 7), ('Ammo Bin: Missile', 8)]),
         'rarm': ('AWP Laminate L4', [('OHS Manipulator MH3', 1), ('ARH Coil C3', 2)]),
         'lshoulder': ('AWP Laminate L4', [('CMS Swarm SW3', 0), ('Ammo Bin: Missile', 2)]),
         'cockpit': ('AWP Laminate L4', [('SBL Sensor SA2', 2)]),
@@ -184,6 +184,72 @@ PREFABS = [
     }),
 ]
 
+# Each prefab's signature turn: what it is built to do every turn of hard fighting ('Sprint' costs the chassis size).
+SIGNATURE = {
+    'Kettle': ['KR Nailer N1', 'KR Nailer N1'],
+    'Junkyard Dog': ['KR Chainblade CB1', 'BRO M8'],
+    'Scrapheap': ['KR AC-30R', 'OHS Breaker BH3'],
+    'Packhorse': ['BRO AC-20', 'OHS Winch W2'],
+    'Hauler': ['OHS Rock Drill RD2', 'OHS Burnoff BF1'],
+    'Workhorse': ['BRO AC-30', 'BRO M12', 'MAS Jump Jets JJ2'],
+    'Scout': ['Sprint', 'BRO AC-15', 'BRO AC-15'],
+    'Spotter': ['SBL Sensor SA1', 'CMS LRM-3', 'CMS LRM-3', 'CMS LRM-3'],
+    'Militia Line': ['BRO AC-30', 'BRO HC-40'],
+    'Gun Tank': ['BRO HC-40', 'BRO AC-30', 'LDE LZ-1'],
+    'Siege Gun': ['BRO HC-60', 'BRO AC-30'],
+    'Skirmisher': ['LDE LZ-4', 'LDE Pulse PL2', 'MAS Flicker FL1'],
+    'Jumper': ['MAS Jump Jets JJ3', 'BRO Twin AC-33', 'BRO AC-30'],
+    'Main Battle': ['BRO HC-45', 'BRO AC-35M'],
+    'Missile Wall': ['SBL Sensor SA2', 'CMS LRM-5', 'CMS LRM-5', 'CMS LRM-5', 'CMS LRM-5', 'CMS LRM-5', 'ARH Coil C3'],
+    'Fortress': ['ARH Thunderer 120', 'BRO Twin AC-33', 'BRO AC-30', 'BRO AC-20'],
+    'Hedge': ['SGW Arc Lance Pattern 2', 'OHS Burnoff BF2'],
+    'Brawler': ['MAS Jump Jets JJ3', 'VCC Piledriver PV3', 'VCC Shear SB3'],
+    'Ghost': ['CLF Veil V1', 'LDE Focus F4', 'LDE Focus F2', 'MAS Flicker FL1'],
+    'Command': ['ARH Rail R4', 'LDE Focus F4', 'CLF Mind M3', 'LDE Focus F2'],
+}
+
+
+def first_overheat(E, net, heat_max, acts, turns=4):
+    """Turn (1-based) in which repeating `acts` [(energy, heat)] each turn first takes heat over Max, or None."""
+    h = 0
+    for t in range(1, turns + 1):
+        e = E
+        for en, ht in acts:
+            if en <= e:
+                e -= en
+                h = max(0, h + ht)
+        if h > heat_max:
+            return t
+        h = max(0, h + net)
+    return None
+
+
+def balance(name, c, parts, E, net, heat_max):
+    """Signature turn affordable; it overheats no sooner than turn 2 (Military/Elite: turn 3). Using everything,
+    including a sprint, may overheat Scrap-Standard mechs in turn 1, but not Military/Elite ones."""
+    cost = lambda n: (c['size'], c['size']) if n == 'Sprint' else (PARTS[n].get('energy') or 0, PARTS[n].get('heat') or 0)
+    sig = [cost(n) for n in SIGNATURE[name]]
+    high = c['tier'] in ('Military', 'Elite')
+    errs = []
+    if sum(e for e, _ in sig) > E:
+        errs.append(f'{name}: signature turn needs {sum(e for e, _ in sig)} energy, has {E}')
+    t = first_overheat(E, net, heat_max, sig)
+    if t is not None and t < (3 if high else 2):
+        errs.append(f'{name}: signature turn overheats in turn {t}')
+    every = list(sig)
+    left = {}
+    for n in SIGNATURE[name]:
+        left[n] = left.get(n, 0) + 1
+    for p in parts:
+        if p.get('energy') is None or p.get('charges') or (p.get('heat') or 0) < 0:
+            continue
+        every += [cost(p['name'])] * max(0, p.get('repeat', 1) - left.get(p['name'], 0))
+    every.append(cost('Sprint'))
+    t_all = first_overheat(E, net, heat_max, every)
+    if high and t_all == 1:
+        errs.append(f'{name}: using everything overheats in turn 1')
+    return errs, t, t_all
+
 
 def fits(slot, typ):
     if slot in ('Hull', 'Armour'):
@@ -202,6 +268,7 @@ for name, chassis, desc, lo in PREFABS:
     shot = shot_e = shot_h = 0
     ammo_need, bins = set(), set()
     heavy = 0
+    fitted = []
     for sid, (armour, mounts) in lo.items():
         a = PARTS[armour]
         assert a['type'] == 'Armour', armour
@@ -210,6 +277,7 @@ for name, chassis, desc, lo in PREFABS:
         used = set()
         for part, start in mounts:
             p = PARTS[part]
+            fitted.append(p)
             size = p.get('size', 1)
             for i in range(start, start + size):
                 if i >= len(secs[sid]['slots']) or not fits(secs[sid]['slots'][i], p['type']) or i in used:
@@ -232,10 +300,12 @@ for name, chassis, desc, lo in PREFABS:
                 shot += p['roll']['bonus'] * n
                 shot_e += p['energy'] * n
                 shot_h += p['heat'] * n
+    errs, t_sig, t_all = balance(name, c, fitted, E - upkeep, rh - cool, c['heatMax'] + hm)
+    errors += errs
     if ammo_need - bins:
         errors.append(f'{name}: no bin for {ammo_need - bins}')
     rows.append(f"{name:13} {chassis:24} E {E - upkeep:2} (react {E}, upkeep {upkeep})  heat +{rh} -{cool} = {rh - cool:+d}/turn  "
-                f"HeatMax {c['heatMax'] + hm:2}  full shot +{shot} for {shot_e}E {shot_h}H  speed -{heavy}  price {price:,}")
+                f"HeatMax {c['heatMax'] + hm:2}  overheats: signature t{t_sig or '-'}, everything t{t_all or '-'}  full shot +{shot} for {shot_e}E {shot_h}H  speed -{heavy}  price {price:,}")
 
 print('\n'.join(rows))
 if errors:

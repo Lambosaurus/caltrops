@@ -1,6 +1,6 @@
 import { findAttachment, findChassis, mountCovering } from './loadout'
 import { mountDisabled } from './derive'
-import type { Chassis, Mech, MechRules, MechSectionState, Mount, Roller, MechResult } from './types'
+import type { Chassis, Mech, MechRoll, MechRules, MechSectionState, Mount, Roller, MechResult } from './types'
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n))
@@ -47,7 +47,7 @@ export function cookoffDice(rules: MechRules, mount: Mount): number {
   return Math.max(0, mount.ammo ?? 0) * volatility
 }
 
-interface Opts { ignoreArmour?: boolean, cookoff: boolean, roller: Roller }
+interface Opts { ignoreArmour?: boolean, cookoff: boolean, roller: Roller, rolls?: MechRoll[] /* collects cook-off rolls */ }
 
 function apply(rules: MechRules, mech: Mech, startId: string, count: number, ignoreArmour: boolean, opts: Opts, events: string[], notices: string[]) {
   const chassis = findChassis(rules, mech.chassis)
@@ -100,9 +100,11 @@ function checkCookoffs(rules: MechRules, mech: Mech, sectionId: string, opts: Op
     const what = att.bin ? `${m.ammo} rounds × ${dice / (m.ammo ?? 1)}` : `Volatile (${att.volatile})`
     // A Volatile part cooks off once; repairing it re-arms it (see toggleWound).
     if (!att.bin) m.state = { ...(m.state ?? {}), cooked: true }
+    const where = sectionName(findChassis(rules, mech.chassis), sectionId)
     if (!opts.cookoff) {
       events.push(`  ${m.name} disabled${att.bin ? ` with ${m.ammo} rounds` : ''}: cook-off is ${dice}d4 to this section, ignoring armour. Apply by hand.`)
       notices.push(`${m.name} cook-off: roll ${dice}d4 on this section, ignoring armour. Apply by hand.`)
+      opts.rolls?.push({ label: `Cook-off: ${m.name} (${what}) in the ${where}. Each success is a wound there, ignoring armour: apply by hand`, dice })
       continue
     }
     const rolled = opts.roller(dice)
@@ -110,6 +112,7 @@ function checkCookoffs(rules: MechRules, mech: Mech, sectionId: string, opts: Op
     const line = `COOK-OFF: ${m.name}, ${what} = ${dice}d4 [${rolled.join(' ')}] → ${plural(k, 'wound')}, ignoring armour.`
     events.push(`  ${line}`)
     notices.push(line)
+    opts.rolls?.push({ label: `Cook-off: ${m.name} (${what}) in the ${where} → ${plural(k, 'wound')}, ignoring armour (applied)`, dice, rolled })
     if (att.bin) m.ammo = 0
     if (k) apply(rules, mech, sectionId, k, true, opts, events, notices)
   }
@@ -119,8 +122,9 @@ export function applyWounds(rules: MechRules, mech: Mech, sectionId: string, cou
   const next = cloneMech(mech)
   const events: string[] = []
   const notices: string[] = []
-  apply(rules, next, sectionId, count, !!opts.ignoreArmour, opts, events, notices)
-  return { mech: next, events, notices }
+  const rolls: MechRoll[] = opts.rolls ?? []
+  apply(rules, next, sectionId, count, !!opts.ignoreArmour, { ...opts, rolls }, events, notices)
+  return { mech: next, events, notices, rolls }
 }
 
 // Manual-mode hit: soak armour, then mark slots in this section only. No overflow, cook-off or out/pilot changes.

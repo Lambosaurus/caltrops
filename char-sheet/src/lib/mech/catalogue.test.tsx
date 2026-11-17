@@ -1,7 +1,7 @@
 import scrapLancerRuleset from '../../data/scraplancer'
 import { applyPrefab, findAttachment, loadMech, newMech, normaliseMech, refitMech } from './loadout'
 import { deriveStats, turnEnergy } from './derive'
-import { activate, activationBlocker, adjustTurn, attack, newScene, newTurn, planCost, planParts, setCharges, shotRoll, shotTags } from './turn'
+import { activate, activationBlocker, adjustTurn, attack, newScene, newTurn, outOfRange, planCost, setCharges, shotsBlocker, sprint, sprintCost, weaponRoll, weaponTags } from './turn'
 import { applyWounds, cookoffDice } from './damage'
 import type { Mech } from './types'
 
@@ -71,37 +71,57 @@ describe('prefabs', () => {
   })
 })
 
-describe('one shot a turn', () => {
-  it('fires every chosen activation as one roll, then blocks that attack until New turn', () => {
-    let m = prefab('Fortress')
-    const counts = { [keyOf(m, 'ARH Thunderer 120')]: 1, [keyOf(m, 'BRO Twin AC-33')]: 1, [keyOf(m, 'BRO AC-30')]: 1, [keyOf(m, 'BRO AC-20')]: 1 }
-    expect(planParts(mr, m, counts, 'Mid').map(p => p.dice - p.penalty)).toEqual([14, 5, 5, 2])
+describe('each weapon rolls on its own', () => {
+  it('fires each weapon as its own roll, each with only its own tags', () => {
+    const m = prefab('Fortress')
+    const counts = { [keyOf(m, 'ARH Thunderer 120')]: 1, [keyOf(m, 'BRO Twin AC-33')]: 2, [keyOf(m, 'BRO AC-30')]: 1 }
     expect(planCost(mr, m, counts)).toEqual({ energy: 12, heat: 14 })
-    const res = attack(mr, m, 'shot', 'Mid', counts, roll1)
-    expect(res.parts).toHaveLength(4)
+    const res = attack(mr, m, 'Mid', counts, roll1)
     expect(res.mech.turn.energy).toBe(m.turn.energy - 12)
-    const info = shotRoll(rules, res.parts, 'shot', 'Mid', { Precision: 2, Gunnery: 1 })!
-    expect(info).toMatchObject({ attribute: { name: 'Precision', score: 2 }, skill: { name: 'Gunnery', score: 1 }, bonus: 26 })
-    expect(shotTags(mr, res.parts)).toEqual(expect.arrayContaining(['Kinetic', 'Powerful', 'Piercing (2)', 'Concussive']))
-    m = res.mech
-    expect(m.turn.shot).toEqual([])
-    expect(activationBlocker(mr, m, keyOf(m, 'BRO Twin AC-33'), 'Mid')).toContain('already made')
-    m = newTurn(mr, m).mech
-    expect(m.turn.fired).toEqual({})
-    expect(activationBlocker(mr, m, keyOf(m, 'BRO Twin AC-33'), 'Mid')).toBeNull()
+    expect(res.volleys.map(v => [v.name, v.shots, v.dice, v.penalty])).toEqual([
+      ['ARH Thunderer 120', 1, 15, 1], ['BRO Twin AC-33', 2, 5, 0], ['BRO AC-30', 1, 5, 0],
+    ])
+    const scores = { Precision: 2, Gunnery: 1 }
+    // The pilot's dice go on every roll; a Repeating weapon adds its dice per shot; the range penalty applies once.
+    expect(res.volleys.map(v => weaponRoll(rules, v, 'Mid', scores)!.bonus)).toEqual([14, 10, 5])
+    expect(weaponRoll(rules, res.volleys[1], 'Mid', scores)).toMatchObject({ attribute: { name: 'Precision', score: 2 }, skill: { name: 'Gunnery', score: 1 } })
+    expect(weaponTags(mr, 'ARH Thunderer 120')).toContain('Piercing (2)')
+    expect(weaponTags(mr, 'BRO AC-30')).toEqual(['Kinetic'])
+    // No once-a-turn limit: a weapon with shots left can fire again this turn.
+    expect(activationBlocker(mr, adjustTurn(res.mech, { energy: 9 }), keyOf(m, 'BRO Twin AC-33'), 'Mid')).toContain('Already activated 2×')
+    expect(activationBlocker(mr, adjustTurn(res.mech, { energy: 9 }), keyOf(m, 'BRO AC-20'), 'Mid')).toBeNull()
   })
 
   it('stops a weapon early when it runs out of energy', () => {
     const m = adjustTurn(prefab('Fortress'), { energy: 7 })
-    const res = attack(mr, m, 'shot', 'Long', { [keyOf(m, 'ARH Thunderer 120')]: 1, [keyOf(m, 'BRO Twin AC-33')]: 2 }, roll1)
-    expect(res.parts.map(p => p.name)).toEqual(['ARH Thunderer 120'])
+    const res = attack(mr, m, 'Long', { [keyOf(m, 'ARH Thunderer 120')]: 1, [keyOf(m, 'BRO Twin AC-33')]: 2 }, roll1)
+    expect(res.volleys.map(v => v.name)).toEqual(['ARH Thunderer 120'])
   })
 
-  it('melee is a separate strike with the weapon aspect', () => {
+  it('melee needs an Engaged target and uses the weapon aspect', () => {
     const m = prefab('Workhorse')
-    const res = attack(mr, m, 'strike', 'Short', { [keyOf(m, 'OHS Breaker BH3')]: 1 }, roll1)
-    expect(shotRoll(rules, res.parts, 'strike', 'Short', {})!.attribute!.name).toBe('Violence')
-    expect(res.mech.turn.fired).toEqual({ strike: true })
+    const breaker = findAttachment(mr, 'OHS Breaker BH3')!
+    expect(outOfRange(breaker, 'Short')).toBe(true)
+    expect(outOfRange(breaker, 'Engaged')).toBe(false)
+    const res = attack(mr, m, 'Engaged', { [keyOf(m, 'OHS Breaker BH3')]: 1 }, roll1)
+    expect(weaponRoll(rules, res.volleys[0], 'Engaged', {})!.attribute!.name).toBe('Violence')
+  })
+
+  it('guns treat an Engaged target as Short', () => {
+    const m = prefab('Workhorse')
+    const res = attack(mr, m, 'Engaged', { [keyOf(m, 'BRO AC-30')]: 1 }, roll1)
+    expect(res.volleys[0].penalty).toBe(1)
+    expect(weaponRoll(rules, res.volleys[0], 'Engaged', {})!.attribute!.name).toBe('Reflex')
+  })
+
+  it('says why a shot count is blocked', () => {
+    const m = adjustTurn(prefab('Workhorse'), { energy: 3 })
+    const mg = keyOf(m, 'BRO M12'), ac = keyOf(m, 'BRO AC-30')
+    expect(shotsBlocker(mr, m, { [ac]: 1 }, mg, 2, 'Short')).toBe('Not enough energy: 2 shots need 2 (+2 for the other weapons), have 3.')
+    expect(shotsBlocker(mr, m, {}, mg, 2, 'Short')).toBeNull()
+    expect(shotsBlocker(mr, m, {}, mg, 1, 'Long')).toBe('Out of range: reaches Short, target is Long.')
+    const used = activate(mr, m, mg, roll1, 'Short').mech
+    expect(shotsBlocker(mr, used, {}, mg, 2, 'Short')).toBe('Only 1 shot left this turn (Repeating 2).')
   })
 
   it('Hungry weapons draw several rounds, across bins', () => {
@@ -124,8 +144,8 @@ describe('turn economy', () => {
 
   it('Heavy parts slow the mech', () => {
     const m = prefab('Junkyard Dog')
-    expect(deriveStats(mr, m).heavy).toBe(5)
-    expect(deriveStats(mr, m).speed).toBe(55)
+    expect(deriveStats(mr, m).heavy).toBe(1)
+    expect(deriveStats(mr, m).speed).toBe(11)
   })
 
   it('adjustTurn sets values directly, floored at 0', () => {
@@ -154,6 +174,25 @@ describe('turn economy', () => {
     expect(newTurn(mr, m).mech.sections.core.armour!.points).toBe(6)
   })
 
+  it('Sprint costs energy and heat equal to chassis size', () => {
+    expect(sprintCost(mr, prefab('Kettle'))).toEqual({ energy: 1, heat: 1 })
+    expect(sprintCost(mr, prefab('Scout'))).toEqual({ energy: 2, heat: 2 })
+    expect(sprintCost(mr, prefab('Workhorse'))).toEqual({ energy: 3, heat: 3 })
+    expect(sprintCost(mr, prefab('Fortress'))).toEqual({ energy: 5, heat: 5 })
+    const m = prefab('Workhorse')
+    expect(sprint(mr, m, roll1).mech.turn).toMatchObject({ energy: m.turn.energy - 3, heat: 3 })
+  })
+
+  it('overheat and cook-off rolls are reported for the VTT', () => {
+    let m = adjustTurn(prefab('Workhorse'), { heat: 12 })
+    const res = activate(mr, m, keyOf(m, 'BRO AC-30'), roll1, 'Mid')
+    expect(res.rolls).toEqual([{ label: 'Overheat self-damage on BRO AC-30. Each success is a wound: mark by hand', dice: 5 }])
+    m = { ...m, settings: { ...m.settings, autoHeatDamage: true } }
+    const auto = activate(mr, m, keyOf(m, 'BRO AC-30'), roll1, 'Mid')
+    expect(auto.rolls![0]).toMatchObject({ dice: 5, rolled: [1, 1, 1, 1, 1] })
+    expect(auto.rolls![0].label).toContain('0 wounds (applied)')
+  })
+
   it('Volatile parts cook off once when disabled', () => {
     let m = prefab('Scrapheap') // KR Hotpile F6, Volatile (8), core slots 2-3
     m = { ...m, sections: { ...m.sections, core: { ...m.sections.core, armour: null } } }
@@ -162,6 +201,8 @@ describe('turn economy', () => {
     const res = applyWounds(mr, m, 'core', 4, { cookoff: true, roller })
     expect(calls).toEqual([8])
     expect(res.notices.some(n => n.includes('COOK-OFF: KR Hotpile F6'))).toBe(true)
+    expect(res.rolls).toEqual([expect.objectContaining({ dice: 8, rolled: Array(8).fill(1) })])
+    expect(res.rolls![0].label).toContain('Cook-off: KR Hotpile F6 (Volatile (8)) in the Core')
     const pile = res.mech.sections.core.mounts.find(x => x.name === 'KR Hotpile F6')!
     expect(cookoffDice(mr, pile)).toBe(0)
   })

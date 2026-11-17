@@ -26,9 +26,8 @@ export function slotAccepts(slotType: string, attachmentType: string): boolean {
 
 export function freshTurn(): MechTurn {
   return {
-    energy: 0, heat: 0, stored: 0, shutdown: false,
+    energy: 0, heat: 0, stored: 0, shutdown: false, holdShutdown: false,
     used: {}, lastFired: null, out: false, pilotWounds: 0,
-    shot: [], strike: [], shotBand: null, fired: {},
   }
 }
 
@@ -227,9 +226,6 @@ function loadTurn(raw: any): MechTurn {
   const t = raw ?? {}
   const out: any = { ...fresh }
   for (const k of Object.keys(fresh)) if (t[k] !== undefined) out[k] = t[k]
-  if (!Array.isArray(out.shot)) out.shot = []
-  if (!Array.isArray(out.strike)) out.strike = []
-  if (typeof out.fired !== 'object' || out.fired === null) out.fired = {}
   return out
 }
 

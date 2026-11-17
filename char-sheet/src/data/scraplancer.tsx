@@ -3,6 +3,7 @@ import type { MechRules } from '../lib/mech/types'
 import lancerRuleset from './lancer'
 import { AMMO, ATTACHMENTS, CHASSIS, TAGS } from './scraplancerCatalogue'
 import { PREFABS } from './scraplancerPrefabs'
+import { TAG_SHORT } from './scraplancerTagShort'
 
 // Chassis, parts, ammo and tags are generated from the rules doc (scripts/scraplancer/gen.py); prefabs by prefabs.py.
 
@@ -22,10 +23,11 @@ const mechs: MechRules = {
     ammo: AMMO,
     prefabs: PREFABS,
     tags: TAGS,
+    tagsShort: TAG_SHORT,
     // Mechs saved before the catalogue gave every frame a make and model.
     chassisAliases: { Jackal: 'MAS Jackal J-7', Mule: 'OHS Mule Mk II', Bulwark: 'HCA Bulwark Block 4' },
     rangeAspects: { Short: 'Reflex', Mid: 'Precision', Long: 'Precision' },
-    sprint: { energy: 2, heat: 2 },
+    sprint: { energy: 2, heat: 2 }, // every chassis here has a size, which sets the Sprint cost instead
 }
 
 const scrapLancerRuleset: Rules = {
