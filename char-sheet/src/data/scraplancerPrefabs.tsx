@@ -179,7 +179,7 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "KR AC-30R",
-      0
+      1
      ]
     ]
    },
@@ -198,7 +198,7 @@ export const PREFABS: MechPrefab[] = [
     "armour": "AWP Plate P2",
     "mounts": [
      [
-      "CWF Fin-2",
+      "Ammo Bin: Standard",
       1
      ]
     ]
@@ -244,10 +244,6 @@ export const PREFABS: MechPrefab[] = [
      [
       "OHS Cargo Pod P7",
       5
-     ],
-     [
-      "Ammo Bin: Standard",
-      7
      ]
     ]
    },
@@ -274,10 +270,6 @@ export const PREFABS: MechPrefab[] = [
      [
       "SBL Rangefinder RF1",
       1
-     ],
-     [
-      "CWF Fin-2",
-      2
      ]
     ]
    }
@@ -293,7 +285,7 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "OHS Cargo Pod P12",
-      2
+      3
      ]
     ]
    },
@@ -302,19 +294,19 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "KR Hotpile F9",
-      2
+      3
      ],
      [
       "HTC Halcyon HX-2",
-      5
-     ],
-     [
-      "CWF Array RA3",
       6
      ],
      [
+      "CWF Array RA3",
+      7
+     ],
+     [
       "CWF Fin-1",
-      8
+      9
      ]
     ]
    },
@@ -336,11 +328,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "OHS Manipulator MH1",
-      0
+      1
      ],
      [
       "OHS Rack R3",
-      1
+      2
      ]
     ]
    },
@@ -520,7 +512,7 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "HTC Halcyon HX-2",
-      0
+      1
      ]
     ]
    }
@@ -822,11 +814,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "OHS Manipulator MH3",
-      0
+      1
      ],
      [
       "BRO AC-30",
-      1
+      2
      ]
     ]
    },
@@ -916,11 +908,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "SBL Sensor SA2",
-      0
+      1
      ],
      [
       "SBL Fire Control FC1",
-      1
+      2
      ]
     ]
    }
@@ -958,11 +950,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "VCC Shear SB3",
-      0
+      1
      ],
      [
       "BRO AC-30",
-      1
+      2
      ]
     ]
    },
@@ -992,7 +984,7 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "BRO Twin AC-33",
-      0
+      1
      ]
     ]
    },
@@ -1001,7 +993,7 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "SBL Sensor SA2",
-      0
+      1
      ]
     ]
    }
@@ -1171,11 +1163,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "CMS Swarm SW3",
-      0
+      1
      ],
      [
       "Ammo Bin: Missile",
-      2
+      3
      ]
     ]
    },
@@ -1333,15 +1325,15 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "HRW Dipole D6",
-      2
+      3
      ],
      [
       "HTC Halcyon HX-3",
-      4
+      5
      ],
      [
       "GWC Radiator Pattern 5",
-      5
+      6
      ]
     ]
    },
@@ -1392,11 +1384,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "VCC Piledriver PV3",
-      1
+      2
      ],
      [
       "SGW Ion Disruptor Pattern 3",
-      2
+      3
      ]
     ]
    },
@@ -1405,15 +1397,15 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "GWC Kiln Pattern 8",
-      2
+      3
      ],
      [
       "HTC Halcyon CX-4",
-      5
+      6
      ],
      [
       "GWC Radiator Pattern 5",
-      6
+      7
      ]
     ]
    },
@@ -1422,11 +1414,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "VCC Shear SB3",
-      1
+      2
      ],
      [
       "HPY Napalm NP2",
-      2
+      3
      ]
     ]
    },
@@ -1451,11 +1443,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "MAS Flicker FL1",
-      0
+      1
      ],
      [
       "MAS Vector VT2",
-      1
+      2
      ]
     ]
    },
@@ -1464,11 +1456,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "HTC Phase P3",
-      0
+      1
      ],
      [
       "HTC Halcyon GS-3",
-      1
+      2
      ]
     ]
    },
@@ -1562,11 +1554,11 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "VCC Edge E4",
-      0
+      1
      ],
      [
       "ARH Rail R4",
-      1
+      2
      ]
     ]
    },
@@ -1596,15 +1588,15 @@ export const PREFABS: MechPrefab[] = [
     "mounts": [
      [
       "OHS Manipulator MH3",
-      0
-     ],
-     [
-      "LDE Focus F4",
       1
      ],
      [
+      "LDE Focus F4",
+      2
+     ],
+     [
       "LDE Focus F2",
-      3
+      4
      ]
     ]
    },
