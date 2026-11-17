@@ -166,7 +166,7 @@ PREFABS = [
         'rarm': ('AWP Laminate L4', [('VCC Shear SB3', 2), ('HPY Napalm NP2', 3)]),
         'cockpit': ('AWP Laminate L4', [('SBL Sensor SA2', 2)]),
     }),
-    ('Ghost', 'CLF Wraith S9', 'Elite recon and EW: veil, AI core and Focus lasers on a Torus. No Hull: every wound costs a part.', {
+    ('Ghost', 'CLF Wraith S9', 'Elite recon and EW: veil, AI core and Focus lasers on a Torus. Two Hull: most wounds cost a part.', {
         'lleg': ('AWP Weave W5', [('MAS Flicker FL1', 1), ('MAS Vector VT2', 2)]),
         'rleg': ('AWP Weave W5', [('HTC Phase P3', 1), ('HTC Halcyon GS-3', 2)]),
         'larm': ('AWP Weave W5', [('VCC Edge E2', 0), ('LDE Focus F2', 1)]),

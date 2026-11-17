@@ -77,6 +77,14 @@ describe('prefabs', () => {
     }
   })
 
+  it('no prefab claims No Hull on a frame that has Hull', () => {
+    for (const p of mr.prefabs!) {
+      const c = mr.chassis.find(x => x.name === p.chassis)!
+      const hull = c.sections.some(s => s.slots.includes('Hull'))
+      expect([p.name, hull && /no hull/i.test(p.description ?? '')]).toEqual([p.name, false])
+    }
+  })
+
   it('applyPrefab swaps chassis and loadout but keeps identity', () => {
     const m = { ...newMech(rules, 'KR Tinpot R0', 'Pot'), owner: 'sam' }
     const next = applyPrefab(rules, m, 'Fortress')

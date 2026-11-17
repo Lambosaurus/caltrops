@@ -2,7 +2,7 @@
 
 > Snapshot of the "Scrap Lancer Mech Rules (Draft)" doc, Catalogue tab. The char sheet generates its Scrap Lancer data from these files: edit them (or re-export the doc), then run `python scripts/scraplancer/gen.py` and `python scripts/scraplancer/prefabs.py` in `char-sheet/`.
 
-Twenty-one chassis and about 249 parts (Parts tab) from twenty manufacturers, from Kessler's welded-together scrap to Concord's AI-designed Elite frames. Every part is named by make and model, e.g. OHS Ox Mk III. Better parts buy the same job in fewer slots, for less heat or energy, or with no risk; cheap parts are big, hot, volatile or unreliable. Every number and price is a (call) to play-test.
+Thirty-one chassis and about 249 parts (Parts tab) from twenty manufacturers, from Kessler's welded-together scrap to Concord's AI-designed Elite frames. Every part is named by make and model, e.g. OHS Ox Mk III. Better parts buy the same job in fewer slots, for less heat or energy, or with no risk; cheap parts are big, hot, volatile or unreliable. Every number and price is a (call) to play-test.
 
 ## Tiers and prices
 
@@ -52,7 +52,7 @@ For parts, the number in a model name is the part's headline stat: energy for a 
 
 ## Chassis overview
 
-Thirty-one frames from seven makes, grouped by make. Prices run from 800 to 70,000, and Heat Max from 5 to 20: junk frames scrape by on small numbers, while super-heavies run big reactors, big coolers and big guns. Jackal J-7, Mule Mk II and Bulwark Block 4 are the original Jackal, Mule and Bulwark under their makers' names; only their Heat Max has changed.
+Thirty-one frames from seven makes, grouped by make. Prices run from 800 to 70,000, and Heat Max from 5 to 20: junk frames scrape by on small numbers, while super-heavies run big reactors, big coolers and big guns. Jackal J-7, Mule Mk II and Bulwark Block 4 are the original Jackal, Mule and Bulwark under their makers' names, with new Heat Max; the Jackal and Bulwark also gained a slot.
 
 Slot counts exclude each section's Armour slot.
 
@@ -96,13 +96,13 @@ Hardpoints are Reactor / Weapon / Tech / Hand / untyped slots.
 
 How the tiers show up in the frame:
 
-Cheap frames are slot-poor or Hull-padded. The Ox Mk II has 21 slots, but 8 are Hull and only one takes a gun.
+Cheap frames are slot-poor or Hull-padded. The Ox Mk II has 19 slots, but 8 are Hull and only one takes a gun.
 
-Better frames have more slots and more Heat Max. Slots rise with tier within each size class (Scrap 2 to 4 below Standard, Military and Elite 2 to 6 above), every frame has some Hull, and OHS and Greenward frames carry 2 extra Hull. The Wraith S9 keeps only two Hull slots, in exchange for 6 Tech slots and Evasion 6.
+Better frames have more slots and more Heat Max. Slots rise with tier within each size class (Scrap 3 to 6 below Standard, Salvage 1 to 3 below, Military 2 to 3 above and Elite 4 to 6 above), every frame has some Hull, and OHS and Greenward frames get 2 extra slots. The Wraith S9 keeps only two Hull slots, in exchange for 6 Tech slots and Evasion 6.
 
-Reactor bays and gun mounts grow with the frame. The Tinpot R0 runs on one reactor slot and most frames have two. Heavy frames have three, and the Bastion VX-12 has four, plus a five-slot gun mount for Siege-size weapons. Elite reactors fit more output into fewer slots.
+Reactor bays and gun mounts grow with the frame. The Tinpot R0 runs on one reactor slot and most frames have two. Heavy frames have three, and the Bastion VX-12 and Goliath R9 have four, the Bastion plus a five-slot gun mount for Siege-size weapons. Elite reactors fit more output into fewer slots.
 
-Mark numbers are upgrades. The Ox Mk III adds a second gun and two Tech slots to the Mk II for 1,500 more.
+Mark numbers are upgrades. The Ox Mk III adds a second gun and a Tech slot to the Mk II for 1,500 more.
 
 ## Chassis details: Kessler and Orion
 

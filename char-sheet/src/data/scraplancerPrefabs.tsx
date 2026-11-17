@@ -1436,7 +1436,7 @@ export const PREFABS: MechPrefab[] = [
  {
   "name": "Ghost",
   "chassis": "CLF Wraith S9",
-  "description": "Elite recon and EW: veil, AI core and Focus lasers on a Torus. No Hull: every wound costs a part.",
+  "description": "Elite recon and EW: veil, AI core and Focus lasers on a Torus. Two Hull: most wounds cost a part.",
   "loadout": {
    "lleg": {
     "armour": "AWP Weave W5",
