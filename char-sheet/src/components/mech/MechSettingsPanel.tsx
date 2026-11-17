@@ -6,7 +6,7 @@ import type { Mech, MechSettings } from '../../lib/mech/types'
 const OPTIONS: [keyof MechSettings, string][] = [
   ['autoAmmo', 'Spend ammo on activation'],
   ['autoHeatDamage', 'Roll and apply overheat damage'],
-  ['autoCookoff', 'Roll and apply ammo cook-off'],
+  ['autoCookoff', 'Roll and apply Volatile cook-offs'],
   ['autoHitDamage', 'Apply hit damage to sections'],
 ]
 
