@@ -40,7 +40,7 @@ Round to the nearest whole die, minimum 1. Melee weapons multiply by a further �
 
 Two worked loadouts show the range the numbers are built for.
 
-KR Tinpot R0 (Scrap, Heat Max 3). A KR Smokestack G2 makes 2 energy and +3 heat. A CWF Array RA3 in the core and a Fin-1 in each leg remove 5, so it cools 2 a turn while idle. Its KR Nailer N1 costs 1 energy and 2 heat a shot, adds +1 die to the pilot's shot, and Jams on a miss: one shot a turn breaks even, and two shots fill its heat bank in two turns. It potters, picks its moments and runs from anything big.
+KR Tinpot R0 (Scrap, Heat Max 5). A KR Smokestack G2 makes 2 energy and +3 heat. A CWF Array RA3 in the core and a Fin-1 in each leg remove 5, so it cools 2 a turn while idle. Its KR Nailer N1 costs 1 energy and 2 heat a shot, adds +1 die to the pilot's shot, and Jams on a miss: one shot a turn breaks even, and two shots fill its heat bank in two turns. It potters, picks its moments and runs from anything big.
 
 VDG Bastion VX-12 (Military, Heat Max 20). An HRW Twin-core TC16 makes 16 energy and +7 heat. Three Halcyon CX-5s (−15, drawing 3 energy) and a CWF Array RA4 in each tread (−8) remove 23. Against a target at Mid it fires one shot: an ARH Thunderer 120 (+15 dice, −1 for the closer band; 6 energy, 8 heat), one activation of a BRO Twin AC-33 (+5; 2 and 2), a BRO AC-30 (+5; 2 and 2) and a BRO AC-20 (+2; 2 and 2). That is one roll of Precision + Gunnery + 26, all landing on one section, for 15 of its 16 energy and 2 heat under even. The Twin AC-33's second activation would add 5 more dice, but needs 2 energy it hasn't got, and the Thunderer is Braced, so a Bastion that wants its main gun stands still.
 

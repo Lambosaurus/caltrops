@@ -161,7 +161,7 @@ Act, in any order.
 
 Move up to the mech's Speed (sum of surviving legs) for free. Any movement removes Sitting Duck.
 
-Sprint: spend 2 energy and gain 2 heat to move Speed again, and gain Evasion until your next turn (call: amounts).
+Sprint: spend energy and gain heat equal to the chassis Size to move Speed again, and gain Evasion until your next turn. Size follows the chassis class: Ultralight 1, Light 2, Medium 3, Heavy 4, Heavy assault and Super-heavy 5. Small mechs sprint cheaply; a heavy one pays for every dash, which is what evasion jets are for.
 
 Activate attachments: pay energy, gain heat, draw ammo, apply the effect. Each attachment once, unless Repeating.
 
@@ -171,11 +171,11 @@ End the turn, one of two ways:
 
 End turn: add the reactor's passive heat, subtract passive cooling (never below 0).
 
-Shut down & purge (an action, any time): the reactor adds no heat, cooling applies, and the mech is stunned until its next turn.
+Shut down & purge (an action, any time): the reactor adds no heat, cooling applies, and the mech stays shut down, stunned, through its whole next turn.
 
 ### Shut down & purge
 
-Shutting down is an action the pilot can take at any point in their turn, and it ends the turn. The reactor adds no heat that end of turn; passive cooling still applies. Until its next turn the mech is stunned (+1 die to attacks against it) and, unless it moved first, a Sitting Duck. It reboots at the start of its next turn with full energy; if still above Heat Max, it starts that turn overheated.
+Shutting down is an action the pilot can take at any point in their turn, and it ends the turn. The reactor adds no heat that end of turn; passive cooling still applies. The mech then stays shut down through its whole next turn, like a stun: no energy, no actions, no movement, and it is stunned (+1 die to attacks against it) and a Sitting Duck. The reactor adds no heat at the end of that turn either, and cooling applies again. It reboots at the start of the turn after, with full energy; if still above Heat Max, it starts that turn overheated. Because it costs a whole turn, pilots usually shut down at the end of a turn, after they have acted.
 
 ### Overheated
 
@@ -189,7 +189,7 @@ What a mech did with its legs this turn changes how hard it is to hit, until its
 |---|---|---|
 | Sitting Duck | Did not move (including while shut down, or with no legs left) | +2 dice |
 | Moved | Moved up to Speed | No change |
-| Sprinting | Sprinted (2 energy, +2 heat) | − dice equal to Evasion |
+| Sprinting | Sprinted (energy and heat equal to Size) | − dice equal to Evasion |
 
 Legs provide Evasion the way they provide Speed: the sum over surviving legs. A medium mech's legs give 2 in total. Example values: Jackal 4, Mule 2, Bulwark treads 1 (call: light and heavy values). A shut-down mech is also stunned (+1 die), so it suffers +3 in total (call: they stack).
 
@@ -238,7 +238,7 @@ Three starting frames, all numbers (call) and untested. Every section also has o
 
 ### MAS Jackal J-7 — light scout
 
-Heat Max 5. 13 slots, 4 of them Hull. Fast, with an exposed canopy that is easy to snipe and a left arm that is a hand and little else.
+Heat Max 6. 13 slots, 4 of them Hull. Fast, with an exposed canopy that is easy to snipe and a left arm that is a hand and little else.
 
 | Section | d12 | Aim cost | Slots | Provides | Transfers to |
 |---|---|---|---|---|---|
@@ -361,7 +361,7 @@ With heat at 11 and 2 energy left, the pilot can:
 
 End turn: heat settles to 10, still over Max, so it starts turn 3 overheated and every action risks damage until it cools.
 
-Shut down & purge: heat drops to 7, but the mech is stunned and a Sitting Duck through the enemy phase (+3 dice against it).
+Shut down & purge: heat drops to 7, but the mech stays shut down, stunned and a Sitting Duck (+3 dice against it), through the enemy phase and all of turn 3. Cooling takes it to 3 by the end of turn 3, and it reboots in turn 4.
 
 Keep fighting: the second M12 burst (+2 heat, to 13) would roll 4d4 (13 − 9), each 4 wounding the M12.
 
@@ -402,11 +402,11 @@ Ejection and pilots on foot once a mech is lost.
 | Inside a weapon's range band: −1 die per band closer | Attachments |
 | Melee needs a Short (engaged) target | Attachments |
 | Unspent energy is lost unless stored in a Capacitor | Mech turn |
-| Sprint costs 2 energy and +2 heat | Mech turn |
+| Sprint costs energy and heat equal to chassis Size (1–5) | Mech turn |
 | Reactor heat and passive cooling both applied at end of turn | Mech turn |
 | Overheat roll uses the overage after the action; sprint damage lands in the legs | Mech turn |
 | No forced shutdown: a mech can stay overheated across turns | Mech turn |
-| Shut-down mechs are stunned: +1 die to attacks against them | Mech turn |
+| Shut down & purge holds the mech shut down, stunned, through its next turn: +1 die to attacks against it | Mech turn |
 | Evasion per chassis (Jackal 4, Mule 2, Bulwark 1); Sitting Duck +2 and Evasion change attacker dice, not successes | Mobility |
 | Stunned (+1) and Sitting Duck (+2) stack on a shut-down mech | Mobility |
 | All wounds from one hit go to one section | Damage |
@@ -415,5 +415,5 @@ Ejection and pilots on foot once a mech is lost.
 | Aim cost minimum 1 die | Damage |
 | Field repair: 1 Scrap + check, one wound per success; no armour or section restore | Damage |
 | Mech wounds are not fresh or locked | Damage |
-| Chassis Heat Max values (Jackal 5, Mule 7, Bulwark 11) and Heat Sink at +2 | Examples |
+| Chassis Heat Max values (Jackal 6, Mule 7, Bulwark 11) and Heat Sink at +2 | Examples |
 | All other chassis and attachment numbers | Examples |

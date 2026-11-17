@@ -1,7 +1,7 @@
 import scrapLancerRuleset from '../../data/scraplancer'
 import { applyPrefab, findAttachment, loadMech, newMech, normaliseMech, refitMech } from './loadout'
 import { deriveStats, turnEnergy } from './derive'
-import { activate, activationBlocker, adjustTurn, attack, newScene, newTurn, planCost, planParts, setCharges, shotRoll, shotTags } from './turn'
+import { activate, activationBlocker, adjustTurn, attack, newScene, newTurn, planCost, planParts, setCharges, shotRoll, shotTags, sprint, sprintCost } from './turn'
 import { applyWounds, cookoffDice } from './damage'
 import type { Mech } from './types'
 
@@ -154,6 +154,25 @@ describe('turn economy', () => {
     expect(newTurn(mr, m).mech.sections.core.armour!.points).toBe(6)
   })
 
+  it('Sprint costs energy and heat equal to chassis size', () => {
+    expect(sprintCost(mr, prefab('Kettle'))).toEqual({ energy: 1, heat: 1 })
+    expect(sprintCost(mr, prefab('Scout'))).toEqual({ energy: 2, heat: 2 })
+    expect(sprintCost(mr, prefab('Workhorse'))).toEqual({ energy: 3, heat: 3 })
+    expect(sprintCost(mr, prefab('Fortress'))).toEqual({ energy: 5, heat: 5 })
+    const m = prefab('Workhorse')
+    expect(sprint(mr, m, roll1).mech.turn).toMatchObject({ energy: m.turn.energy - 3, heat: 3 })
+  })
+
+  it('overheat and cook-off rolls are reported for the VTT', () => {
+    let m = adjustTurn(prefab('Workhorse'), { heat: 12 })
+    const res = activate(mr, m, keyOf(m, 'BRO AC-30'), roll1, 'Mid')
+    expect(res.rolls).toEqual([{ label: 'Overheat self-damage on BRO AC-30. Each success is a wound: mark by hand', dice: 5 }])
+    m = { ...m, settings: { ...m.settings, autoHeatDamage: true } }
+    const auto = activate(mr, m, keyOf(m, 'BRO AC-30'), roll1, 'Mid')
+    expect(auto.rolls![0]).toMatchObject({ dice: 5, rolled: [1, 1, 1, 1, 1] })
+    expect(auto.rolls![0].label).toContain('0 wounds (applied)')
+  })
+
   it('Volatile parts cook off once when disabled', () => {
     let m = prefab('Scrapheap') // KR Hotpile F6, Volatile (8), core slots 2-3
     m = { ...m, sections: { ...m.sections, core: { ...m.sections.core, armour: null } } }
@@ -162,6 +181,8 @@ describe('turn economy', () => {
     const res = applyWounds(mr, m, 'core', 4, { cookoff: true, roller })
     expect(calls).toEqual([8])
     expect(res.notices.some(n => n.includes('COOK-OFF: KR Hotpile F6'))).toBe(true)
+    expect(res.rolls).toEqual([expect.objectContaining({ dice: 8, rolled: Array(8).fill(1) })])
+    expect(res.rolls![0].label).toContain('Cook-off: KR Hotpile F6 (Volatile (8)) in the Core')
     const pile = res.mech.sections.core.mounts.find(x => x.name === 'KR Hotpile F6')!
     expect(cookoffDice(mr, pile)).toBe(0)
   })

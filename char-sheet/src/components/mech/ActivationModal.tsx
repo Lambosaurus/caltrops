@@ -17,7 +17,7 @@ import { activationRoll } from '../../lib/mech/roll'
 import type { Mech, RangeBand } from '../../lib/mech/types'
 import type { Dictionary, RollInfo, Rules } from '../../lib/rules'
 import { roller } from './roller'
-import { showNotices } from './notify'
+import { showResult } from './notify'
 
 const BANDS: RangeBand[] = ['Short', 'Mid', 'Long']
 const signed = (n: number) => (n >= 0 ? '+' : '') + n
@@ -101,7 +101,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
       return // blocked: nothing was paid, so do not roll
     }
     view.publish('mech', res.mech)
-    showNotices(res.notices)
+    showResult(res, mech.name)
     if (info) {
       if (toVtt && foundry.isPresent()) {
         foundry.submitRoll(info)

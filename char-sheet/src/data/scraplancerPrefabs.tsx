@@ -5,7 +5,7 @@ export const PREFABS: MechPrefab[] = [
  {
   "name": "Kettle",
   "chassis": "KR Tinpot R0",
-  "description": "The Parts tab's junk-mech example: one Smokestack, one Nailer, a heat bank of 3. Potters about and picks its moments.",
+  "description": "The Parts tab's junk-mech example: one Smokestack, one Nailer, a heat bank of 5. Potters about and picks its moments.",
   "loadout": {
    "lleg": {
     "armour": "KR Scrap Plate SP1",
@@ -602,7 +602,7 @@ export const PREFABS: MechPrefab[] = [
  {
   "name": "Militia Line",
   "chassis": "HCA Warden Block 2",
-  "description": "The colony baseline: an AC-30 and an HC-40 in one shot, two exchangers, nothing fancy.",
+  "description": "The colony baseline: an AC-30 and an HC-40 in one shot, an exchanger and fins, nothing fancy.",
   "loadout": {
    "lleg": {
     "armour": "AWP Plate P2",
@@ -651,7 +651,7 @@ export const PREFABS: MechPrefab[] = [
       3
      ],
      [
-      "HTC Halcyon HX-3",
+      "CWF Fin-2",
       4
      ],
      [
@@ -893,7 +893,7 @@ export const PREFABS: MechPrefab[] = [
       3
      ],
      [
-      "HTC Halcyon CX-4",
+      "HTC Halcyon GS-3",
       4
      ]
     ]
@@ -929,7 +929,7 @@ export const PREFABS: MechPrefab[] = [
  {
   "name": "Jumper",
   "chassis": "MAS Harrier H-3",
-  "description": "Jump-and-shoot: a Twin AC-33 and an AC-30, heavy jump jets and a shear for landing hits.",
+  "description": "Jump-and-shoot: hop on the light jets and fire the Twin AC-33 and AC-30; the heavy jets are for getting out.",
   "loadout": {
    "lleg": {
     "armour": "AWP Lightweave LW4",
@@ -978,7 +978,7 @@ export const PREFABS: MechPrefab[] = [
       3
      ],
      [
-      "HTC Halcyon CX-4",
+      "HTC Halcyon GS-3",
       4
      ],
      [
@@ -1095,7 +1095,7 @@ export const PREFABS: MechPrefab[] = [
  {
   "name": "Missile Wall",
   "chassis": "VDG Monolith VX-9",
-  "description": "Siege frame: LRM-5 and Swarm racks plus a coil gun. Lock first, then bury the target.",
+  "description": "Siege frame on a Twin-core TC13: LRM-5 and Swarm racks plus a coil gun. Lock first, then bury the target.",
   "loadout": {
    "lleg": {
     "armour": "AWP Laminate L4",
@@ -1132,7 +1132,7 @@ export const PREFABS: MechPrefab[] = [
     "armour": "AWP Laminate L5",
     "mounts": [
      [
-      "HRW Twin-core TC10",
+      "HRW Twin-core TC13",
       2
      ],
      [

@@ -14,7 +14,7 @@ import { activationBlocker, attack, planCost, planParts, shotRoll, shotTags, wea
 import type { Mech, RangeBand, ShotKind } from '../../lib/mech/types'
 import type { Dictionary, Rules } from '../../lib/rules'
 import { roller } from './roller'
-import { showNotices } from './notify'
+import { showResult } from './notify'
 
 const BANDS: RangeBand[] = ['Short', 'Mid', 'Long']
 const signed = (n: number) => (n >= 0 ? '+' : '') + n
@@ -87,7 +87,7 @@ function ShotModal({ rules, view, target, close }: {
     if (!mech || !mr || !parts.length) return
     const res = attack(mr, mech, kind, shotBand, counts, roller)
     view.publish('mech', res.mech)
-    showNotices(res.notices)
+    showResult(res, mech.name)
     const base = shotRoll(rules, res.parts, kind, shotBand, scores)
     if (!base) return
     const roll = { ...base, bonus: (base.bonus ?? 0) + bonus }

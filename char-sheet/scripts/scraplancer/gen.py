@@ -103,8 +103,9 @@ def part(heading, d):
     }
     if d.get('Kind'):
         a['kind'] = d['Kind']
-    if d.get('Notes'):
-        a['description'] = d['Notes']
+    notes = '. '.join(x for x in re.split(r'\.\s+', d.get('Notes', '').strip(' .')) if x and not x.startswith('Was '))  # drop old-name notes ('Was Flamer')
+    if notes:
+        a['description'] = notes
 
     if heading == 'Armour':
         a['type'] = 'Armour'
@@ -133,6 +134,9 @@ def part(heading, d):
         a['cooling'] = -num(d['Heat / turn'])
         if num(d['Energy / turn']):
             a['upkeep'] = num(d['Energy / turn'])
+        m = re.search(r'\+(\d+) Heat Max', d.get('Notes', ''))  # e.g. Fin-2: 'Fin-1's cooling, plus +1 Heat Max'
+        if m:
+            a['heatSink'] = int(m.group(1))
     elif heading == 'Heat sinks':
         a['heatSink'] = num(d['Heat Max'])
         if d['Energy'] not in DASH:  # Phase sinks: also activated to dump heat
@@ -219,6 +223,13 @@ for l in CAT[i + 1:]:
     overview[f'{c[0]} {c[1]}'] = {'make': c[0], 'model': c[1], 'class': c[2], 'tier': c[3], 'price': num(c[4]),
                                    'heatMax': num(c[5]), 'trait': c[9]}
 
+def class_size(cls):
+    """Chassis size 1-5 from its class: Ultralight 1, Light 2, Medium 3, Heavy 4, Heavy assault / Super-heavy 5."""
+    if 'assault' in cls or cls.startswith('Super'):
+        return 5
+    return {'Ultralight': 1, 'Light': 2, 'Medium': 3, 'Heavy': 4}[cls.split()[0]]
+
+
 ROLE = {
     'Left leg': 'lleg', 'Right leg': 'rleg', 'Left arm': 'larm', 'Right arm': 'rarm', 'Arm': 'rarm',
     'Core': 'core', 'Cargo bed (core)': 'core', 'Cockpit': 'cockpit', 'Sensor head (cockpit)': 'cockpit',
@@ -297,7 +308,7 @@ for src in (CAT, RULES):
             secs.append(sec)
         ids = {s['id'] for s in secs}
         shape = 'tracked' if ids & {'treads', 'ltread'} else 'quad' if 'flleg' in ids else 'biped'
-        chassis[name] = {'name': name, 'make': o['make'], 'model': o['model'], 'class': o['class'], 'tier': o['tier'],
+        chassis[name] = {'name': name, 'make': o['make'], 'model': o['model'], 'class': o['class'], 'size': class_size(o['class']), 'tier': o['tier'],
                          'price': o['price'], 'heatMax': o['heatMax'], 'trait': o['trait'], 'description': desc,
                          'shape': shape, 'sections': secs}
 
@@ -308,6 +319,14 @@ chassis_list = [chassis[n] for n in order]
 
 # Tag glossary: Rules tab core tags, then the Catalogue tag table (which wins on a clash).
 tags = {}
+
+
+def clean_rule(text):
+    """A tag rule without design notes: old-name remarks ('Was ...'), '(call)' markers and 'Replaces ...:' preambles."""
+    text = re.sub(r'^Replaces [^:]*:\s*', '', text)
+    text = text.replace(' (call)', '')
+    parts = [x for x in re.split(r'\.\s+', text.strip(' .')) if x and not x.startswith('Was ')]
+    return '. '.join(parts)
 
 
 def read_tags(lines, header):
@@ -321,7 +340,7 @@ def read_tags(lines, header):
         if len(c) < 2 or not c[1]:
             continue
         for name in c[0].split(' / '):
-            tags[re.sub(r' \(.*\)$', '', name).replace(' vs Y', '').strip()] = c[1]
+            tags[re.sub(r' \(.*\)$', '', name).replace(' vs Y', '').strip()] = clean_rule(c[1])
 
 
 read_tags(RULES, '| Tag | Rule |')

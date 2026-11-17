@@ -11,7 +11,7 @@ import { applyWounds, markWounds } from '../../lib/mech/damage'
 import type { Mech, MechRules } from '../../lib/mech/types'
 import type { Rules } from '../../lib/rules'
 import { roller } from './roller'
-import { showNotices } from './notify'
+import { showResult } from './notify'
 
 /**
  * Apply `count` wounds to a section and publish the result. With autoHitDamage on, the full rules apply
@@ -23,11 +23,11 @@ export function applyHit(view: View, sectionId: string, count: number, ignoreArm
   if (!rules || !mech) {
     return
   }
-  const { mech: next, notices } = mech.settings.autoHitDamage
+  const res = mech.settings.autoHitDamage
     ? applyWounds(rules, mech, sectionId, count, { ignoreArmour, cookoff: mech.settings.autoCookoff, roller })
     : markWounds(rules, mech, sectionId, count, ignoreArmour)
-  view.publish('mech', next)
-  showNotices(notices)
+  view.publish('mech', res.mech)
+  showResult(res, mech.name)
 }
 
 /** Popup for hitting one section: wound count and ignores armour. */

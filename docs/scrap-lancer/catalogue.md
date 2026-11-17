@@ -52,26 +52,28 @@ For parts, the number in a model name is the part's headline stat: energy for a 
 
 ## Chassis overview
 
-Twenty-one frames from seven makes, grouped by make. Prices run from 800 to 70,000, and Heat Max from 3 to 20: junk frames scrape by on small numbers, while super-heavies run big reactors, big coolers and big guns. Jackal J-7, Mule Mk II and Bulwark Block 4 are the original Jackal, Mule and Bulwark under their makers' names; only their Heat Max has changed.
+Twenty-one frames from seven makes, grouped by make. Prices run from 800 to 70,000, and Heat Max from 5 to 20: junk frames scrape by on small numbers, while super-heavies run big reactors, big coolers and big guns. Jackal J-7, Mule Mk II and Bulwark Block 4 are the original Jackal, Mule and Bulwark under their makers' names; only their Heat Max has changed.
 
 Slot counts exclude each section's Armour slot.
+
+Size follows the class and sets the cost of a Sprint, in both energy and heat: Ultralight 1, Light 2, Medium 3, Heavy 4, Heavy assault and Super-heavy 5.
 
 Hardpoints are Reactor / Weapon / Tech / Hand / untyped slots.
 
 | Make | Model | Class | Tier | Price | Heat Max | Slots (Hull) | Speed / Evasion | Hardpoints R/W/T/H/U | Trait (call) |
 |---|---|---|---|---|---|---|---|---|---|
-| KR | Tinpot R0 | Ultralight | Scrap | 800 | 3 | 10 (3) | 50 / 2 | 1 / 1 / 0 / 1 / 4 | Tiny: attacks against it from Long range roll −1 die |
-| KR | Rattler R1 | Light | Scrap | 1,200 | 4 | 12 (3) | 60 / 2 | 2 / 1 / 0 / 2 / 4 | Open cab: an Area attack that hits the cockpit also hits the pilot |
-| KR | Hulk R3 | Medium | Scrap | 2,200 | 5 | 15 (5) | 50 / 2 | 2 / 3 / 0 / 1 / 4 | Junker: rebuilding a destroyed section costs only Scrap, never Solari |
-| OHS | Ox Mk II | Medium quad | Scrap | 2,500 | 5 | 21 (8) | 60 / 0 | 2 / 1 / 2 / 1 / 7 | Unshakeable: cannot be knocked down, shoved or grappled |
-| OHS | Ox Mk III | Medium quad | Salvage | 4,000 | 6 | 23 (8) | 60 / 0 | 2 / 2 / 3 / 1 / 7 | Unshakeable |
+| KR | Tinpot R0 | Ultralight | Scrap | 800 | 5 | 10 (3) | 50 / 2 | 1 / 1 / 0 / 1 / 4 | Tiny: attacks against it from Long range roll −1 die |
+| KR | Rattler R1 | Light | Scrap | 1,200 | 6 | 12 (3) | 60 / 2 | 2 / 1 / 0 / 2 / 4 | Open cab: an Area attack that hits the cockpit also hits the pilot |
+| KR | Hulk R3 | Medium | Scrap | 2,200 | 7 | 15 (5) | 50 / 2 | 2 / 3 / 0 / 1 / 4 | Junker: rebuilding a destroyed section costs only Scrap, never Solari |
+| OHS | Ox Mk II | Medium quad | Scrap | 2,500 | 6 | 21 (8) | 60 / 0 | 2 / 1 / 2 / 1 / 7 | Unshakeable: cannot be knocked down, shoved or grappled |
+| OHS | Ox Mk III | Medium quad | Salvage | 4,000 | 7 | 23 (8) | 60 / 0 | 2 / 2 / 3 / 1 / 7 | Unshakeable |
 | OHS | Mule Mk II | Medium | Salvage | 6,000 | 7 | 21 (4) | 60 / 2 | 2 / 4 / 2 / 2 / 6 | Workhorse: field repairs on it roll +1 die |
 | OHS | Mastodon Mk I | Heavy tracked | Salvage | 8,000 | 9 | 21 (6) | 30 / 0 | 3 / 1 / 2 / 2 / 7 | Hauler: each Stowage part on it holds +2 |
 | HCA | Picket Block 1 | Light | Salvage | 5,000 | 5 | 14 (3) | 70 / 4 | 2 / 3 / 3 / 1 / 2 | Spotter: its target locks also count for allies' attacks |
 | HCA | Warden Block 2 | Medium | Standard | 10,000 | 8 | 21 (5) | 60 / 2 | 2 / 5 / 3 / 1 / 5 | Militia standard: armour refills at half price in any colony town |
 | HCA | Bulwark Block 4 | Heavy tracked | Standard | 14,000 | 11 | 25 (7) | 40 / 1 | 3 / 6 / 2 / 0 / 7 | Stable platform: Long weapons roll +1 die if it did not move this turn |
 | HCA | Rampart Block 6 | Heavy | Standard | 20,000 | 13 | 24 (7) | 30 / 0 | 3 / 6 / 3 / 1 / 4 | Gun platform: a size-4 weapon on its cannon arm ignores Braced |
-| MAS | Jackal J-7 | Light | Salvage | 4,000 | 5 | 13 (3) | 80 / 4 | 2 / 3 / 1 / 1 / 3 | Light frame: Sprint costs 1 energy instead of 2 |
+| MAS | Jackal J-7 | Light | Salvage | 4,000 | 6 | 13 (3) | 80 / 4 | 2 / 3 / 1 / 1 / 3 | Light frame: Sprint costs 1 less energy |
 | MAS | Kestrel K-12 | Light | Military | 18,000 | 7 | 17 (3) | 90 / 4 | 2 / 4 / 4 / 0 / 4 | Gyro-stabilised: Sprint and jump parts cost 1 less heat |
 | MAS | Harrier H-3 | Medium | Military | 22,000 | 8 | 19 (3) | 80 / 4 | 2 / 5 / 3 / 1 / 5 | Built to jump: jump parts cost 1 less energy |
 | VDG | Halberd VX-6 | Medium | Military | 20,000 | 10 | 23 (6) | 60 / 2 | 2 / 5 / 3 / 1 / 6 | Fire control: once per turn, one weapon ignores the −1 die for a closer band |
@@ -102,7 +104,7 @@ Arms, legs and shoulders transfer hits to the core; the cockpit transfers them t
 
 ### KR Tinpot R0 — ultralight, Scrap
 
-A one-seat walker built round a car engine. It runs on a single small reactor and a heat bank of 3, so every shot is a decision.
+A one-seat walker built round a car engine. It runs on a single small reactor and a heat bank of 5, so every shot is a decision.
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|

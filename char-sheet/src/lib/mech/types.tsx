@@ -11,6 +11,7 @@ export interface ChassisSection {
 export interface ChassisLoadout { armour?: string, mounts: [string, number][] /* [attachment name, start slot] */ }
 export interface Chassis {
   name: string, description?: string, heatMax: number, shape: 'biped' | 'tracked' | 'quad',
+  size?: number /* 1 (ultralight) to 5 (super-heavy): Sprint costs this much energy and heat */,
   make?: string, model?: string, class?: string, tier?: string, price?: number, trait?: string,
   sections: ChassisSection[], loadout?: { [sectionId: string]: ChassisLoadout },
 }
@@ -36,8 +37,10 @@ export interface MechAttachment {
 export interface MechAmmo { name: string, perBin: number, volatility: number, refill?: number }
 export interface MechRules {
   slotTypes: MechSlotType[], chassis: Chassis[], attachments: MechAttachment[], ammo: MechAmmo[],
-  rangeAspects: { [band in RangeBand]: string }, sprint: { energy: number, heat: number },
+  rangeAspects: { [band in RangeBand]: string },
+  sprint: { energy: number, heat: number } /* for a chassis with no size */,
   prefabs?: MechPrefab[], chassisAliases?: { [oldName: string]: string }, tags?: { [tag: string]: string } /* tag name -> rule text */,
+  tagsShort?: { [tag: string]: string } /* tag name -> one-line summary for popovers; X and Y stand for its number and type */,
 }
 export interface Mount { name: string, start: number, ammo?: number, charges?: number, state?: { [k: string]: any } }
 export interface MechSectionState { armour: { name: string, points: number } | null, mounts: Mount[], wounds: boolean[] }
@@ -46,6 +49,8 @@ export interface ShotPart { key: string, name: string, dice: number, penalty: nu
 export type ShotKind = 'shot' | 'strike'
 export interface MechTurn {
   energy: number, heat: number, stored: number, shutdown: boolean,
+  /** Shut down & purge: the mech stays shut down through its whole next turn, then reboots. */
+  holdShutdown: boolean,
   used: { [mountKey: string]: number }, lastFired: string | null, out: boolean, pilotWounds: number,
   /** Pending ranged shot / melee strike, built up one weapon activation at a time, then rolled once. */
   shot: ShotPart[], strike: ShotPart[], shotBand: RangeBand | null,
@@ -59,5 +64,10 @@ export interface Mech {
   equipment: { [container: string]: SheetEquipment[] } /* key 'Stowage' */,
   turn: MechTurn, settings: MechSettings,
 }
-export interface MechResult { mech: Mech, events: string[], notices: string[] }
+/**
+ * A d4 pool the rules call for outside an attack (overheat self-damage, cook-off). `rolled` is set when the sheet has
+ * already rolled and applied it; without it the player rolls it (in the VTT when there is one) and applies it by hand.
+ */
+export interface MechRoll { label: string, dice: number, rolled?: number[] }
+export interface MechResult { mech: Mech, events: string[], notices: string[], rolls?: MechRoll[] }
 export const DEFAULT_MECH_SETTINGS: MechSettings = { autoAmmo: false, autoHeatDamage: false, autoCookoff: false, autoHitDamage: false }

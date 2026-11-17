@@ -2,7 +2,7 @@ import { cloneMech, applyWounds, markOut } from './damage'
 import { deriveStats, mountDisabled, mountWorking, sectionDestroyed, slotsOf, turnEnergy } from './derive'
 import { findAttachment, findChassis, mountKey } from './loadout'
 import type { Dictionary, RollInfo, Rules } from '../rules'
-import type { Mech, MechAttachment, MechRules, MechResult, Mount, RangeBand, Roller, ShotKind, ShotPart } from './types'
+import type { Mech, MechAttachment, MechRoll, MechRules, MechResult, Mount, RangeBand, Roller, ShotKind, ShotPart } from './types'
 
 const BANDS: RangeBand[] = ['Short', 'Mid', 'Long']
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
@@ -54,7 +54,7 @@ export function activationBlocker(rules: MechRules, mech: Mech, key: string, tar
   const att = found && findAttachment(rules, found.mount.name)
   if (!found || !att) return 'Unknown attachment.'
   if (t.out) return 'Mech is out of action.'
-  if (t.shutdown) return 'Shut down until New turn.'
+  if (t.shutdown) return shutdownText(mech)
   if (sectionDestroyed(mech, found.sectionId)) return 'Section destroyed.'
   if (mountDisabled(rules, mech, found.sectionId, found.mount)) return 'Disabled: every slot it occupies is wounded.'
   if ((t.used[key] ?? 0) >= (att.repeat ?? 1)) return att.repeat ? `Already activated ${att.repeat}× this turn.` : 'Already activated this turn.'
@@ -74,11 +74,15 @@ export function activationBlocker(rules: MechRules, mech: Mech, key: string, tar
   return null
 }
 
+/** Why a shut-down mech cannot act. */
+export const shutdownText = (mech: Mech): string =>
+  mech.turn.holdShutdown ? 'Shut down: stays down through the next turn.' : 'Shut down: reboots at New turn.'
+
 // Rolled only for an action taken while already overheated; dice = overage after the action.
 // `mech` is a private clone that this mutates.
 function heatAfterAction(
   rules: MechRules, mech: Mech, wasOver: boolean, actor: { sectionId: string, mount: Mount } | null,
-  roller: Roller, events: string[], notices: string[],
+  roller: Roller, events: string[], notices: string[], rolls: MechRoll[],
 ): Mech {
   const heatMax = deriveStats(rules, mech).heatMax
   if (mech.turn.heat <= heatMax) return mech
@@ -94,10 +98,12 @@ function heatAfterAction(
   if (!mech.settings.autoHeatDamage) {
     events.push(`  Overheated action: roll ${dice}d4 self-damage on ${partName} and mark wounds by hand.`)
     notices.push(`Overheated: roll ${dice}d4 self-damage on ${partName} and mark wounds by hand.`)
+    rolls.push({ label: `Overheat self-damage on ${partName}. Each success is a wound: mark by hand`, dice })
     return mech
   }
   const rolled = roller(dice)
   const hits = rolled.filter(x => x === 4).length
+  rolls.push({ label: `Overheat self-damage on ${partName} → ${plural(hits, 'wound')} (applied)`, dice, rolled })
   events.push(`  Overheated action: rolled ${dice}d4 [${rolled.join(' ')}] → ${plural(hits, 'wound')}.`)
   if (hits > 0) notices.push(`Overheated: rolled ${dice}d4 self-damage on ${partName} → ${plural(hits, 'wound')} applied.`)
   let left = hits
@@ -116,7 +122,7 @@ function heatAfterAction(
     events.push(`  heat damage lands in the ${partName}.`)
   }
   if (left > 0 && sectionId) {
-    const res = applyWounds(rules, mech, sectionId, left, { ignoreArmour: true, cookoff: mech.settings.autoCookoff, roller })
+    const res = applyWounds(rules, mech, sectionId, left, { ignoreArmour: true, cookoff: mech.settings.autoCookoff, roller, rolls })
     events.push(...res.events)
     notices.push(...res.notices)
     return res.mech
@@ -164,22 +170,30 @@ export function activate(rules: MechRules, mech: Mech, key: string, roller: Roll
   }
   events.push(`${att.name}: −${energy}E ${signed(heat)}H${extra}.`)
   const notices: string[] = []
-  return { mech: heatAfterAction(rules, next, wasOver, found, roller, events, notices), events, notices }
+  const rolls: MechRoll[] = []
+  return { mech: heatAfterAction(rules, next, wasOver, found, roller, events, notices, rolls), events, notices, rolls }
+}
+
+/** Sprint costs energy and heat equal to the chassis size (1 to 5). */
+export function sprintCost(rules: MechRules, mech: Mech): { energy: number, heat: number } {
+  const size = findChassis(rules, mech.chassis)?.size
+  return size ? { energy: size, heat: size } : rules.sprint
 }
 
 export function sprintBlocker(rules: MechRules, mech: Mech): string | null {
   const t = mech.turn
+  const { energy } = sprintCost(rules, mech)
   if (t.out) return 'Mech is out of action.'
-  if (t.shutdown) return 'Shut down until New turn.'
+  if (t.shutdown) return shutdownText(mech)
   if (deriveStats(rules, mech).speed <= 0) return 'Cannot move: no working legs.'
   if (t.used.sprint) return 'Already sprinted this turn.'
-  if (t.energy < rules.sprint.energy) return `Not enough energy: needs ${rules.sprint.energy}, have ${t.energy}.`
+  if (t.energy < energy) return `Not enough energy: needs ${energy}, have ${t.energy}.`
   return null
 }
 
 export function sprint(rules: MechRules, mech: Mech, roller: Roller): MechResult {
   if (sprintBlocker(rules, mech) !== null) return { mech, events: [], notices: [] }
-  const { energy, heat } = rules.sprint
+  const { energy, heat } = sprintCost(rules, mech)
   const next = cloneMech(mech)
   const t = next.turn
   const wasOver = t.heat > deriveStats(rules, next).heatMax
@@ -189,19 +203,26 @@ export function sprint(rules: MechRules, mech: Mech, roller: Roller): MechResult
   const d = deriveStats(rules, next)
   const events = [`Sprint: −${energy}E +${heat}H, move up to ${d.speed * 2} in total. Evasion ${d.evasion}.`]
   const notices: string[] = []
-  return { mech: heatAfterAction(rules, next, wasOver, null, roller, events, notices), events, notices }
+  const rolls: MechRoll[] = []
+  return { mech: heatAfterAction(rules, next, wasOver, null, roller, events, notices, rolls), events, notices, rolls }
 }
 
-// Ends the turn at once: the purge applies now (no reactor heat), actions stay blocked until New turn.
+/**
+ * Ends the turn at once: the purge applies now (no reactor heat). The mech then stays shut down, like a stun, through
+ * its whole next turn (no energy, no actions, cooling again at its end) and reboots at the New turn after that.
+ */
 export function shutdownPurge(rules: MechRules, mech: Mech): MechResult {
   if (mech.turn.out || mech.turn.shutdown) return { mech, events: [], notices: [] }
   const d = deriveStats(rules, mech)
   const before = mech.turn.heat
   const heat = Math.max(0, before - d.cooling)
-  const next: Mech = { ...mech, turn: { ...mech.turn, heat, shutdown: true, stored: 0, shot: [], strike: [], shotBand: null } }
+  const next: Mech = {
+    ...mech,
+    turn: { ...mech.turn, heat, energy: 0, shutdown: true, holdShutdown: true, stored: 0, shot: [], strike: [], shotBand: null },
+  }
   return {
     mech: next,
-    events: [`SHUT DOWN & PURGE: no reactor heat, cooling −${d.cooling}: heat ${before} → ${heat}. Shut down until New turn.`],
+    events: [`SHUT DOWN & PURGE: no reactor heat, cooling −${d.cooling}: heat ${before} → ${heat}. Stays shut down through the next turn.`],
     notices: [],
   }
 }
@@ -228,10 +249,21 @@ export function newTurn(rules: MechRules, mech: Mech): MechResult {
   const sections = selfRepair(rules, mech, repairs)
   const fresh = turnEnergy(d)
   const upkeep = d.upkeep ? ` (${d.energyOut} − ${d.upkeep} cooler upkeep)` : ''
-  if (mech.turn.shutdown) {
+  if (mech.turn.shutdown && mech.turn.holdShutdown) {
+    // The turn after a purge is spent shut down. The purge already settled the heat for the turn that ended.
     return {
-      mech: { ...mech, sections, turn: { ...mech.turn, ...TURN_RESET, shutdown: false, stored: 0, energy: fresh } },
-      events: [`Rebooted after shutdown: energy ${fresh}${upkeep}.`, ...repairs],
+      mech: { ...mech, sections, turn: { ...mech.turn, ...TURN_RESET, holdShutdown: false, stored: 0, energy: 0 } },
+      events: ['Still shut down this turn: stunned, no energy, no actions. Reboots at the next New turn.', ...repairs],
+      notices: [],
+    }
+  }
+  if (mech.turn.shutdown) {
+    // End of a turn spent shut down: no reactor heat, cooling applies. Then reboot.
+    const before = mech.turn.heat
+    const heat = Math.max(0, before - d.cooling)
+    return {
+      mech: { ...mech, sections, turn: { ...mech.turn, ...TURN_RESET, heat, shutdown: false, holdShutdown: false, stored: 0, energy: fresh } },
+      events: [`Rebooted after shutdown: heat ${before} −${d.cooling} cooling = ${heat}, energy ${fresh}${upkeep}.`, ...repairs],
       notices: [],
     }
   }
@@ -328,6 +360,7 @@ export function attack(rules: MechRules, mech: Mech, kind: ShotKind, band: Range
   let m = clearShot(mech, kind)
   const events: string[] = []
   const notices: string[] = []
+  const rolls: MechRoll[] = []
   for (const [key, n] of Object.entries(counts)) {
     for (let i = 0; i < n; i++) {
       if (activationBlocker(rules, m, key, band) !== null) break
@@ -335,10 +368,11 @@ export function attack(rules: MechRules, mech: Mech, kind: ShotKind, band: Range
       m = res.mech
       events.push(...res.events)
       notices.push(...res.notices)
+      rolls.push(...(res.rolls ?? []))
     }
   }
   const parts = m.turn[kind]
-  return { mech: fireShot(m, kind), events, notices, parts }
+  return { mech: fireShot(m, kind), events, notices, rolls, parts }
 }
 
 /** Marks the pending shot or strike as rolled: the pool empties and no weapon can join that kind again this turn. */
@@ -363,7 +397,10 @@ export function adjustTurn(mech: Mech, change: TurnAdjust): Mech {
     const v = change[k]
     if (v !== undefined) t[k] = Math.max(0, Math.floor(v) || 0)
   }
-  if (change.shutdown !== undefined) t.shutdown = change.shutdown
+  if (change.shutdown !== undefined) {
+    t.shutdown = change.shutdown
+    if (!change.shutdown) t.holdShutdown = false
+  }
   if (change.out !== undefined) t.out = change.out
   return { ...mech, turn: t }
 }

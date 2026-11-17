@@ -1,10 +1,22 @@
-// Pure popover text for the mech sheet. Components render these; nothing here touches React.
+// Pure popover content for the mech sheet. Components render these; nothing here touches React.
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
 import { aimCost, deriveStats, hitLabel, mountDisabled, sectionDestroyed, slotsOf, turnEnergy } from '../../lib/mech/derive'
-import { activationBlocker, isWeapon, shotKindOf, SHOT_LABEL } from '../../lib/mech/turn'
+import { activationBlocker, isWeapon, shotKindOf, sprintCost, SHOT_LABEL } from '../../lib/mech/turn'
 import type { ChassisSection, Mech, MechAttachment, MechRules, Mount } from '../../lib/mech/types'
 
-export interface PopText { title: string, sub?: string, lines: string[] }
+/** A headline number: `value` big and bold, `label` small beside it. */
+export interface PopStat { value: string, label?: string, tone?: Tone }
+export type Tone = 'good' | 'warn' | 'bad'
+export interface PopLine { text: string, tone?: Tone }
+export interface PopTag { name: string, text: string }
+
+/**
+ * Popover content, laid out top to bottom: title, a dim sub line, the headline numbers, live status (coloured),
+ * one line per tag, short rule lines, and a dim note.
+ */
+export interface PopText {
+  title: string, sub?: string, stats?: PopStat[], status?: PopLine[], tags?: PopTag[], lines: string[], note?: string,
+}
 
 const signed = (n: number) => (n >= 0 ? '+' : '') + n
 
@@ -40,122 +52,131 @@ export function rollText(att: MechAttachment, rules: MechRules): string {
   return `${att.effect ? att.effect + ': ' : ''}${aspect ? aspect + ' + ' : ''}${att.roll.skill}${att.roll.bonus ? ` ${signed(att.roll.bonus)}` : ''}`
 }
 
-/** The rule for each of a part's tags that the ruleset defines, as 'Tag: rule'. */
-export function tagRules(rules: MechRules, tags: string | undefined): string[] {
-  if (!tags || !rules.tags) return []
-  const out: string[] = []
+// Tags whose meaning the headline numbers already show.
+const SHOWN_AS_STATS = /^(Repeating|Charges|Recharging|Hungry|Heavy|Volatile|Passive|Hand|Stowage)\b/
+
+/**
+ * A part's tags with a one-line rule each: the ruleset's short form with X and Y filled in, else the full rule.
+ * Tags the headline numbers already cover are left out.
+ */
+export function tagList(rules: MechRules, tags: string | undefined): PopTag[] {
+  if (!tags) return []
+  const out: PopTag[] = []
   for (const raw of tags.split(',')) {
     const tag = raw.trim().replace(/ \(while it has points\)$/, '')
+    if (!tag || SHOWN_AS_STATS.test(tag) || out.some(t => t.name === tag)) continue
     const base = tag.replace(/ \(.*\)$/, '').replace(/ vs \w+$/, '')
-    const rule = rules.tags[base]
-    if (rule && !out.some(l => l.startsWith(base + ':') || l.startsWith(tag + ':'))) out.push(`${tag}: ${rule}`)
+    const x = /\((\d+)/.exec(tag)?.[1] ?? 'X'
+    const y = / vs (\w+)/.exec(tag)?.[1] ?? 'Y'
+    const text = rules.tagsShort?.[base] ?? rules.tags?.[base] ?? ''
+    out.push({ name: tag, text: text.replace(/\bX\b/g, x).replace(/\bY\b/g, y) })
   }
   return out
 }
 
-/** Stat lines for an attachment (catalogue style, no mount state). */
-export function attachmentStats(rules: MechRules, att: MechAttachment): string[] {
-  const L: string[] = []
-  const size = att.size ?? 1
-  const make = [att.kind, att.tier, att.price ? `${att.price.toLocaleString()} Solari` : ''].filter(Boolean).join(' · ')
-  if (make) L.push(make)
-  L.push(att.type === 'Armour' ? `Armour · ${att.armour ?? 0} points`
-    : `Size ${size} · ${att.type === 'Generic' ? 'Generic: fits any slot' : `${att.type} slot${size > 1 ? 's' : ''}`}${size > 1 ? ' (consecutive)' : ''}`)
-  if (att.reactor) L.push(`Passive: +${att.reactor.energy} energy every turn, +${att.reactor.heat} heat at end of turn.`)
-  if (att.cooling) L.push(`Passive: −${att.cooling} heat at end of turn.${att.upkeep ? ` Its pump draws ${att.upkeep} energy every turn.` : ''}`)
-  if (att.capacitor) L.push(`Passive: keeps up to ${att.capacitor} unspent energy into next turn${att.capacitorHeat ? `; +${att.capacitorHeat} heat on a turn that draws it` : ''}.`)
-  if (att.heavy) L.push(`Heavy: −${att.heavy} Speed while fitted.`)
-  if (att.volatile) L.push(`Volatile: when disabled, ${att.volatile}d4 to this section, ignoring armour.`)
-  if (att.selfRepair) L.push('Self-repairing: regains 1 point each New turn.')
-  if (att.hand) L.push('Passive: this arm provides Hand.')
-  if (att.heatSink) L.push(`Passive: +${att.heatSink} Heat Max while working.`)
-  if (att.stowage) L.push(`Passive: +${att.stowage} stowage slots for pilot-scale gear.`)
+/** The numbers that matter for a part, as headline chips. */
+export function keyStats(rules: MechRules, att: MechAttachment): PopStat[] {
+  const S: PopStat[] = []
+  if (att.type === 'Armour') S.push({ value: `${att.armour ?? 0}`, label: 'points' })
+  if (att.reactor) S.push({ value: `+${att.reactor.energy}`, label: 'energy/turn' }, { value: `+${att.reactor.heat}`, label: 'heat/turn' })
+  if (att.cooling) S.push({ value: `−${att.cooling}`, label: 'heat/turn' })
+  if (att.upkeep) S.push({ value: `−${att.upkeep}`, label: 'energy/turn' })
+  if (att.capacitor) S.push({ value: `${att.capacitor}`, label: 'energy stored' })
+  if (att.capacitorHeat) S.push({ value: `+${att.capacitorHeat}`, label: 'heat when drawn' })
+  if (att.heatSink) S.push({ value: `+${att.heatSink}`, label: 'Heat Max' })
+  if (att.stowage) S.push({ value: `${att.stowage}`, label: 'stowage' })
   if (att.bin) {
     const ammo = rules.ammo.find(a => a.name === att.bin)
-    L.push(`Holds: ${ammo?.perBin ?? '?'} ${att.bin} rounds.`)
-    if (ammo) L.push(`Cook-off: ${ammo.volatility}d4 per round left (${ammo.perBin * ammo.volatility}d4 when full).`)
+    S.push({ value: `${ammo?.perBin ?? '?'}`, label: `${att.bin} rounds` })
+    if (ammo?.volatility) S.push({ value: `${ammo.volatility}d4`, label: 'per round on cook-off', tone: 'warn' })
   }
-  if (att.energy !== undefined) {
-    let c = `Activate: ${att.energy} energy, ${signed(att.heat ?? 0)} heat`
-    if (att.ammo) c += `, ${att.ammoPer ?? 1} ${att.ammo} ammo`
-    if (att.charges) c += `, 1 charge (of ${att.charges}, refilled ${att.recharge === 'scene' ? 'each scene' : 'at a haven'})`
-    L.push(c + '.')
-    L.push(att.repeat ? `Repeating ${att.repeat}: up to ${att.repeat}× per turn.` : 'Once per turn.')
-  }
-  if (att.range) L.push(`Range: ${att.range}${att.range === 'Melee' ? ' (target must be Short)' : " (can't fire beyond; −1 die per band closer)"}`)
-  if (att.roll) L.push(`Roll: ${rollText(att, rules)}`)
-  else if (att.effect) L.push(`Effect: ${att.effect}`)
-  if (att.armour) L.push('Each point absorbs one wound to this section. Refilled only at a haven.')
-  if (att.tags) L.push(`Tags: ${att.tags}`)
-  L.push(...tagRules(rules, att.tags))
-  if (att.description) L.push(att.description)
-  return L
+  if (att.roll && isWeapon(att)) S.push({ value: `${signed(att.roll.bonus ?? 0)}`, label: 'dice' })
+  if (att.range) S.push({ value: att.range })
+  if (att.energy !== undefined) S.push({ value: costText(att), label: att.repeat ? 'each' : undefined })
+  if (att.repeat) S.push({ value: `×${att.repeat}`, label: 'a turn' })
+  if (att.ammo) S.push({ value: `${att.ammoPer ?? 1}`, label: `${att.ammo} ammo` })
+  if (att.charges) S.push({ value: `${att.charges}`, label: att.recharge === 'scene' ? 'charges/scene' : 'charges' })
+  if (att.roll && !isWeapon(att)) S.push({ value: rollText(att, rules), label: 'roll' })
+  else if (!att.roll && att.effect) S.push({ value: att.effect })
+  if (att.hand) S.push({ value: 'Hand' })
+  if (att.heavy) S.push({ value: `−${att.heavy}`, label: 'Speed', tone: 'warn' })
+  if (att.volatile) S.push({ value: `${att.volatile}d4`, label: 'if disabled', tone: 'warn' })
+  if (att.selfRepair) S.push({ value: '+1', label: 'point/turn' })
+  return S
 }
 
+const sizeText = (att: MechAttachment): string => att.type === 'Armour' ? 'Armour'
+  : `Size ${att.size ?? 1} ${att.type === 'Generic' ? 'Generic (any slot)' : att.type}`
+
+/** Catalogue popover: shopping details, numbers, tags and the part's flavour. */
 export function attachmentPop(rules: MechRules, att: MechAttachment): PopText {
-  return { title: att.name, lines: attachmentStats(rules, att) }
+  const sub = [att.kind, att.tier, att.price ? `${att.price.toLocaleString()} Solari` : '', sizeText(att)].filter(Boolean).join(' · ')
+  return { title: att.name, sub, stats: keyStats(rules, att), tags: tagList(rules, att.tags), lines: [], note: att.description }
 }
 
 export function unknownPartPop(name: string): PopText {
-  return { title: `Unknown part: ${name}`, lines: ['This ruleset has no attachment with that name. It does nothing until replaced.'] }
+  return { title: `Unknown part: ${name}`, lines: ['Not in this ruleset. It does nothing until replaced.'] }
 }
 
-/** A mounted attachment: stats plus wound status and whether it can be activated now. */
+/** A mounted part in play: what it does, and what state it is in right now. */
 export function mountPop(rules: MechRules, mech: Mech, sectionId: string, mount: Mount, key: string, editable: boolean): PopText {
   const att = findAttachment(rules, mount.name)
   if (!att) return unknownPartPop(mount.name)
   const wounds = mech.sections[sectionId]?.wounds ?? []
   const slots = slotsOf(rules, mount)
   const hurt = slots.filter(i => wounds[i]).length
-  let status = `Status: ${hurt}/${slots.length} slots wounded`
-  if (mountDisabled(rules, mech, sectionId, mount)) status += ' · DISABLED'
-  if (att.bin) status += ` · ${mount.ammo ?? 0}/${binCapacity(rules, att)} rounds`
-  if (att.charges) status += ` · ${mount.charges ?? 0} charges`
-  const lines = [...attachmentStats(rules, att)]
+  const status: PopLine[] = []
+  if (mountDisabled(rules, mech, sectionId, mount)) status.push({ text: 'DISABLED: every slot wounded', tone: 'bad' })
+  else if (hurt) status.push({ text: `${hurt}/${slots.length} slots wounded`, tone: 'warn' })
+  if (att.bin) status.push({ text: `${mount.ammo ?? 0}/${binCapacity(rules, att)} rounds left`, tone: mount.ammo ? undefined : 'warn' })
+  if (att.charges) status.push({ text: `${mount.charges ?? 0}/${att.charges} charges left`, tone: mount.charges ? undefined : 'warn' })
   if (att.energy !== undefined) {
-    status += ` · used ${mech.turn.used[key] ?? 0}/${att.repeat ?? 1}`
-  }
-  lines.push(status)
-  if (att.energy !== undefined) {
+    const used = mech.turn.used[key] ?? 0
+    if (used) status.push({ text: `Used ${used}/${att.repeat ?? 1} this turn` })
     const why = activationBlocker(rules, mech, key)
-    if (why) lines.push(`Can't activate: ${why}`)
-    else if (!editable) lines.push('Read only.')
-    else {
-      lines.push('Click the button to activate.')
-      const heatMax = deriveStats(rules, mech).heatMax
-      if (mech.turn.heat > heatMax) {
-        lines.push(`Overheated: activating rolls ${Math.max(0, mech.turn.heat + (att.heat ?? 0) - heatMax)}d4 self-damage to this part.`)
-      }
+    if (why && editable && !mountDisabled(rules, mech, sectionId, mount)) status.push({ text: why, tone: 'warn' })
+    else if (!why && editable) {
+      const over = mech.turn.heat + (att.heat ?? 0) - deriveStats(rules, mech).heatMax
+      if (mech.turn.heat > deriveStats(rules, mech).heatMax) status.push({ text: `Overheated: using it rolls ${Math.max(0, over)}d4 self-damage`, tone: 'bad' })
     }
   }
-  return { title: att.name, lines }
+  return { title: att.name, sub: [att.kind, sizeText(att)].filter(Boolean).join(' · '), stats: keyStats(rules, att), status, tags: tagList(rules, att.tags), lines: [] }
 }
 
 export function sectionPop(rules: MechRules, mech: Mech, section: ChassisSection): PopText {
   const chassis = findChassis(rules, mech.chassis)
-  const n = section.range[1] - section.range[0] + 1
   const state = mech.sections[section.id]
   const hurt = (state?.wounds ?? []).filter(Boolean).length
-  const lines = [
-    `Location: d12 ${hitLabel(section)} (${n}/12, ${Math.round(n / 12 * 100)}% of hits).`,
-    `Aimed shot: attacker removes ${aimCost(section)} dice (5 − ${n}, min 1) to pick this section.`,
-  ]
+  const total = state?.wounds.length ?? 0
   const armour = state?.armour ? findAttachment(rules, state.armour.name) : undefined
-  lines.push(`Wounds: ${hurt}/${state?.wounds.length ?? 0} slots${state?.armour ? `, armour ${state.armour.points}/${armour?.armour ?? '?'}` : ''}.`)
-  const prov = [section.provides?.speed ? `Speed ${section.provides.speed}` : '', section.provides?.evasion ? `Evasion ${section.provides.evasion}` : ''].filter(Boolean)
-  if (prov.length) lines.push(`Provides: ${prov.join(', ')} while not destroyed.`)
+  const stats: PopStat[] = []
+  if (state?.armour) stats.push({ value: `${state.armour.points}/${armour?.armour ?? '?'}`, label: 'armour', tone: state.armour.points ? undefined : 'warn' })
+  stats.push({ value: `${hurt}/${total}`, label: 'wounds', tone: hurt ? (hurt >= total ? 'bad' : 'warn') : undefined })
+  if (section.provides?.speed) stats.push({ value: `${section.provides.speed}`, label: 'Speed' })
+  if (section.provides?.evasion) stats.push({ value: `${section.provides.evasion}`, label: 'Evasion' })
   const transferTo = section.transfer && section.transfer !== 'pilot' ? chassis?.sections.find(s => s.id === section.transfer)?.name ?? section.transfer : ''
-  lines.push(section.transfer === 'pilot' ? "When destroyed: further hits go to the pilot's Body track."
-    : section.transfer ? `When destroyed: overflow hits pass to the ${transferTo}.`
-    : 'When destroyed: the mech is out of action.')
-  if (sectionDestroyed(mech, section.id)) lines.push('DESTROYED')
-  return { title: section.name, sub: aimText(section), lines }
+  const status: PopLine[] = sectionDestroyed(mech, section.id) ? [{ text: 'DESTROYED', tone: 'bad' }] : []
+  return {
+    title: section.name,
+    sub: `d12 ${hitLabel(section)} · aimed shot −${aimCost(section)} dice`,
+    stats, status, lines: [
+      section.transfer === 'pilot' ? 'Destroyed: further hits go to the pilot.'
+        : section.transfer ? `Destroyed: further hits go to the ${transferTo}.`
+        : 'Destroyed: the mech is out of action.',
+    ],
+  }
 }
 
 export function armourPop(rules: MechRules, name: string, points: number): PopText {
   const att = findAttachment(rules, name)
   if (!att) return unknownPartPop(name)
-  return { title: att.name, lines: [...attachmentStats(rules, att), `${points}/${att.armour ?? 0} points left. Click a pip to set by hand.`] }
+  const max = att.armour ?? 0
+  return {
+    title: att.name,
+    stats: [{ value: `${points}/${max}`, label: 'points', tone: points ? undefined : 'warn' }, ...keyStats(rules, att).slice(1)],
+    tags: tagList(rules, att.tags),
+    lines: ['Each point soaks one wound to this section. Click a pip to set.'],
+  }
 }
 
 export function slotTypePop(rules: MechRules, typeName: string): PopText {
@@ -167,17 +188,15 @@ export function emptySlotPop(rules: MechRules, typeName: string, editable: boole
   const t = slotTypePop(rules, typeName)
   return {
     title: `Empty ${(typeName || 'untyped').toLowerCase()} slot`,
-    lines: [...t.lines, 'Still takes a wound when hit, so it acts as padding.', ...(editable ? ['Drag a matching part here.'] : [])],
+    lines: [...t.lines, 'Still takes a wound when hit.', ...(editable ? ['Drag a matching part here.'] : [])],
   }
 }
 
 export function woundPop(section: ChassisSection, index: number, wounded: boolean): PopText {
   return {
     title: `${section.name} slot ${index + 1}`,
-    lines: [
-      wounded ? 'Wounded. Click to repair (field repair: 1 Scrap + check per wound).' : 'Unwounded. Click to mark a wound.',
-      'Wounds land top to bottom by default; an attachment is disabled once all its slots are wounded.',
-    ],
+    status: [wounded ? { text: 'Wounded', tone: 'bad' } : { text: 'Unwounded' }],
+    lines: [wounded ? 'Click to repair (1 Scrap + a check).' : 'Click to mark a wound.'],
   }
 }
 
@@ -188,34 +207,52 @@ export function statPop(rules: MechRules, mech: Mech, kind: StatKind): PopText {
   const chassis = findChassis(rules, mech.chassis)
   switch (kind) {
     case 'energy':
-      return { title: `Energy ${t.energy}/${turnEnergy(d)}`, lines: [
-        `Refilled on each New turn: reactor ${d.energyOut}${d.upkeep ? ` − ${d.upkeep} cooler upkeep` : ''} = ${turnEnergy(d)}. Spend it on activations and sprinting.`,
-        'Use − / + or Adjust… to set it by hand.',
-        `Unspent energy is lost${d.capacitor ? `, except up to ${d.capacitor} kept by capacitors` : ''}.`] }
+      return {
+        title: `Energy ${t.energy}/${turnEnergy(d)}`,
+        stats: [
+          { value: `+${d.energyOut}`, label: 'reactor' },
+          ...(d.upkeep ? [{ value: `−${d.upkeep}`, label: 'cooler upkeep' }] : []),
+          ...(d.capacitor ? [{ value: `${d.capacitor}`, label: 'can be stored' }] : []),
+        ],
+        lines: [`Refills to ${turnEnergy(d)} each New turn; unspent energy is lost${d.capacitor ? ' unless stored' : ''}.`],
+      }
     case 'heat': {
-      const proj = t.shutdown ? t.heat : Math.max(0, t.heat + d.reactorHeat - d.cooling)
+      const proj = Math.max(0, t.shutdown ? (t.holdShutdown ? t.heat : t.heat - d.cooling) : t.heat + d.reactorHeat - d.cooling)
       const sinks = d.heatMax - d.baseHeatMax
-      const lines = [
-        `Heat Max ${d.baseHeatMax} chassis${sinks ? ` ${signed(sinks)} heat sinks` : ''}.`,
-        t.shutdown ? 'Activations add heat now. New turn: reboot, heat unchanged.'
-          : `Activations add heat now. At end of turn: ${t.heat} + ${d.reactorHeat} reactor − ${d.cooling} cooling = ${proj}.`]
-      if (proj > d.heatMax) lines.push(`That is over Heat Max by ${proj - d.heatMax}: you will start next turn overheated.`)
-      lines.push('Above Heat Max you are Overheated: every further action rolls d4s equal to the overage after it; each 4 wounds that part.')
-      lines.push('Use − / + or Adjust… for heat damage, water and other GM rulings.')
-      return { title: `Heat ${t.heat}/${d.heatMax}`, lines }
+      const status: PopLine[] = []
+      if (t.heat > d.heatMax) status.push({ text: `OVERHEATED by ${t.heat - d.heatMax}: every action rolls self-damage`, tone: 'bad' })
+      else if (proj > d.heatMax) status.push({ text: `Ends the turn over Heat Max by ${proj - d.heatMax}`, tone: 'warn' })
+      return {
+        title: `Heat ${t.heat}/${d.heatMax}`,
+        sub: `Heat Max ${d.baseHeatMax} chassis${sinks ? ` ${signed(sinks)} sinks` : ''}`,
+        stats: [
+          { value: `${proj}`, label: 'at end of turn', tone: proj > d.heatMax ? 'warn' : undefined },
+          ...(t.shutdown ? [] : [{ value: `+${d.reactorHeat}`, label: 'reactor' }]),
+          { value: `−${d.cooling}`, label: 'cooling' },
+        ],
+        status,
+        lines: ['Over Heat Max, each further action rolls 1d4 per point over; each 4 wounds the part that acted.'],
+      }
     }
-    case 'speed':
-      return { title: `Speed ${d.speed}`, lines: [
-        ...(chassis?.sections ?? []).filter(s => s.provides?.speed).map(s => `${s.name}: ${sectionDestroyed(mech, s.id) ? 'destroyed' : s.provides?.speed}`),
-        ...(d.heavy ? [`Heavy parts: −${d.heavy}`] : []),
-        `Sum of surviving legs/treads. Moving is free; sprint for ${rules.sprint.energy} energy, +${rules.sprint.heat} heat.`] }
+    case 'speed': {
+      const sp = sprintCost(rules, mech)
+      return {
+        title: `Speed ${d.speed}`,
+        stats: [
+          ...(chassis?.sections ?? []).filter(s => s.provides?.speed).map(s => sectionDestroyed(mech, s.id)
+            ? { value: '0', label: `${s.name} (destroyed)`, tone: 'bad' as Tone }
+            : { value: `${s.provides?.speed}`, label: s.name }),
+          ...(d.heavy ? [{ value: `−${d.heavy}`, label: 'Heavy parts', tone: 'warn' as Tone }] : []),
+        ],
+        lines: [`Moving is free. Sprint: ${sp.energy}E +${sp.heat}H to move again and gain Evasion.`],
+      }
+    }
     case 'evasion':
-      return { title: `Evasion ${d.evasion}`, lines: ['Sum of surviving legs/treads.'] }
+      return { title: `Evasion ${d.evasion}`, lines: ['After a Sprint, attacks against the mech roll this many fewer dice.'] }
     case 'hand':
-      return { title: `Hand ${d.hand ? '✓' : '✗'}`, lines: ['Needs a working Manipulator on a surviving arm. Lets the mech grab, carry and use handheld gear.'] }
+      return { title: `Hand ${d.hand ? '✓' : '✗'}`, lines: ['Needs a working Manipulator on a surviving arm: grab, carry and use hand-held gear.'] }
     case 'stowage':
       return { title: `Stowage ${(mech.equipment.Stowage ?? []).length}/${d.stowage}`, lines: [
-        'Pilot-scale inventory carried by the mech: scrap, supplies, salvage, spare gear.',
-        'If a rack is destroyed, the items it held are lost or unreachable until it is repaired.'] }
+        'Pilot-scale cargo: scrap, supplies, salvage. Lost or out of reach while its rack is destroyed.'] }
   }
 }

@@ -26,7 +26,7 @@ export function slotAccepts(slotType: string, attachmentType: string): boolean {
 
 export function freshTurn(): MechTurn {
   return {
-    energy: 0, heat: 0, stored: 0, shutdown: false,
+    energy: 0, heat: 0, stored: 0, shutdown: false, holdShutdown: false,
     used: {}, lastFired: null, out: false, pilotWounds: 0,
     shot: [], strike: [], shotBand: null, fired: {},
   }

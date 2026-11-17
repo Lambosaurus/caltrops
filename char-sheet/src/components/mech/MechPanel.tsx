@@ -8,7 +8,7 @@ import ShotModal, { type AttackTarget } from './ShotModal'
 import MechAdjustModal from './MechAdjustModal'
 import MechStowage from './MechStowage'
 import { statPop, StatKind } from './mechText'
-import { showNotices } from './notify'
+import { showResult } from './notify'
 import { useEffect, useState } from 'react'
 
 // Internal imports
@@ -16,7 +16,7 @@ import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { deriveStats, overheated, turnEnergy } from '../../lib/mech/derive'
 import { adjustAmmo, setArmourPoints, toggleWound } from '../../lib/mech/damage'
-import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, sprint, sprintBlocker, weaponKeys } from '../../lib/mech/turn'
+import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, sprint, sprintBlocker, sprintCost, weaponKeys } from '../../lib/mech/turn'
 import { findAttachment, findChassis, mountCovering } from '../../lib/mech/loadout'
 import { copyMechLink } from '../../lib/mech/store'
 import type { Mech, MechResult, MechRules, ShotKind } from '../../lib/mech/types'
@@ -65,7 +65,9 @@ function MechPanel({ view, editable, showStowage = true }: {
   const stats = deriveStats(mechRules, mech)
   const t = mech.turn
   const hot = overheated(mechRules, mech)
-  const projected = Math.max(0, t.shutdown ? t.heat : t.heat + stats.reactorHeat - stats.cooling)
+  // Heat after the next New turn: unchanged going into a held shutdown turn, cooled (no reactor) after one.
+  const projected = Math.max(0, t.shutdown ? (t.holdShutdown ? t.heat : t.heat - stats.cooling) : t.heat + stats.reactorHeat - stats.cooling)
+  const sprintCosts = sprintCost(mechRules, mech)
   const perTurn = turnEnergy(stats)
   const heatColor = hot ? 'bg-error' : t.heat > stats.heatMax * 0.7 ? 'bg-warning' : 'bg-primary'
   const warns: string[] = []
@@ -83,7 +85,7 @@ function MechPanel({ view, editable, showStowage = true }: {
   // Every handler publishes the new mech, then toasts anything the player must act on.
   function run(res: MechResult) {
     view.publish('mech', res.mech)
-    showNotices(res.notices)
+    showResult(res, mech!.name)
   }
   const publish = (next: Mech) => view.publish('mech', next)
 
@@ -138,7 +140,9 @@ function MechPanel({ view, editable, showStowage = true }: {
       {stat('hand', <>Hand {stats.hand ? '✓' : '✗'}</>)}
       {t.pilotWounds ? <span className='px-2 border border-error text-error'>Pilot wounds {t.pilotWounds}</span> : null}
       {t.out ? <span className='badge badge-error rounded-none font-bold'>OUT OF ACTION</span>
-        : t.shutdown ? <span className='badge badge-error rounded-none font-bold'>SHUT DOWN</span>
+        : t.shutdown ? <span className='badge badge-error rounded-none font-bold' title={t.holdShutdown ? 'Stays shut down through the next turn' : 'Reboots at New turn'}>
+          {t.holdShutdown ? 'SHUT DOWN: next turn too' : 'SHUT DOWN: reboots at New turn'}
+        </span>
         : hot ? <span className='badge badge-error rounded-none font-bold'>OVERHEATED</span> : null}
       <span className='flex-1'/>
       <button className='btn btn-xs btn-warning rounded-none' disabled={!canAttack('shot')} onClick={() => setAttackOn({ kind: 'shot' })}>
@@ -148,7 +152,7 @@ function MechPanel({ view, editable, showStowage = true }: {
         {t.fired.strike ? 'Strike made' : 'Strike'}
       </button>
       <button className='btn btn-xs btn-outline rounded-none' disabled={sprintDisabled} onClick={() => run(sprint(mechRules, mech, roller))}>
-        Sprint ({mechRules.sprint.energy}E +{mechRules.sprint.heat}H)
+        Sprint ({sprintCosts.energy}E +{sprintCosts.heat}H)
       </button>
       <button className='btn btn-xs btn-error rounded-none' disabled={purgeDisabled} onClick={() => run(shutdownPurge(mechRules, mech))}>
         Shut down &amp; purge
