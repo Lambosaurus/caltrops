@@ -406,8 +406,6 @@ Categorical skills: replace the placeholder names (Gunnery, Tech, Mobility, Mele
 
 Enemy mechs: full sheets like the players, or Caltrops foe notation with a short slot list?
 
-Movement scale: Speed 4–90 per turn is slow on a 1,200 m map with a 650 m Long band. Decide whether Speed is metres per turn or needs scaling up.
-
 Economy: Solari prices are drafted on the Catalogue and Parts tabs; Scrap costs, armour refills and section rebuilds still need play-testing.
 
 Ejection and pilots on foot once a mech is lost.
