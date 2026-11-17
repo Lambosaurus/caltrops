@@ -1,6 +1,9 @@
 import type { SheetEquipment } from '../rules'
 
+/** A weapon's reach. */
 export type RangeBand = 'Short' | 'Mid' | 'Long'
+/** Where a target is: Engaged is base to base (melee), and counts as Short for guns. */
+export type TargetBand = 'Engaged' | RangeBand
 export type Roller = (n: number) => number[]
 export interface MechSlotType { name: string /* '' = untyped */, label: string, color: string, description: string }
 export interface ChassisSection {
@@ -44,18 +47,15 @@ export interface MechRules {
 }
 export interface Mount { name: string, start: number, ammo?: number, charges?: number, state?: { [k: string]: any } }
 export interface MechSectionState { armour: { name: string, points: number } | null, mounts: Mount[], wounds: boolean[] }
-/** One weapon activation's dice waiting in the pending shot or strike. */
-export interface ShotPart { key: string, name: string, dice: number, penalty: number }
+/** Ranged weapons (shot) and melee weapons (strike) are picked in separate attack dialogs. */
 export type ShotKind = 'shot' | 'strike'
+/** One weapon's roll in an attack: its activations this time, the dice each adds, and the range penalty (once). */
+export interface Volley { key: string, name: string, shots: number, dice: number, penalty: number }
 export interface MechTurn {
   energy: number, heat: number, stored: number, shutdown: boolean,
   /** Shut down & purge: the mech stays shut down through its whole next turn, then reboots. */
   holdShutdown: boolean,
   used: { [mountKey: string]: number }, lastFired: string | null, out: boolean, pilotWounds: number,
-  /** Pending ranged shot / melee strike, built up one weapon activation at a time, then rolled once. */
-  shot: ShotPart[], strike: ShotPart[], shotBand: RangeBand | null,
-  /** Which of the turn's one shot and one strike have been rolled. */
-  fired: { shot?: boolean, strike?: boolean },
 }
 export interface MechSettings { autoAmmo: boolean, autoHeatDamage: boolean, autoCookoff: boolean, autoHitDamage: boolean }
 export interface Mech {

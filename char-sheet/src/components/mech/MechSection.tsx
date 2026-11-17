@@ -120,14 +120,17 @@ function MechSection({ rules, section, view, editable, loadout = false, onHit, o
           const rep = att.repeat ?? 1
           const blocked = activationBlocker(rules, mech!, key) !== null
           const label = rep > 1 ? `${costText(att)} ${used}/${rep}` : used ? 'used' : costText(att)
+          // The popover's status line says why a disabled button can't be used; the span lets the hover reach it.
           right = <Popover content={pop}>
-            <button
-              className={`btn btn-xs btn-outline px-1 normal-case ${used >= rep ? 'btn-ghost' : 'btn-primary'}`}
-              disabled={!play || blocked}
-              onClick={() => onActivate(key)}
-            >
-              {label}{att.charges ? ` (${mount.charges ?? 0})` : ''}
-            </button>
+            <span className={`inline-flex ${!play || blocked ? 'cursor-not-allowed' : ''}`}>
+              <button
+                className={`btn btn-xs btn-outline px-1 normal-case ${used >= rep ? 'btn-ghost' : 'btn-primary'} ${!play || blocked ? 'pointer-events-none' : ''}`}
+                disabled={!play || blocked}
+                onClick={() => onActivate(key)}
+              >
+                {label}{att.charges ? ` (${mount.charges ?? 0})` : ''}
+              </button>
+            </span>
           </Popover>
         } else {
           const passive = att.bin ? `${mount.ammo ?? 0}/${binCapacity(rules, att)}` : passiveText(att)

@@ -24,7 +24,7 @@ Pumped coolers cost power. Tech exchangers draw energy every turn, and cheap one
 
 ### Roll bonus
 
-A mech makes one shot a turn (see Shots on the Rules tab): the pilot's dice once, plus the dice of every weapon activation in it. A weapon's roll is the dice it adds, built from its size times its tier, so one big gun always adds more than two small guns in the same slots, and better tiers add a lot more. Scrap and Salvage parts also pay with Jams and extra heat; special tags are free on Military and Elite parts.
+Each weapon rolls on its own (see Attacks on the Rules tab): the pilot's dice, plus the weapon's dice for each shot. A weapon's roll is the dice it adds, built from its size times its tier, so one big gun always adds more than two small guns in the same slots, and better tiers add a lot more. Scrap and Salvage parts also pay with Jams and extra heat; special tags are free on Military and Elite parts.
 
 | Size | Base dice |  | Tier | Multiplier |
 |---|---|---|---|---|
@@ -40,9 +40,9 @@ Round to the nearest whole die, minimum 1. Melee weapons multiply by a further �
 
 Two worked loadouts show the range the numbers are built for.
 
-KR Tinpot R0 (Scrap, Heat Max 5). A KR Smokestack G2 makes 2 energy and +3 heat. A CWF Array RA3 in the core and a Fin-1 in each leg remove 5, so it cools 2 a turn while idle. Its KR Nailer N1 costs 1 energy and 2 heat a shot, adds +1 die to the pilot's shot, and Jams on a miss: one shot a turn breaks even, and two shots fill its heat bank in two turns. It potters, picks its moments and runs from anything big.
+KR Tinpot R0 (Scrap, Heat Max 5). A KR Smokestack G2 makes 2 energy and +3 heat. A CWF Array RA3 in the core and a Fin-1 in each leg remove 5, so it cools 2 a turn while idle. Its KR Nailer N1 costs 1 energy and 2 heat a shot, adds +1 die to its roll per shot, and Jams on a miss: one shot a turn breaks even, and two shots fill its heat bank in two turns. It potters, picks its moments and runs from anything big.
 
-VDG Bastion VX-12 (Military, Heat Max 20). An HRW Twin-core TC16 makes 16 energy and +7 heat. Three Halcyon CX-5s (−15, drawing 3 energy) and a CWF Array RA4 in each tread (−8) remove 23. Against a target at Mid it fires one shot: an ARH Thunderer 120 (+15 dice, −1 for the closer band; 6 energy, 8 heat), one activation of a BRO Twin AC-33 (+5; 2 and 2), a BRO AC-30 (+5; 2 and 2) and a BRO AC-20 (+2; 2 and 2). That is one roll of Precision + Gunnery + 26, all landing on one section, for 15 of its 16 energy and 2 heat under even. The Twin AC-33's second activation would add 5 more dice, but needs 2 energy it hasn't got, and the Thunderer is Braced, so a Bastion that wants its main gun stands still.
+VDG Bastion VX-12 (Military, Heat Max 20). An HRW Twin-core TC16 makes 16 energy and +7 heat. Three Halcyon CX-5s (−15, drawing 3 energy) and a CWF Array RA4 in each tread (−8) remove 23. Against a target at Mid it fires four weapons, each its own Precision + Gunnery roll with its own hit location: an ARH Thunderer 120 (+14: +15, −1 for the closer band; 6 energy, 8 heat), a BRO Twin AC-33 once (+5; 2 and 2), a BRO AC-30 (+5; 2 and 2) and a BRO AC-20 (+2; 2 and 2). That is 12 of its 13 energy and 2 heat under even. The Twin AC-33's second shot would make its roll +10, but needs 2 energy it hasn't got, and the Thunderer is Braced, so a Bastion that wants its main gun stands still.
 
 ## Reading model names
 
@@ -342,7 +342,7 @@ Rocket pods carry their own rockets (Charges) and need no bin; refills cost 50 a
 
 ## Melee and hands
 
-All go in Hand slots and need a Short (engaged) target. Orion's are work tools; Vasquez's are built to fight. Melee rolls get +2 over a gun of the same size and tier, for the risk of getting engaged.
+All go in Hand slots and need an Engaged (base-to-base) target. Orion's are work tools; Vasquez's are built to fight. Melee rolls get +2 over a gun of the same size and tier, for the risk of getting engaged.
 
 ### Claws and hands
 

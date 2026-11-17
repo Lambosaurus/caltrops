@@ -1,7 +1,7 @@
 // Pure popover content for the mech sheet. Components render these; nothing here touches React.
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
 import { aimCost, deriveStats, hitLabel, mountDisabled, sectionDestroyed, slotsOf, turnEnergy } from '../../lib/mech/derive'
-import { activationBlocker, isWeapon, shotKindOf, sprintCost, SHOT_LABEL } from '../../lib/mech/turn'
+import { activationBlocker, isWeapon, sprintCost } from '../../lib/mech/turn'
 import type { ChassisSection, Mech, MechAttachment, MechRules, Mount } from '../../lib/mech/types'
 
 /** A headline number: `value` big and bold, `label` small beside it. */
@@ -47,7 +47,7 @@ export const binCapacity = (rules: MechRules, att: MechAttachment): number =>
 
 export function rollText(att: MechAttachment, rules: MechRules): string {
   if (!att.roll) return att.effect ?? ''
-  if (isWeapon(att)) return `adds ${signed(att.roll.bonus ?? 0)} dice${att.repeat ? ' per activation' : ''} to the ${SHOT_LABEL[shotKindOf(att)]}`
+  if (isWeapon(att)) return `${signed(att.roll.bonus ?? 0)} dice per shot`
   const aspect = att.roll.aspect ?? (att.range ? rules.rangeAspects[att.range === 'Melee' ? 'Short' : att.range] : undefined)
   return `${att.effect ? att.effect + ': ' : ''}${aspect ? aspect + ' + ' : ''}${att.roll.skill}${att.roll.bonus ? ` ${signed(att.roll.bonus)}` : ''}`
 }

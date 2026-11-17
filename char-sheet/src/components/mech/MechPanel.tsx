@@ -1,5 +1,5 @@
 // Components
-import Popover from './Popover'
+import Popover, { Why } from './Popover'
 import MechSection, { TypeTag } from './MechSection'
 import ChassisSilhouette from './ChassisSilhouette'
 import HitModal from './HitModal'
@@ -16,7 +16,7 @@ import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { deriveStats, overheated, turnEnergy } from '../../lib/mech/derive'
 import { adjustAmmo, setArmourPoints, toggleWound } from '../../lib/mech/damage'
-import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, sprint, sprintBlocker, sprintCost, weaponKeys } from '../../lib/mech/turn'
+import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, shutdownText, sprint, sprintBlocker, sprintCost, weaponKeys } from '../../lib/mech/turn'
 import { findAttachment, findChassis, mountCovering } from '../../lib/mech/loadout'
 import { copyMechLink } from '../../lib/mech/store'
 import type { Mech, MechResult, MechRules, ShotKind } from '../../lib/mech/types'
@@ -89,7 +89,15 @@ function MechPanel({ view, editable, showStowage = true }: {
   }
   const publish = (next: Mech) => view.publish('mech', next)
 
-  const sprintDisabled = !play || sprintBlocker(mechRules, mech) !== null
+  // Why each status-bar control is disabled, shown on hover (null = enabled).
+  const readOnly = play ? null : 'Read only: you cannot play this mech.'
+  const sprintWhy = readOnly ?? sprintBlocker(mechRules, mech)
+  const attackWhy = (kind: ShotKind): string | null => readOnly
+    ?? (t.out ? 'Mech is out of action.' : t.shutdown ? shutdownText(mech)
+      : weaponKeys(mechRules, mech, kind).length ? null : `No ${kind === 'shot' ? 'ranged' : 'melee'} weapons fitted.`)
+  const purgeWhy = readOnly ?? (t.out ? 'Mech is out of action.' : t.shutdown ? 'Already shut down.' : null)
+  const newTurnWhy = readOnly ?? (t.out ? 'Out of action: repair the core (or untick it in Adjust…) first.' : null)
+  const off = (why: string | null) => (why ? 'pointer-events-none' : '')
   // Inline −/+ for energy and heat; the Adjust dialog sets anything else.
   const nudge = (field: 'energy' | 'heat', delta: number) => publish(adjustTurn(mech, { [field]: t[field] + delta }))
   const step = (field: 'energy' | 'heat', delta: number) => play
@@ -100,7 +108,6 @@ function MechPanel({ view, editable, showStowage = true }: {
         onClick={() => nudge(field, delta)}
       >{delta < 0 ? '−' : '+'}</button>
     : null
-  const canAttack = (kind: ShotKind) => play && !t.out && !t.shutdown && !t.fired[kind] && weaponKeys(mechRules, mech, kind).length > 0
   // Weapon buttons open the attack dialog with that weapon selected; other parts use the activation dialog.
   function onActivate(key: string) {
     const [sectionId, start] = key.split(':')
@@ -109,7 +116,6 @@ function MechPanel({ view, editable, showStowage = true }: {
     if (att && isWeapon(att)) setAttackOn({ kind: shotKindOf(att), key })
     else setActiveKey(key)
   }
-  const purgeDisabled = !play || t.shutdown || t.out
 
   return <div className='w-full'>
     <table className='table table-compact w-full'>
@@ -145,20 +151,28 @@ function MechPanel({ view, editable, showStowage = true }: {
         </span>
         : hot ? <span className='badge badge-error rounded-none font-bold'>OVERHEATED</span> : null}
       <span className='flex-1'/>
-      <button className='btn btn-xs btn-warning rounded-none' disabled={!canAttack('shot')} onClick={() => setAttackOn({ kind: 'shot' })}>
-        {t.fired.shot ? 'Shot made' : 'Attack'}
-      </button>
-      <button className='btn btn-xs btn-warning btn-outline rounded-none' disabled={!canAttack('strike')} onClick={() => setAttackOn({ kind: 'strike' })}>
-        {t.fired.strike ? 'Strike made' : 'Strike'}
-      </button>
-      <button className='btn btn-xs btn-outline rounded-none' disabled={sprintDisabled} onClick={() => run(sprint(mechRules, mech, roller))}>
-        Sprint ({sprintCosts.energy}E +{sprintCosts.heat}H)
-      </button>
-      <button className='btn btn-xs btn-error rounded-none' disabled={purgeDisabled} onClick={() => run(shutdownPurge(mechRules, mech))}>
-        Shut down &amp; purge
-      </button>
-      <button className='btn btn-xs btn-success rounded-none' disabled={!play || t.out} onClick={() => run(newTurn(mechRules, mech))}>New turn ▶</button>
-      <button className='btn btn-xs btn-outline rounded-none' disabled={!play} onClick={() => setAdjusting(true)}>Adjust…</button>
+      <Why why={attackWhy('shot')}>
+        <button className={`btn btn-xs btn-warning rounded-none ${off(attackWhy('shot'))}`} disabled={!!attackWhy('shot')} onClick={() => setAttackOn({ kind: 'shot' })}>Attack</button>
+      </Why>
+      <Why why={attackWhy('strike')}>
+        <button className={`btn btn-xs btn-warning btn-outline rounded-none ${off(attackWhy('strike'))}`} disabled={!!attackWhy('strike')} onClick={() => setAttackOn({ kind: 'strike' })}>Strike</button>
+      </Why>
+      <Why why={sprintWhy}>
+        <button className={`btn btn-xs btn-outline rounded-none ${off(sprintWhy)}`} disabled={!!sprintWhy} onClick={() => run(sprint(mechRules, mech, roller))}>
+          Sprint ({sprintCosts.energy}E +{sprintCosts.heat}H)
+        </button>
+      </Why>
+      <Why why={purgeWhy}>
+        <button className={`btn btn-xs btn-error rounded-none ${off(purgeWhy)}`} disabled={!!purgeWhy} onClick={() => run(shutdownPurge(mechRules, mech))}>
+          Shut down &amp; purge
+        </button>
+      </Why>
+      <Why why={newTurnWhy}>
+        <button className={`btn btn-xs btn-success rounded-none ${off(newTurnWhy)}`} disabled={!!newTurnWhy} onClick={() => run(newTurn(mechRules, mech))}>New turn ▶</button>
+      </Why>
+      <Why why={readOnly}>
+        <button className={`btn btn-xs btn-outline rounded-none ${off(readOnly)}`} disabled={!!readOnly} onClick={() => setAdjusting(true)}>Adjust…</button>
+      </Why>
       <button className='btn btn-xs btn-outline rounded-none' onClick={() => copyMechLink(mech.id)}>Copy mech link</button>
     </div>
 

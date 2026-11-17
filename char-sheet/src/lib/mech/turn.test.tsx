@@ -75,9 +75,10 @@ describe('ammo', () => {
 
 describe('blockers', () => {
   it('range is checked against the given target', () => {
-    expect(activationBlocker(R, mule(), MG, 'Mid')).toBe('Target is beyond Short range.')
+    expect(activationBlocker(R, mule(), MG, 'Mid')).toBe('Out of range: reaches Short, target is Mid.')
     expect(activationBlocker(R, mule(), HAMMER, 'Mid')).toContain('Melee')
-    expect(activationBlocker(R, mule(), HAMMER, 'Short')).toBeNull()
+    expect(activationBlocker(R, mule(), HAMMER, 'Short')).toContain('Engaged')
+    expect(activationBlocker(R, mule(), HAMMER, 'Engaged')).toBeNull()
     expect(activationBlocker(R, mule(), MG)).toBeNull()
     expect(activationBlocker(R, mule(), MG, 'Short')).toBeNull()
   })

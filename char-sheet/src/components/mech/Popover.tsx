@@ -70,4 +70,15 @@ function Popover({ content, children }: { content: PopText | null | undefined, c
   </span>
 }
 
+/**
+ * Says why a control is disabled: hovering it shows `why`. Give the disabled control `pointer-events-none` so the
+ * hover reaches this wrapper (disabled buttons swallow mouse events). With `why` null it renders the child alone.
+ */
+export function Why({ why, children }: { why: string | null | undefined, children: React.ReactNode }): JSX.Element {
+  if (!why) return <>{children}</>
+  return <Popover content={{ title: "Can't do that", status: [{ text: why, tone: 'warn' }], lines: [] }}>
+    <span className='inline-flex cursor-not-allowed' title={why} data-why={why}>{children}</span>
+  </Popover>
+}
+
 export default Popover

@@ -1,8 +1,8 @@
 import type { Dictionary, Rules, RollInfo } from '../rules'
 import { rangePenalty } from './turn'
-import type { MechAttachment, RangeBand } from './types'
+import type { MechAttachment, TargetBand } from './types'
 
-export function activationRoll(rules: Rules, att: MechAttachment, target: RangeBand, scores: Dictionary<number>): RollInfo | null {
+export function activationRoll(rules: Rules, att: MechAttachment, target: TargetBand, scores: Dictionary<number>): RollInfo | null {
   if (!att.roll || !rules.mechs) return null
   const bands = rules.mechs.rangeAspects
   const aspect = att.roll.aspect ?? (att.range && att.range !== 'Melee' ? bands[att.range] : bands.Short)

@@ -116,7 +116,7 @@ A full bin of any type averages about 4 wounds, so where you put ammo matters. T
 
 | Tag | Rule |
 |---|---|
-| Repeating (X) | May be activated up to X times per turn; on a weapon, each activation adds its dice to the shot |
+| Repeating (X) | May be activated up to X times per turn; on a weapon, each activation adds its dice to that weapon's roll |
 | Passive | Always on, never activated |
 | Powerful | +1 success if the roll already scores at least one |
 | Armoured vs Y | Incoming attacks of damage type Y lose 1 success |
@@ -129,25 +129,36 @@ A full bin of any type averages about 4 wounds, so where you put ammo matters. T
 
 ### Range
 
-Each weapon has one range band: Short, Mid or Long. Short weapons roll Reflex + Gunnery; Mid and Long weapons roll Precision + Gunnery.
+A target is in one of four bands. The map is about 1,200 m square, so Long reaches about half way across it.
+
+| Band | Distance | Used by |
+|---|---|---|
+| Engaged | Base to base | Melee. Guns treat it as Short. |
+| Short | Up to 60 m | Machine guns, flamers, short-range missiles |
+| Mid | 61–250 m | Autocannons, lasers, most guns |
+| Long | 251–650 m | Cannons, rails, long-range missiles |
+
+Each weapon has one range band: Short, Mid or Long. Ranged attacks roll Reflex + Gunnery at Engaged or Short and Precision + Gunnery at Mid or Long.
 
 Target beyond the weapon's band: cannot fire.
 
-Target in a closer band: −1 die per band closer (call).
+Target in a closer band: −1 die per band closer, once per roll (call).
 
-Melee attachments (punch, hammer, saw) need the target at Short, i.e. engaged.
+Melee attachments (punch, hammer, saw) need an Engaged target.
 
-### Shots (call)
+### Attacks (call)
 
-Each turn a mech makes at most one ranged shot and one melee strike. A shot is one roll against one target: the pilot's aspect + skill once, plus the dice of every weapon activation spent on it. Firing an AC-30 (+5) and an HC-40 (+8) at the same target is one roll of Precision + Gunnery + 13. Each activation still pays its own energy, heat and ammo, so a Repeating weapon adds its dice once for each activation you pay for.
+Each weapon fires on its own. Its roll is the pilot's aspect + skill, plus the weapon's dice for each shot, against one target, with its own d12 hit location. Firing an AC-30 (+5) and an HC-40 (+8) at the same target is two rolls: Precision + Gunnery + 5, and Precision + Gunnery + 8.
 
-Reach: every weapon in a shot must reach the target's band, and each takes its own −1 die per band closer. The aspect is Reflex at Short and Precision at Mid or Long; a melee strike uses the aspect named by the weapon adding the most dice.
+Shots: a weapon fires once a turn, or up to X times if it is Repeating (X). Pick how many shots before rolling; each shot pays its own energy, heat and ammo, and adds the weapon's dice to that weapon's one roll. An M12 firing both shots rolls Reflex + Gunnery + 2.
 
-Tags: the shot carries every tag of the weapons in it (for numbered tags, the highest). Its damage type is that of the weapon that added the most dice, attacker's choice on a tie.
+Several weapons can fire in the same turn, at the same target or different ones, as long as the energy, heat and ammo last.
 
-Wounds: all of a shot's wounds go to one section, so one big shot wrecks a section where scattered fire would not.
+Tags: each roll carries only its own weapon's tags. Piercing from one gun never combines with Area from another.
 
-Jams: if the shot scores no successes, every Jams weapon in it jams.
+Wounds: each roll's wounds go to the section its own d12 picks, so a volley spreads its damage unless the pilot aims.
+
+Jams: a Jams weapon jams when its own roll scores no successes.
 
 Other rolls: activations that roll for something other than an attack (Targeting, Repair, Tow) roll on their own as usual.
 
@@ -383,7 +394,7 @@ Categorical skills: replace the placeholder names (Gunnery, Tech, Mobility, Mele
 
 Enemy mechs: full sheets like the players, or Caltrops foe notation with a short slot list?
 
-Range bands: distances for Short / Mid / Long and the penalty for firing outside them.
+Movement scale: Speed 20–90 per turn is slow on a 1,200 m map with a 650 m Long band. Decide whether Speed is metres per turn or needs scaling up.
 
 Economy: Solari prices are drafted on the Catalogue and Parts tabs; Scrap costs, armour refills and section rebuilds still need play-testing.
 
@@ -400,7 +411,9 @@ Ejection and pilots on foot once a mech is lost.
 | Missile bin holds 5 (so a full bin cooks off at 15d4, close to the others' 16d4); cook-off wounds ignore armour | Attachments |
 | Stowage Rack: Size 1 Generic, +3 stowage slots; items lost or unreachable while it is destroyed | Attachments |
 | Inside a weapon's range band: −1 die per band closer | Attachments |
-| Melee needs a Short (engaged) target | Attachments |
+| Melee needs an Engaged (base-to-base) target; guns treat Engaged as Short | Attachments |
+| Each weapon rolls on its own with the full pilot dice; repeat shots add to that weapon's roll | Attacks |
+| Range bands: Short to 60 m, Mid 61–250 m, Long 251–650 m | Range |
 | Unspent energy is lost unless stored in a Capacitor | Mech turn |
 | Sprint costs energy and heat equal to chassis Size (1–5) | Mech turn |
 | Reactor heat and passive cooling both applied at end of turn | Mech turn |

@@ -7070,7 +7070,7 @@ export const AMMO: MechAmmo[] = [
 ]
 
 export const TAGS: { [tag: string]: string } = {
- "Repeating": "May be activated up to X times per turn; on a weapon, each activation adds its dice to the shot",
+ "Repeating": "May be activated up to X times per turn; on a weapon, each activation adds its dice to that weapon's roll",
  "Passive": "Always on, never activated",
  "Powerful": "+1 success if the roll already scores at least one",
  "Armoured": "Incoming attacks of damage type Y lose 1 success",
@@ -7103,7 +7103,7 @@ export const TAGS: { [tag: string]: string } = {
  "Recharging": "X activations, refilled at the start of each scene",
  "Renewable": "Its Charges also refill for free, out of combat, wherever what it uses can be found: open water for a spray or quench tank",
  "Missile": "The attack is a missile: Point-defence and Spoofing work against it",
- "Guided": "Against a locked target, each activation adds 1 extra die to the shot",
+ "Guided": "Against a locked target, each activation adds 1 extra die to its roll",
  "Seeking": "Ignores Evasion, and Spoofing does not stop its Guided dice",
  "Targeting": "Activation: roll the listed Roll; each success places a lock on a target in line of sight until your next turn. Attacks against a locked target roll +1 die, and Indirect and Guided weapons use locks",
  "Datalink": "Locks it places count for every mech in your lance",

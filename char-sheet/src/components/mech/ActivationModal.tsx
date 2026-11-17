@@ -14,7 +14,7 @@ import { findAttachment, mountKey as keyOf } from '../../lib/mech/loadout'
 import { overheated, deriveStats } from '../../lib/mech/derive'
 import { activate, activationBlocker } from '../../lib/mech/turn'
 import { activationRoll } from '../../lib/mech/roll'
-import type { Mech, RangeBand } from '../../lib/mech/types'
+import type { Mech, RangeBand, TargetBand } from '../../lib/mech/types'
 import type { Dictionary, RollInfo, Rules } from '../../lib/rules'
 import { roller } from './roller'
 import { showResult } from './notify'
@@ -66,8 +66,8 @@ function ActivationModal({ rules, view, mountKey, close }: {
 
   const mechMode = mode === 'mech'
   const ranged = !!att.range && att.range !== 'Melee'
-  // Defaults to the part's own band (no penalty); Melee is fixed to Short (engaged).
-  const band: RangeBand = !ranged ? 'Short' : chosen ?? att.range as RangeBand
+  // Defaults to the part's own band (no penalty); Melee is fixed to Engaged, other unranged parts to Short.
+  const band: TargetBand = att.range === 'Melee' ? 'Engaged' : !ranged ? 'Short' : chosen ?? att.range as RangeBand
   const names = activationRoll(rules, att, band, {})
   const scores: Dictionary<number> = mechMode && names
     ? { [names.attribute!.name]: aspectScore, [names.skill!.name]: skillScore }

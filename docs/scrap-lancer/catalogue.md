@@ -377,7 +377,7 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 | Renewable | Its Charges also refill for free, out of combat, wherever what it uses can be found: open water for a spray or quench tank |
 | Missiles |  |
 | Missile | The attack is a missile: Point-defence and Spoofing work against it |
-| Guided | Against a locked target, each activation adds 1 extra die to the shot |
+| Guided | Against a locked target, each activation adds 1 extra die to its roll |
 | Seeking | Ignores Evasion, and Spoofing does not stop its Guided dice |
 | Locks and sensors |  |
 | Targeting | Activation: roll the listed Roll; each success places a lock on a target in line of sight until your next turn. Attacks against a locked target roll +1 die, and Indirect and Guided weapons use locks |
