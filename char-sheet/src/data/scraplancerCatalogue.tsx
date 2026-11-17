@@ -11,7 +11,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Scrap",
   "price": 800,
   "heatMax": 5,
-  "trait": "Tiny: attacks against it from Long range roll −1 die",
   "description": "A one-seat walker built round a car engine. It runs on a single small reactor and a heat bank of 5, so every shot is a decision.",
   "shape": "biped",
   "sections": [
@@ -104,7 +103,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Scrap",
   "price": 1200,
   "heatMax": 6,
-  "trait": "Open cab: an Area attack that hits the cockpit also hits the pilot",
   "description": "A cargo loader with a roll cage and a gun welded to one claw. With no Tech slot, it cools with fins alone.",
   "shape": "biped",
   "sections": [
@@ -211,7 +209,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Scrap",
   "price": 2200,
   "heatMax": 7,
-  "trait": "Junker: rebuilding a destroyed section costs only Scrap, never Solari",
   "description": "A dead OHS Mule rebuilt with slabs of Hull and a second gun arm. Ugly, slow and cheap to keep running.",
   "shape": "biped",
   "sections": [
@@ -321,7 +318,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Scrap",
   "price": 2500,
   "heatMax": 6,
-  "trait": "Unshakeable: cannot be knocked down, shoved or grappled",
   "description": "A four-legged freight walker with a crane arm. Tough and roomy, but it carries one gun and cannot dodge. Losing a leg costs only 3 tiles of Speed.",
   "shape": "quad",
   "sections": [
@@ -453,7 +449,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 4000,
   "heatMax": 7,
-  "trait": "Unshakeable",
   "description": "The current Ox. It has the Mk II's legs and cargo bed, plus a second gun on the crane arm and a cab with two Tech slots.",
   "shape": "quad",
   "sections": [
@@ -587,7 +582,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 6000,
   "heatMax": 7,
-  "trait": "Workhorse: field repairs on it roll +1 die",
   "description": "Two working hands, a lighter right arm, a missile pod on the right shoulder, and tough, roomy legs.",
   "shape": "biped",
   "sections": [
@@ -715,7 +709,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 8000,
   "heatMax": 9,
-  "trait": "Hauler: each Stowage part on it holds +2",
   "description": "A tracked mining crawler with a drill arm and a crane. It has a heavy reactor bay and lots of room, but only one Weapon slot. A Treads hit can stop it dead.",
   "shape": "tracked",
   "sections": [
@@ -814,7 +807,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 5000,
   "heatMax": 5,
-  "trait": "Spotter: its target locks also count for allies' attacks",
   "description": "The militia's scout: a sensor head on fast legs, with a hand for field work. Cheap enough to lose.",
   "shape": "biped",
   "sections": [
@@ -923,7 +915,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Standard",
   "price": 10000,
   "heatMax": 8,
-  "trait": "Militia standard: armour refills at half price in any colony town",
   "description": "The colony militia's line mech: nothing special, nothing missing. A gun arm on the right, a working hand on the left.",
   "shape": "biped",
   "sections": [
@@ -1039,7 +1030,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Standard",
   "price": 14000,
   "heatMax": 11,
-  "trait": "Stable platform: Long weapons roll +1 die if it did not move this turn",
   "description": "One treads section: a lucky hit there immobilises it.",
   "shape": "tracked",
   "sections": [
@@ -1143,7 +1133,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Standard",
   "price": 20000,
   "heatMax": 13,
-  "trait": "Gun platform: a size-4 weapon on its cannon arm ignores Braced",
   "description": "The militia's answer to Sol siege frames: a slow heavy biped with a four-slot cannon arm, built to carry a Brannoc HC-60.",
   "shape": "biped",
   "sections": [
@@ -1260,7 +1249,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 4000,
   "heatMax": 6,
-  "trait": "Light frame: Sprint costs 1 less energy",
   "description": "Fast, with an exposed canopy that is easy to snipe and a left arm that is a hand and little else.",
   "shape": "biped",
   "sections": [
@@ -1368,7 +1356,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 18000,
   "heatMax": 7,
-  "trait": "Gyro-stabilised: Sprint and jump parts cost 1 less heat",
   "description": "A front-line skirmisher with gun pods for arms and a sensor head. No hands: it fights, it does not salvage.",
   "shape": "biped",
   "sections": [
@@ -1480,7 +1467,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 22000,
   "heatMax": 8,
-  "trait": "Built to jump: jump parts cost 1 less energy",
   "description": "The Kestrel's bigger sibling, built around jump packs: a hand, a three-gun arm and roomy legs for jets.",
   "shape": "biped",
   "sections": [
@@ -1594,7 +1580,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 20000,
   "heatMax": 10,
-  "trait": "Fire control: once per turn, one weapon ignores the −1 die for a closer band",
   "description": "Vantor's main battle frame: a Warden with Hull in every section, more Heat Max and fire control.",
   "shape": "biped",
   "sections": [
@@ -1712,7 +1697,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 30000,
   "heatMax": 14,
-  "trait": "Siege frame: cannot Sprint; gains Deflection (1) on any turn it does not move",
   "description": "A walking gun emplacement with a missile shoulder. Slow, with no Evasion, but 10 Hull slots and Heat Max 14.",
   "shape": "biped",
   "sections": [
@@ -1848,7 +1832,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 48000,
   "heatMax": 20,
-  "trait": "Emplacement: its Braced weapons can still fire after it moves up to 10",
   "description": "A tracked fortress with a four-slot reactor bay and a five-slot main gun mount. It is the only frame that can carry a Siege-size weapon, and it needs every cooler it can fit.",
   "shape": "tracked",
   "sections": [
@@ -1990,7 +1973,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Standard",
   "price": 9000,
   "heatMax": 8,
-  "trait": "Analog: EM cannot disable its parts and it is never Weak vs EM; cannot mount CLF parts",
   "description": "A Naturalist militia frame: hand-built, armoured in Hull, with one Tech slot and nothing an EM weapon can switch off.",
   "shape": "biped",
   "sections": [
@@ -2106,7 +2088,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 24000,
   "heatMax": 12,
-  "trait": "Analog; Hull wounds on it can be field-repaired without Scrap",
   "description": "Greenward's answer to Elite frames: a slow two-handed brawler with a three-slot reactor bay and 10 Hull slots, built to close in and tear things apart.",
   "shape": "biped",
   "sections": [
@@ -2226,7 +2207,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Elite",
   "price": 45000,
   "heatMax": 8,
-  "trait": "Ghost skin: until it fires a weapon this turn, attacks from beyond Short range roll −2 dice",
   "description": "An Elite recon and electronic-warfare frame. Five Tech slots and Evasion 6, but no Hull: every wound lands on a part.",
   "shape": "biped",
   "sections": [
@@ -2336,7 +2316,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Elite",
   "price": 70000,
   "heatMax": 15,
-  "trait": "Neural link: once per turn, reroll one die on any mech roll",
   "description": "An Elite command frame with two hands, two three-gun arms, a three-slot reactor bay and Heat Max 15.",
   "shape": "biped",
   "sections": [

@@ -221,7 +221,7 @@ for l in CAT[i + 1:]:
     c = cells(l)
     sp, ev = [num(x) for x in c[7].split('/')]
     overview[f'{c[0]} {c[1]}'] = {'make': c[0], 'model': c[1], 'class': c[2], 'tier': c[3], 'price': num(c[4]),
-                                   'heatMax': num(c[5]), 'trait': c[9]}
+                                   'heatMax': num(c[5])}
 
 def class_size(cls):
     """Chassis size 1-5 from its class: Ultralight 1, Light 2, Medium 3, Heavy 4, Heavy assault / Super-heavy 5."""
@@ -309,7 +309,7 @@ for src in (CAT, RULES):
         ids = {s['id'] for s in secs}
         shape = 'tracked' if ids & {'treads', 'ltread'} else 'quad' if 'flleg' in ids else 'biped'
         chassis[name] = {'name': name, 'make': o['make'], 'model': o['model'], 'class': o['class'], 'size': class_size(o['class']), 'tier': o['tier'],
-                         'price': o['price'], 'heatMax': o['heatMax'], 'trait': o['trait'], 'description': desc,
+                         'price': o['price'], 'heatMax': o['heatMax'], 'description': desc,
                          'shape': shape, 'sections': secs}
 
 missing = set(overview) - set(chassis)

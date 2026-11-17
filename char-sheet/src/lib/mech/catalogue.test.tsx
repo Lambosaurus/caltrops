@@ -28,11 +28,11 @@ describe('Scrap Lancer catalogue', () => {
     expect(mr.ammo.map(a => a.name)).toEqual(['Light', 'Standard', 'Missile', 'Heavy', 'Slug', 'Fuel'])
   })
 
-  it('gives every part a make, tier and price, and every chassis a trait', () => {
+  it('gives every part a make, tier and price, and every chassis a tier', () => {
     for (const a of mr.attachments.filter(x => x.group !== 'Ammo')) {
       expect([a.name, !!a.make && !!a.tier && (a.price ?? 0) > 0]).toEqual([a.name, true])
     }
-    for (const c of mr.chassis) expect([c.name, !!c.trait && !!c.tier]).toEqual([c.name, true])
+    for (const c of mr.chassis) expect([c.name, !!c.tier]).toEqual([c.name, true])
   })
 
   it('reads weapon numbers from the Parts tab', () => {

@@ -40,28 +40,28 @@ For parts, the number in a model name is the part's headline stat: energy for a 
 Twenty-one frames from seven makes, grouped by make. Prices run from 800 to 70,000, and Heat Max from 3 to 20: junk frames scrape by on small numbers, while super-heavies run big reactors, big coolers and big guns. Jackal J-7, Mule Mk II and Bulwark Block 4 are the original Jackal, Mule and Bulwark under their makers' names; only their Heat Max has changed.
 Slot counts exclude each section's Armour slot.
 Hardpoints are Reactor / Weapon / Tech / Hand / untyped slots.
-| Make | Model | Class | Tier | Price | Heat Max | Slots (Hull) | Speed / Evasion | Hardpoints R/W/T/H/U | Trait (call) |
-| KR | Tinpot R0 | Ultralight | Scrap | 800 | 3 | 10 (3) | 50 / 2 | 1 / 1 / 0 / 1 / 4 | Tiny: attacks against it from Long range roll −1 die |
-| KR | Rattler R1 | Light | Scrap | 1,200 | 4 | 12 (3) | 60 / 2 | 2 / 1 / 0 / 2 / 4 | Open cab: an Area attack that hits the cockpit also hits the pilot |
-| KR | Hulk R3 | Medium | Scrap | 2,200 | 5 | 15 (5) | 50 / 2 | 2 / 3 / 0 / 1 / 4 | Junker: rebuilding a destroyed section costs only Scrap, never Solari |
-| OHS | Ox Mk II | Medium quad | Scrap | 2,500 | 5 | 21 (8) | 60 / 0 | 2 / 1 / 2 / 1 / 7 | Unshakeable: cannot be knocked down, shoved or grappled |
-| OHS | Ox Mk III | Medium quad | Salvage | 4,000 | 6 | 23 (8) | 60 / 0 | 2 / 2 / 3 / 1 / 7 | Unshakeable |
-| OHS | Mule Mk II | Medium | Salvage | 6,000 | 7 | 21 (4) | 60 / 2 | 2 / 4 / 2 / 2 / 6 | Workhorse: field repairs on it roll +1 die |
-| OHS | Mastodon Mk I | Heavy tracked | Salvage | 8,000 | 9 | 21 (6) | 30 / 0 | 3 / 1 / 2 / 2 / 7 | Hauler: each Stowage part on it holds +2 |
-| HCA | Picket Block 1 | Light | Salvage | 5,000 | 5 | 14 (3) | 70 / 4 | 2 / 3 / 3 / 1 / 2 | Spotter: its target locks also count for allies' attacks |
-| HCA | Warden Block 2 | Medium | Standard | 10,000 | 8 | 21 (5) | 60 / 2 | 2 / 5 / 3 / 1 / 5 | Militia standard: armour refills at half price in any colony town |
-| HCA | Bulwark Block 4 | Heavy tracked | Standard | 14,000 | 11 | 25 (7) | 40 / 1 | 3 / 6 / 2 / 0 / 7 | Stable platform: Long weapons roll +1 die if it did not move this turn |
-| HCA | Rampart Block 6 | Heavy | Standard | 20,000 | 13 | 24 (7) | 30 / 0 | 3 / 6 / 3 / 1 / 4 | Gun platform: a size-4 weapon on its cannon arm ignores Braced |
-| MAS | Jackal J-7 | Light | Salvage | 4,000 | 5 | 13 (3) | 80 / 4 | 2 / 3 / 1 / 1 / 3 | Light frame: Sprint costs 1 energy instead of 2 |
-| MAS | Kestrel K-12 | Light | Military | 18,000 | 7 | 17 (3) | 90 / 4 | 2 / 4 / 4 / 0 / 4 | Gyro-stabilised: Sprint and jump parts cost 1 less heat |
-| MAS | Harrier H-3 | Medium | Military | 22,000 | 8 | 19 (3) | 80 / 4 | 2 / 5 / 3 / 1 / 5 | Built to jump: jump parts cost 1 less energy |
-| VDG | Halberd VX-6 | Medium | Military | 20,000 | 10 | 23 (6) | 60 / 2 | 2 / 5 / 3 / 1 / 6 | Fire control: once per turn, one weapon ignores the −1 die for a closer band |
-| VDG | Monolith VX-9 | Heavy assault | Military | 30,000 | 14 | 31 (10) | 40 / 0 | 3 / 7 / 3 / 1 / 7 | Siege frame: cannot Sprint; gains Deflection (1) on any turn it does not move |
-| VDG | Bastion VX-12 | Super-heavy tracked | Military | 48,000 | 20 | 37 (11) | 20 / 0 | 4 / 11 / 4 / 1 / 6 | Emplacement: its Braced weapons can still fire after it moves up to 10 |
-| GWC | Thornback Pattern 3 | Medium | Standard | 9,000 | 8 | 21 (10) | 60 / 2 | 2 / 3 / 1 / 1 / 4 | Analog: EM cannot disable its parts and it is never Weak vs EM; cannot mount CLF parts |
-| GWC | Ironbark Pattern 5 | Heavy | Military | 24,000 | 12 | 27 (10) | 50 / 0 | 3 / 4 / 2 / 2 / 6 | Analog; Hull wounds on it can be field-repaired without Scrap |
-| CLF | Wraith S9 | Light | Elite | 45,000 | 8 | 15 (0) | 90 / 6 | 2 / 3 / 5 / 1 / 4 | Ghost skin: until it fires a weapon this turn, attacks from beyond Short range roll −2 dice |
-| CLF | Paragon S11 | Heavy | Elite | 70,000 | 15 | 24 (4) | 60 / 2 | 3 / 6 / 4 / 2 / 5 | Neural link: once per turn, reroll one die on any mech roll |
+| Make | Model | Class | Tier | Price | Heat Max | Slots (Hull) | Speed / Evasion | Hardpoints R/W/T/H/U |
+| KR | Tinpot R0 | Ultralight | Scrap | 800 | 3 | 10 (3) | 50 / 2 | 1 / 1 / 0 / 1 / 4 |
+| KR | Rattler R1 | Light | Scrap | 1,200 | 4 | 12 (3) | 60 / 2 | 2 / 1 / 0 / 2 / 4 |
+| KR | Hulk R3 | Medium | Scrap | 2,200 | 5 | 15 (5) | 50 / 2 | 2 / 3 / 0 / 1 / 4 |
+| OHS | Ox Mk II | Medium quad | Scrap | 2,500 | 5 | 21 (8) | 60 / 0 | 2 / 1 / 2 / 1 / 7 |
+| OHS | Ox Mk III | Medium quad | Salvage | 4,000 | 6 | 23 (8) | 60 / 0 | 2 / 2 / 3 / 1 / 7 |
+| OHS | Mule Mk II | Medium | Salvage | 6,000 | 7 | 21 (4) | 60 / 2 | 2 / 4 / 2 / 2 / 6 |
+| OHS | Mastodon Mk I | Heavy tracked | Salvage | 8,000 | 9 | 21 (6) | 30 / 0 | 3 / 1 / 2 / 2 / 7 |
+| HCA | Picket Block 1 | Light | Salvage | 5,000 | 5 | 14 (3) | 70 / 4 | 2 / 3 / 3 / 1 / 2 |
+| HCA | Warden Block 2 | Medium | Standard | 10,000 | 8 | 21 (5) | 60 / 2 | 2 / 5 / 3 / 1 / 5 |
+| HCA | Bulwark Block 4 | Heavy tracked | Standard | 14,000 | 11 | 25 (7) | 40 / 1 | 3 / 6 / 2 / 0 / 7 |
+| HCA | Rampart Block 6 | Heavy | Standard | 20,000 | 13 | 24 (7) | 30 / 0 | 3 / 6 / 3 / 1 / 4 |
+| MAS | Jackal J-7 | Light | Salvage | 4,000 | 5 | 13 (3) | 80 / 4 | 2 / 3 / 1 / 1 / 3 |
+| MAS | Kestrel K-12 | Light | Military | 18,000 | 7 | 17 (3) | 90 / 4 | 2 / 4 / 4 / 0 / 4 |
+| MAS | Harrier H-3 | Medium | Military | 22,000 | 8 | 19 (3) | 80 / 4 | 2 / 5 / 3 / 1 / 5 |
+| VDG | Halberd VX-6 | Medium | Military | 20,000 | 10 | 23 (6) | 60 / 2 | 2 / 5 / 3 / 1 / 6 |
+| VDG | Monolith VX-9 | Heavy assault | Military | 30,000 | 14 | 31 (10) | 40 / 0 | 3 / 7 / 3 / 1 / 7 |
+| VDG | Bastion VX-12 | Super-heavy tracked | Military | 48,000 | 20 | 37 (11) | 20 / 0 | 4 / 11 / 4 / 1 / 6 |
+| GWC | Thornback Pattern 3 | Medium | Standard | 9,000 | 8 | 21 (10) | 60 / 2 | 2 / 3 / 1 / 1 / 4 |
+| GWC | Ironbark Pattern 5 | Heavy | Military | 24,000 | 12 | 27 (10) | 50 / 0 | 3 / 4 / 2 / 2 / 6 |
+| CLF | Wraith S9 | Light | Elite | 45,000 | 8 | 15 (0) | 90 / 6 | 2 / 3 / 5 / 1 / 4 |
+| CLF | Paragon S11 | Heavy | Elite | 70,000 | 15 | 24 (4) | 60 / 2 | 3 / 6 / 4 / 2 / 5 |
 How the tiers show up in the frame:
 Cheap frames are slot-poor or Hull-padded. The Ox Mk II has 21 slots, but 8 are Hull and only one takes a gun.
 Better frames trade Hull for working slots and Heat Max. The Wraith S9 has no Hull at all: every wound costs it a part, in exchange for 5 Tech slots and Evasion 6.
@@ -315,4 +315,4 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 For the web tool:
 The tool can already show most of this: energy, heat, ammo, charges, stowage and passive numbers.
 The tool would need: make, model, tier and price on each chassis and part, a quad silhouette for the Ox, and the two new ammo types.
-Played at the table: chassis traits and the new tags, shown as text in the tool.
+Played at the table: the new tags, shown as text in the tool.

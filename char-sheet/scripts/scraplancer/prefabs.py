@@ -46,7 +46,7 @@ PREFABS = [
         'rarm': ('KR Scrap Plate SP1', [('KR AC-30R', 0)]),
         'cockpit': ('KR Scrap Plate SP1', []),
     }),
-    ('Packhorse', 'OHS Ox Mk III', 'Salvage hauler: cargo pod, winch, a hand and one autocannon. Cannot dodge, hard to knock over.', {
+    ('Packhorse', 'OHS Ox Mk III', 'Salvage hauler: cargo pod, winch, a hand and one autocannon. Cannot dodge.', {
         'rlleg': (P2, [('CWF Fin-2', 1)]), 'rrleg': (P2, [('CWF Fin-2', 1)]),
         'flleg': (P2, [('CWF Fin-2', 1)]), 'frleg': (P2, [('CWF Fin-2', 1)]),
         'core': (C3, [('HRW Dipole D5', 2), ('HTC Halcyon HX-2', 4), ('OHS Cargo Pod P7', 5), ('Ammo Bin: Standard', 7)]),
@@ -100,7 +100,7 @@ PREFABS = [
         'rarm': (C3, [('BRO AC-30', 1), ('LDE LZ-1', 3)]),
         'cockpit': (C3, [('HTC Halcyon HX-3', 1), ('HTC Halcyon HX-3', 2)]),
     }),
-    ('Siege Gun', 'HCA Rampart Block 6', 'Built to carry a Brannoc HC-60 (its trait waives Braced). Runs hot: a few big shots, then it must cool.', {
+    ('Siege Gun', 'HCA Rampart Block 6', 'Built to carry a Brannoc HC-60. Runs hot: a few big shots, then it must cool.', {
         'lleg': (P2, [('CWF Fin-2', 2)]),
         'rleg': (P2, [('Ammo Bin: Standard', 2)]),
         'core': (C3, [('HRW Arc-point A9', 1), ('HTC Halcyon HX-3', 4), ('HTC Halcyon HX-3', 5), ('Ammo Bin: Heavy', 6), ('Ammo Bin: Heavy', 7)]),

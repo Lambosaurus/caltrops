@@ -192,7 +192,7 @@ export const PREFABS: MechPrefab[] = [
  {
   "name": "Packhorse",
   "chassis": "OHS Ox Mk III",
-  "description": "Salvage hauler: cargo pod, winch, a hand and one autocannon. Cannot dodge, hard to knock over.",
+  "description": "Salvage hauler: cargo pod, winch, a hand and one autocannon. Cannot dodge.",
   "loadout": {
    "rlleg": {
     "armour": "AWP Plate P2",
@@ -763,7 +763,7 @@ export const PREFABS: MechPrefab[] = [
  {
   "name": "Siege Gun",
   "chassis": "HCA Rampart Block 6",
-  "description": "Built to carry a Brannoc HC-60 (its trait waives Braced). Runs hot: a few big shots, then it must cool.",
+  "description": "Built to carry a Brannoc HC-60. Runs hot: a few big shots, then it must cool.",
   "loadout": {
    "lleg": {
     "armour": "AWP Plate P2",

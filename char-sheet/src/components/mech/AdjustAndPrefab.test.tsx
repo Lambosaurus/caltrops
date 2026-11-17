@@ -32,7 +32,7 @@ test('heat and energy step inline and can be typed in Adjust', () => {
   expect(view.read('mech').turn).toMatchObject({ heat: 0, energy: 5 })
 })
 
-test('the play panel does not show chassis price, tier, class or trait', () => {
+test('the play panel does not show chassis price, tier, or class', () => {
   panel()
   expect(screen.queryByText(/Workhorse: field repairs/)).toBeNull()
   expect(screen.queryByText(/Solari/)).toBeNull()
