@@ -237,6 +237,10 @@ ROLE = {
     'Rear left leg': 'rlleg', 'Rear right leg': 'rrleg', 'Front left leg': 'flleg', 'Front right leg': 'frleg',
     'Drill arm': 'larm', 'Crane arm': 'rarm', 'Cannon arm': 'rarm', 'Right shoulder': 'shoulder',
     'Left shoulder': 'lshoulder', 'Main gun mount': 'gun',
+    'Claw arm': 'rarm', 'Gun pod': 'rarm', 'Right wing pylon': 'rarm', 'Crane boom': 'rarm', 'Cutting boom': 'rarm',
+    'Left wing pylon': 'larm', 'Cargo bed': 'larm', 'Dozer blade': 'larm',
+    'Welded cannon': 'shoulder', 'Missile rack': 'shoulder', 'Halo': 'shoulder',
+    'Backpack': 'lshoulder', 'Sensor mast (cockpit)': 'cockpit',
 }
 AREA = {  # CSS grid-area on the 6-column body grid: row-start / col-start / row-end / col-end
     'cockpit': '1 / 3 / 2 / 5', 'shoulder': '1 / 5 / 2 / 7', 'gun': '1 / 5 / 2 / 7', 'lshoulder': '1 / 1 / 2 / 3',
