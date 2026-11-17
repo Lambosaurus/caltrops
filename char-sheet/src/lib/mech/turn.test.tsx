@@ -1,7 +1,7 @@
 import { DEFAULT_RULES } from '../rules'
 import { FIXTURE_RULES } from './fixture'
 import { newMech } from './loadout'
-import { activate, activationBlocker, adjustTurn, newTurn, outOfRange, rangePenalty, shutdownPurge, sprint, sprintBlocker } from './turn'
+import { activate, activationBlocker, adjustTurn, newTurn, outOfRange, rangePenalty, shutdownPurge, sprint, sprintBlocker, travel } from './turn'
 import type { Mech, MechSettings } from './types'
 
 const RULES = { ...DEFAULT_RULES, name: 'Test', mechs: FIXTURE_RULES }
@@ -181,5 +181,12 @@ describe('notices', () => {
   it('sprint when overheated notifies', () => {
     const m = mule({ autoHeatDamage: false })
     expect(sprint(R, { ...m, turn: { ...m.turn, heat: 10 } }, never).notices).toHaveLength(1)
+  })
+})
+
+describe('scale', () => {
+  it('speed is tiles per turn: 1 tile = 10 m, 1 turn = 6 s', () => {
+    expect(travel(12)).toEqual({ metres: 120, mps: '20', kmh: '72', kmPerMin: '1.2' })
+    expect(travel(4)).toEqual({ metres: 40, mps: '6.7', kmh: '24', kmPerMin: '0.4' })
   })
 })

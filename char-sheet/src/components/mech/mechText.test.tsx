@@ -22,7 +22,7 @@ const slPart = (n: string) => findAttachment(SL, n)!
 test('section popover: hit range and aim in the sub line, numbers as stats', () => {
   const p = sectionPop(FIXTURE_RULES, mule(), sec('lleg'))
   expect(p.sub).toBe('d12 1–2 · aimed shot −3 dice')
-  expect(p.stats).toEqual(expect.arrayContaining([{ value: '30', label: 'Speed' }, { value: '1', label: 'Evasion' }]))
+  expect(p.stats).toEqual(expect.arrayContaining([{ value: '6', label: 'Speed tiles' }, { value: '1', label: 'Evasion' }]))
 })
 
 test('aim text', () => {
@@ -87,7 +87,7 @@ test('mount popover shows live state, and why it cannot activate', () => {
 
 test('stat popovers', () => {
   const m = mule()
-  expect(statPop(FIXTURE_RULES, m, 'speed').title).toBe('Speed 60')
+  expect(statPop(FIXTURE_RULES, m, 'speed').title).toBe('Speed 12 tiles / turn')
   expect(statPop(FIXTURE_RULES, m, 'heat').sub).toBe('Heat Max 7 chassis +2 sinks')
   m.turn.heat = 12
   expect(statPop(FIXTURE_RULES, m, 'heat').status![0].tone).toBe('bad')
@@ -95,7 +95,7 @@ test('stat popovers', () => {
 
 test('speed popover gives the size-based sprint cost', () => {
   const m = newMech(scrapLancerRuleset, 'VDG Bastion VX-12', 'F', 'Fortress')
-  expect(text(statPop(SL, m, 'speed'))).toContain('Sprint: 5E +5H')
+  expect(text(statPop(SL, m, 'speed'))).toContain('Sprint: 8 tiles (80 m) for 5E +5H')
   expect(slPart('MAS Flicker FL1').tags).toContain('Evasive')
 })
 

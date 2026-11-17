@@ -175,6 +175,18 @@ export function sprintCost(rules: MechRules, mech: Mech): { energy: number, heat
   return size ? { energy: size, heat: size } : rules.sprint
 }
 
+/** Map scale: one tile is 10 m and one turn is 6 s, so 1 tile per turn is 6 km/h. Speed is in tiles per turn. */
+export const TILE_METRES = 10
+export const TURN_SECONDS = 6
+
+const num = (n: number) => String(Math.round(n * 10) / 10)
+
+/** A speed in tiles per turn as real-world rates: metres a turn, m/s, km/h and km a minute. */
+export function travel(tiles: number): { metres: number, mps: string, kmh: string, kmPerMin: string } {
+  const metres = tiles * TILE_METRES
+  return { metres, mps: num(metres / TURN_SECONDS), kmh: num(metres / TURN_SECONDS * 3.6), kmPerMin: num(metres / TURN_SECONDS * 60 / 1000) }
+}
+
 export function sprintBlocker(rules: MechRules, mech: Mech): string | null {
   const t = mech.turn
   const { energy } = sprintCost(rules, mech)
@@ -196,7 +208,7 @@ export function sprint(rules: MechRules, mech: Mech, roller: Roller): MechResult
   t.heat += heat
   t.used = { ...t.used, sprint: 1 }
   const d = deriveStats(rules, next)
-  const events = [`Sprint: −${energy}E +${heat}H, move up to ${d.speed * 2} in total. Evasion ${d.evasion}.`]
+  const events = [`Sprint: −${energy}E +${heat}H, move up to ${d.speed * 2} tiles in total. Evasion ${d.evasion}.`]
   const notices: string[] = []
   const rolls: MechRoll[] = []
   return { mech: heatAfterAction(rules, next, wasOver, null, roller, events, notices, rolls), events, notices, rolls }

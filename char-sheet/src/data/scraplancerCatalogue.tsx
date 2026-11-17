@@ -29,7 +29,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 25,
+     "speed": 5,
      "evasion": 1
     }
    },
@@ -47,7 +47,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 25,
+     "speed": 5,
      "evasion": 1
     }
    },
@@ -122,7 +122,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -140,7 +140,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -229,7 +229,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 25,
+     "speed": 5,
      "evasion": 1
     }
    },
@@ -247,7 +247,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 25,
+     "speed": 5,
      "evasion": 1
     }
    },
@@ -339,7 +339,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "4 / 1 / 5 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -356,7 +356,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "4 / 4 / 5 / 7",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -373,7 +373,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 1 / 4 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -390,7 +390,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 7",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -471,7 +471,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "4 / 1 / 5 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -488,7 +488,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "4 / 4 / 5 / 7",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -505,7 +505,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 1 / 4 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -522,7 +522,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 7",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -606,7 +606,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -625,7 +625,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -736,7 +736,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 6",
     "provides": {
-     "speed": 30
+     "speed": 6
     }
    },
    {
@@ -832,7 +832,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 35,
+     "speed": 7,
      "evasion": 2
     }
    },
@@ -850,7 +850,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 35,
+     "speed": 7,
      "evasion": 2
     }
    },
@@ -942,7 +942,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -961,7 +961,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -1060,7 +1060,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 6",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 1
     }
    },
@@ -1162,7 +1162,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -1180,7 +1180,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 15
+     "speed": 3
     }
    },
    {
@@ -1278,7 +1278,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 2
     }
    },
@@ -1296,7 +1296,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 2
     }
    },
@@ -1387,7 +1387,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 45,
+     "speed": 9,
      "evasion": 2
     }
    },
@@ -1406,7 +1406,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 45,
+     "speed": 9,
      "evasion": 2
     }
    },
@@ -1499,7 +1499,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 2
     }
    },
@@ -1518,7 +1518,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 40,
+     "speed": 8,
      "evasion": 2
     }
    },
@@ -1613,7 +1613,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -1632,7 +1632,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -1732,7 +1732,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 20
+     "speed": 4
     }
    },
    {
@@ -1751,7 +1751,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 20
+     "speed": 4
     }
    },
    {
@@ -1868,7 +1868,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 1 / 4 / 4",
     "provides": {
-     "speed": 10
+     "speed": 2
     }
    },
    {
@@ -1887,7 +1887,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 7",
     "provides": {
-     "speed": 10
+     "speed": 2
     }
    },
    {
@@ -2009,7 +2009,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -2028,7 +2028,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -2126,7 +2126,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 25
+     "speed": 5
     }
    },
    {
@@ -2145,7 +2145,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 25
+     "speed": 5
     }
    },
    {
@@ -2244,7 +2244,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 45,
+     "speed": 9,
      "evasion": 3
     }
    },
@@ -2262,7 +2262,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 45,
+     "speed": 9,
      "evasion": 3
     }
    },
@@ -2355,7 +2355,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 2 / 4 / 4",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -2374,7 +2374,7 @@ export const CHASSIS: Chassis[] = [
     "transfer": "core",
     "area": "3 / 4 / 4 / 6",
     "provides": {
-     "speed": 30,
+     "speed": 6,
      "evasion": 1
     }
    },
@@ -3275,9 +3275,9 @@ export const ATTACHMENTS: MechAttachment[] = [
   "description": "Two blocks",
   "size": 3,
   "type": "Generic",
-  "tags": "Heavy (5)",
+  "tags": "Heavy (1)",
   "heatSink": 4,
-  "heavy": 5
+  "heavy": 1
  },
  {
   "name": "HTC Halcyon HS-2",
@@ -6662,10 +6662,10 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Tower shield",
   "size": 2,
   "type": "Hand",
-  "tags": "Deflection (2), Frontal, Heavy (10)",
+  "tags": "Deflection (2), Frontal, Heavy (2)",
   "energy": 1,
   "heat": 0,
-  "heavy": 10
+  "heavy": 2
  },
  {
   "name": "SBL Field Generator FG2",
@@ -6752,8 +6752,8 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Scrap plate",
   "type": "Armour",
   "armour": 2,
-  "tags": "Heavy (5)",
-  "heavy": 5
+  "tags": "Heavy (1)",
+  "heavy": 1
  },
  {
   "name": "KR Slab SB4",
@@ -6766,8 +6766,8 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Slab armour",
   "type": "Armour",
   "armour": 4,
-  "tags": "Heavy (10)",
-  "heavy": 10
+  "tags": "Heavy (2)",
+  "heavy": 2
  },
  {
   "name": "AWP Plate P2",
@@ -6806,8 +6806,8 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Plating",
   "type": "Armour",
   "armour": 3,
-  "tags": "Heavy (5)",
-  "heavy": 5
+  "tags": "Heavy (1)",
+  "heavy": 1
  },
  {
   "name": "AWP Reactive RX2",
@@ -6872,8 +6872,8 @@ export const ATTACHMENTS: MechAttachment[] = [
   "kind": "Bulkhead plate",
   "type": "Armour",
   "armour": 6,
-  "tags": "Heavy (10)",
-  "heavy": 10
+  "tags": "Heavy (2)",
+  "heavy": 2
  },
  {
   "name": "AWP Lightweave LW4",
@@ -7077,7 +7077,7 @@ export const TAGS: { [tag: string]: string } = {
  "Weak": "Incoming attacks of damage type Y gain 1 success",
  "Deflection": "Gain X deflection until your next turn; each cancels one incoming success",
  "Indirect": "May fire without line of sight at a locked target",
- "Area": "Roll once against every target within X of the point of impact",
+ "Area": "Roll once against every target within X tiles of the point of impact",
  "Volatile": "when disabled, roll Xd4, each success a wound to that section that ignores armour. Ammo bins keep rounds × volatility",
  "Kinetic": "Damage types, used by Armoured and Weak",
  "Thermal": "Damage types, used by Armoured and Weak",
@@ -7133,7 +7133,7 @@ export const TAGS: { [tag: string]: string } = {
  "Analog": "It cannot be disrupted by Disruptor attacks",
  "Shielded": "Disrupting this part costs X more successes",
  "Faraday": "Passive: while it works, every other part in its section has Shielded (X). Faraday (X, mech) covers every part on the mech instead",
- "Heavy": "−X mech Speed while it is fitted",
+ "Heavy": "−X tiles of mech Speed while it is fitted",
  "Cheap recharge": "Refilling it costs half price: armour points on armour, or Charges on a part that has them",
  "Self-repairing": "Armour only: regains 1 point at the start of each of your turns, up to its maximum",
  "Dextrous": "+X dice to fine work with this hand: field repairs, locks, salvage"

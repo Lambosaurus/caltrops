@@ -34,7 +34,7 @@ Each section defines:
 |---|---|---|
 | Location range | Faces of the d12 location die that hit this section | 1–2 |
 | Slots | Ordered list of typed slots; each slot is also one wound | Armour, Hull, untyped, untyped |
-| Provides | What the section adds while it is not destroyed | Speed 30, Evasion 1 |
+| Provides | What the section adds while it is not destroyed | Speed 6, Evasion 1 |
 | Transfers to | Where hits go once the section is destroyed | Core |
 
 Location numbers run left to right, bottom up: legs get the low numbers, the cockpit gets 12.
@@ -49,7 +49,7 @@ Legs — each provides Speed. Mech speed is the sum of surviving legs; no legs, 
 
 Arms — only matter for what is mounted on them. An arm with a working Manipulator provides Hand (grab, carry, use handheld gear).
 
-Nothing is special-cased: a tracked chassis has one Treads section providing Speed 40, a quad has four legs. The tool sums what surviving sections provide.
+Nothing is special-cased: a tracked chassis has one Treads section providing Speed 8, a quad has four legs. The tool sums what surviving sections provide.
 
 ### Slot types (call)
 
@@ -123,20 +123,32 @@ A full bin of any type averages about 4 wounds, so where you put ammo matters. T
 | Weak vs Y | Incoming attacks of damage type Y gain 1 success |
 | Deflection (X) | Gain X deflection until your next turn; each cancels one incoming success |
 | Indirect | May fire without line of sight at a locked target |
-| Area (X) | Roll once against every target within X of the point of impact |
+| Area (X) | Roll once against every target within X tiles of the point of impact |
 | Volatile | Cooks off when disabled (see Ammo bins). Other parts use Volatile (X), defined on the Catalogue tab with about forty more tags |
 | Kinetic / Thermal / Explosive / EM | Damage types, used by Armoured and Weak |
 
+### Scale
+
+One tile is 10 m, about one mech wide. One turn is 6 seconds. So 1 tile per turn is 6 km/h: multiply Speed by 6 for km/h.
+
+| Speed | Per turn | km/h | Sprinting |
+|---|---|---|---|
+| 4 (super-heavy) | 40 m | 24 | 8 tiles, 48 km/h |
+| 12 (medium) | 120 m | 72 | 24 tiles, 144 km/h |
+| 18 (fast light) | 180 m | 108 | 36 tiles, 216 km/h |
+
+Out of combat, Speed in tiles × 6 is also the travel speed in km/h. Start fights around the Mid/Long boundary (25–30 tiles apart); a medium mech closes from Long to Short in about five turns walking, two or three sprinting.
+
 ### Range
 
-A target is in one of four bands. The map is about 1,200 m square, so Long reaches about half way across it.
+A target is in one of four bands. The map is about 120 tiles (1,200 m) square, so Long reaches about half way across it.
 
-| Band | Distance | Used by |
-|---|---|---|
-| Engaged | Base to base | Melee. Guns treat it as Short. |
-| Short | Up to 60 m | Machine guns, flamers, short-range missiles |
-| Mid | 61–250 m | Autocannons, lasers, most guns |
-| Long | 251–650 m | Cannons, rails, long-range missiles |
+| Band | Tiles | Distance | Used by |
+|---|---|---|---|
+| Engaged | Adjacent | Base to base | Melee. Guns treat it as Short. |
+| Short | 1–6 | Up to 60 m | Machine guns, flamers, short-range missiles |
+| Mid | 7–25 | 61–250 m | Autocannons, lasers, most guns |
+| Long | 26–65 | 251–650 m | Cannons, rails, long-range missiles |
 
 Each weapon has one range band: Short, Mid or Long. Ranged attacks roll Reflex + Gunnery at Engaged or Short and Precision + Gunnery at Mid or Long.
 
@@ -253,8 +265,8 @@ Heat Max 6. 13 slots, 4 of them Hull. Fast, with an exposed canopy that is easy 
 
 | Section | d12 | Aim cost | Slots | Provides | Transfers to |
 |---|---|---|---|---|---|
-| Left leg | 1–2 | 3 | Hull, untyped | Speed 40, Evasion 2 | Core |
-| Right leg | 3–4 | 3 | Hull, untyped | Speed 40, Evasion 2 | Core |
+| Left leg | 1–2 | 3 | Hull, untyped | Speed 8, Evasion 2 | Core |
+| Right leg | 3–4 | 3 | Hull, untyped | Speed 8, Evasion 2 | Core |
 | Left arm | 5 | 4 | Hand, Weapon | Hand (with Manipulator) | Core |
 | Core | 6–9 | 1 | Hull, Reactor ×2, untyped | — | — |
 | Right arm | 10 | 4 | Weapon, Weapon | — | Core |
@@ -266,8 +278,8 @@ Heat Max 7. 21 slots, 4 of them Hull. Two working hands, a lighter right arm, a 
 
 | Section | d12 | Aim cost | Slots | Provides | Transfers to |
 |---|---|---|---|---|---|
-| Left leg | 1–2 | 3 | Hull, untyped ×2 | Speed 30, Evasion 1 | Core |
-| Right leg | 3–4 | 3 | Hull, untyped ×2 | Speed 30, Evasion 1 | Core |
+| Left leg | 1–2 | 3 | Hull, untyped ×2 | Speed 6, Evasion 1 | Core |
+| Right leg | 3–4 | 3 | Hull, untyped ×2 | Speed 6, Evasion 1 | Core |
 | Left arm | 5–6 | 3 | Hand, Weapon ×2 | Hand (with Manipulator) | Core |
 | Core | 7–9 | 2 | Hull, Reactor ×2, Tech, untyped ×2 | — | — |
 | Right arm | 10 | 4 | Hand, Weapon | Hand (with Manipulator) | Core |
@@ -280,7 +292,7 @@ Heat Max 11. 25 slots, 7 of them Hull. One treads section: a lucky hit there imm
 
 | Section | d12 | Aim cost | Slots | Provides | Transfers to |
 |---|---|---|---|---|---|
-| Treads | 1–2 | 3 | Hull ×2, untyped ×3 | Speed 40, Evasion 1 | Core |
+| Treads | 1–2 | 3 | Hull ×2, untyped ×3 | Speed 8, Evasion 1 | Core |
 | Left arm | 3–4 | 3 | Hull, Weapon ×3 | — | Core |
 | Core | 5–9 | 1 | Hull ×2, Reactor ×3, untyped ×4 | — | — |
 | Right arm | 10–11 | 3 | Hull, Weapon ×3 | — | Core |
@@ -357,7 +369,7 @@ A Mule brawling at Short range with everything ends turn 1 just under Heat Max a
 | Cockpit | AWP Plate P2 (2) | Hull, SBL Sensor SA1 |
 | Right shoulder | AWP Plate P2 (2) | CMS SRM-2 (Weapon), Ammo Bin: Missile (5) |
 
-Derived: 6 energy per turn, of which the exchanger's pump draws 1, so 5 to spend. Passive heat +3 (reactor) −4 (exchanger 3, fins 1) = net −1 per turn. Heat Max 7 + 2 (heat sink) = 9, Speed 60, Hand. Losing the heat sink drops Heat Max back to 7 mid-fight.
+Derived: 6 energy per turn, of which the exchanger's pump draws 1, so 5 to spend. Passive heat +3 (reactor) −4 (exchanger 3, fins 1) = net −1 per turn. Heat Max 7 + 2 (heat sink) = 9, Speed 12, Hand. Losing the heat sink drops Heat Max back to 7 mid-fight.
 
 ### Heat over two turns
 
@@ -394,7 +406,7 @@ Categorical skills: replace the placeholder names (Gunnery, Tech, Mobility, Mele
 
 Enemy mechs: full sheets like the players, or Caltrops foe notation with a short slot list?
 
-Movement scale: Speed 20–90 per turn is slow on a 1,200 m map with a 650 m Long band. Decide whether Speed is metres per turn or needs scaling up.
+Movement scale: Speed 4–90 per turn is slow on a 1,200 m map with a 650 m Long band. Decide whether Speed is metres per turn or needs scaling up.
 
 Economy: Solari prices are drafted on the Catalogue and Parts tabs; Scrap costs, armour refills and section rebuilds still need play-testing.
 
@@ -414,6 +426,7 @@ Ejection and pilots on foot once a mech is lost.
 | Melee needs an Engaged (base-to-base) target; guns treat Engaged as Short | Attachments |
 | Each weapon rolls on its own with the full pilot dice; repeat shots add to that weapon's roll | Attacks |
 | Range bands: Short to 60 m, Mid 61–250 m, Long 251–650 m | Range |
+| Scale: 1 tile = 10 m, 1 turn = 6 s; Speed in tiles per turn (old values ÷ 5) | Scale |
 | Unspent energy is lost unless stored in a Capacitor | Mech turn |
 | Sprint costs energy and heat equal to chassis Size (1–5) | Mech turn |
 | Reactor heat and passive cooling both applied at end of turn | Mech turn |

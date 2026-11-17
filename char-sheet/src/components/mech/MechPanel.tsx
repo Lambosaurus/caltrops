@@ -141,7 +141,7 @@ function MechPanel({ view, editable, showStowage = true }: {
         {' '}<Meter fraction={t.heat / (stats.heatMax * 1.5)} color={heatColor} mark={1 / 1.5}/>
         {' '}<span className='opacity-60'>end of turn → {projected}</span>
       </>)}
-      {stat('speed', <>Speed {stats.speed}</>)}
+      {stat('speed', <>Speed <b>{stats.speed}</b> <span className='opacity-60'>tiles</span></>)}
       {stat('evasion', <>Evasion {stats.evasion}</>)}
       {stat('hand', <>Hand {stats.hand ? '✓' : '✗'}</>)}
       {t.pilotWounds ? <span className='px-2 border border-error text-error'>Pilot wounds {t.pilotWounds}</span> : null}

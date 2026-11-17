@@ -1,7 +1,7 @@
 // Pure popover content for the mech sheet. Components render these; nothing here touches React.
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
 import { aimCost, deriveStats, hitLabel, mountDisabled, sectionDestroyed, slotsOf, turnEnergy } from '../../lib/mech/derive'
-import { activationBlocker, isWeapon, sprintCost } from '../../lib/mech/turn'
+import { activationBlocker, isWeapon, sprintCost, travel } from '../../lib/mech/turn'
 import type { ChassisSection, Mech, MechAttachment, MechRules, Mount } from '../../lib/mech/types'
 
 /** A headline number: `value` big and bold, `label` small beside it. */
@@ -99,7 +99,7 @@ export function keyStats(rules: MechRules, att: MechAttachment): PopStat[] {
   if (att.roll && !isWeapon(att)) S.push({ value: rollText(att, rules), label: 'roll' })
   else if (!att.roll && att.effect) S.push({ value: att.effect })
   if (att.hand) S.push({ value: 'Hand' })
-  if (att.heavy) S.push({ value: `−${att.heavy}`, label: 'Speed', tone: 'warn' })
+  if (att.heavy) S.push({ value: `−${att.heavy}`, label: 'Speed tiles', tone: 'warn' })
   if (att.volatile) S.push({ value: `${att.volatile}d4`, label: 'if disabled', tone: 'warn' })
   if (att.selfRepair) S.push({ value: '+1', label: 'point/turn' })
   return S
@@ -152,7 +152,7 @@ export function sectionPop(rules: MechRules, mech: Mech, section: ChassisSection
   const stats: PopStat[] = []
   if (state?.armour) stats.push({ value: `${state.armour.points}/${armour?.armour ?? '?'}`, label: 'armour', tone: state.armour.points ? undefined : 'warn' })
   stats.push({ value: `${hurt}/${total}`, label: 'wounds', tone: hurt ? (hurt >= total ? 'bad' : 'warn') : undefined })
-  if (section.provides?.speed) stats.push({ value: `${section.provides.speed}`, label: 'Speed' })
+  if (section.provides?.speed) stats.push({ value: `${section.provides.speed}`, label: 'Speed tiles' })
   if (section.provides?.evasion) stats.push({ value: `${section.provides.evasion}`, label: 'Evasion' })
   const transferTo = section.transfer && section.transfer !== 'pilot' ? chassis?.sections.find(s => s.id === section.transfer)?.name ?? section.transfer : ''
   const status: PopLine[] = sectionDestroyed(mech, section.id) ? [{ text: 'DESTROYED', tone: 'bad' }] : []
@@ -236,15 +236,22 @@ export function statPop(rules: MechRules, mech: Mech, kind: StatKind): PopText {
     }
     case 'speed': {
       const sp = sprintCost(rules, mech)
+      const walk = travel(d.speed)
+      const run = travel(d.speed * 2)
       return {
-        title: `Speed ${d.speed}`,
+        title: `Speed ${d.speed} tiles / turn`,
+        sub: `${walk.metres} m a turn · ${walk.mps} m/s · ${walk.kmh} km/h`,
         stats: [
           ...(chassis?.sections ?? []).filter(s => s.provides?.speed).map(s => sectionDestroyed(mech, s.id)
             ? { value: '0', label: `${s.name} (destroyed)`, tone: 'bad' as Tone }
             : { value: `${s.provides?.speed}`, label: s.name }),
           ...(d.heavy ? [{ value: `−${d.heavy}`, label: 'Heavy parts', tone: 'warn' as Tone }] : []),
         ],
-        lines: [`Moving is free. Sprint: ${sp.energy}E +${sp.heat}H to move again and gain Evasion.`],
+        lines: [
+          `Moving is free. Sprint: ${d.speed * 2} tiles (${run.metres} m) for ${sp.energy}E +${sp.heat}H, and gain Evasion.`,
+          `Travel: ${walk.kmPerMin} km a minute, ${walk.kmh} km an hour.`,
+        ],
+        note: '1 tile = 10 m · 1 turn = 6 s',
       }
     }
     case 'evasion':

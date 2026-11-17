@@ -8,7 +8,7 @@ export const TAG_SHORT: { [tag: string]: string } = {
   Weak: 'Y attacks against it gain 1 success',
   Deflection: 'cancels X incoming successes until your next turn',
   Indirect: 'no line of sight needed against a locked target',
-  Area: 'rolls once against everything within X of impact',
+  Area: 'rolls once against everything within X tiles of impact',
   Volatile: 'when disabled: Xd4 to its section, ignoring armour',
   Kinetic: 'damage type',
   Thermal: 'damage type',
@@ -65,7 +65,7 @@ export const TAG_SHORT: { [tag: string]: string } = {
   Analog: 'cannot be disrupted',
   Shielded: 'disrupting it costs X more successes',
   Faraday: 'parts in its section get Shielded (X)',
-  Heavy: '−X Speed',
+  Heavy: '−X tiles of Speed',
   'Cheap recharge': 'refills at half price',
   'Self-repairing': '+1 armour point each turn',
 }

@@ -139,7 +139,7 @@ All are Passive and raise Heat Max; the Phase sinks can also be activated to dum
 | Make | Model | Kind | Tier | Type | Size | Heat Max | Energy | Heat | Tags | Price | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | KR | Ballast BB2 | Ballast sink | Scrap | Generic | 2 | +2 | — | — | — | 200 | A block of scrap iron |
-| KR | Ballast BB4 | Ballast sink | Scrap | Generic | 3 | +4 | — | — | Heavy (5) | 400 | Two blocks |
+| KR | Ballast BB4 | Ballast sink | Scrap | Generic | 3 | +4 | — | — | Heavy (1) | 400 | Two blocks |
 | HTC | Halcyon HS-2 | Heat sink | Standard | Generic | 1 | +2 | — | — | — | 800 | Was Heat Sink |
 | HTC | Halcyon HS-5 | Heat sink | Standard | Generic | 2 | +5 | — | — | — | 1,600 | Beats two HS-2s |
 | HTC | Halcyon HS-8 | Heat sink | Standard | Generic | 3 | +8 | — | — | — | 2,800 | Heat bank for a big-gun frame |
@@ -446,7 +446,7 @@ Defence parts trade energy and heat for fewer incoming successes. An activated d
 | SBL | Faraday Mesh FM1 | Faraday mesh | Standard | Tech | 1 | — | — | — | Passive, Faraday (1) | 2,500 |
 | SBL | Surge Breaker SB2 | Surge breaker | Military | Tech | 1 | 2 | 1 | — | Grounding (2) | 7,000 |
 | CMS | Point-defence PD1 | Point-defence turret | Military | Weapon | 1 | 1 | 1 | Light | Point-defence (1) | 6,000 |
-| AWP | Tower Shield TS2 | Tower shield | Military | Hand | 2 | 1 | 0 | — | Deflection (2), Frontal, Heavy (10) | 8,000 |
+| AWP | Tower Shield TS2 | Tower shield | Military | Hand | 2 | 1 | 0 | — | Deflection (2), Frontal, Heavy (2) | 8,000 |
 | SBL | Field Generator FG2 | Field generator | Military | Tech | 2 | 2 | 3 | — | Deflection (1), Armoured vs Kinetic, Weak vs EM | 9,000 |
 | CMS | Point-defence PD2 | Point-defence turret | Military | Weapon | 1 | 2 | 1 | Light | Point-defence (2) | 10,000 |
 | CLF | Aegis A2 | Aegis projector | Elite | Tech | 2 | 3 | 3 | — | Deflection (2) | 20,000 |
@@ -459,16 +459,16 @@ Each section's Armour slot holds one; the model number is its points. Refilling 
 | Make | Model | Kind | Tier | Points | Tags | Tags while it has points | Price |
 |---|---|---|---|---|---|---|---|
 | KR | Scrap Plate SP1 | Scrap plate | Scrap | 1 | — | — | 100 |
-| KR | Scrap Plate SP2 | Scrap plate | Scrap | 2 | Heavy (5) | — | 250 |
-| KR | Slab SB4 | Slab armour | Scrap | 4 | Heavy (10) | — | 600 |
+| KR | Scrap Plate SP2 | Scrap plate | Scrap | 2 | Heavy (1) | — | 250 |
+| KR | Slab SB4 | Slab armour | Scrap | 4 | Heavy (2) | — | 600 |
 | AWP | Plate P2 | Plating | Salvage | 2 | — | — | 500 |
 | AWP | Ablative AB2 | Ablative plating | Salvage | 2 | — | Armoured vs Thermal | 1,200 |
-| AWP | Plate P3 | Plating | Standard | 3 | Heavy (5) | — | 900 |
+| AWP | Plate P3 | Plating | Standard | 3 | Heavy (1) | — | 900 |
 | AWP | Reactive RX2 | Reactive plating | Standard | 2 | — | Armoured vs Explosive | 1,200 |
 | AWP | Hardened H2 | Hardened plating | Standard | 2 | — | Armoured vs EM | 1,500 |
 | AWP | Composite C3 | Composite plating | Standard | 3 | — | — | 1,500 |
 | AWP | Ablative AB3 | Ablative plating | Standard | 3 | — | Armoured vs Thermal | 2,500 |
-| AWP | Bulkhead B6 | Bulkhead plate | Standard | 6 | Heavy (10) | — | 5,000 |
+| AWP | Bulkhead B6 | Bulkhead plate | Standard | 6 | Heavy (2) | — | 5,000 |
 | AWP | Lightweave LW4 | Light composite | Military | 4 | Cheap recharge | — | 4,000 |
 | AWP | Reactive RX3 | Reactive plating | Military | 3 | — | Armoured vs Explosive | 3,500 |
 | AWP | Hardened H3 | Hardened plating | Military | 3 | — | Armoured vs EM | 4,000 |

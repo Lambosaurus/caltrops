@@ -18,13 +18,13 @@ describe('deriveStats', () => {
   it('derives the loaded Mule', () => {
     const st = deriveStats(FIXTURE_RULES, mule())
     expect(st).toMatchObject({
-      energyOut: 6, reactorHeat: 2, cooling: 4, heatMax: 9, baseHeatMax: 7, speed: 60, evasion: 2,
+      energyOut: 6, reactorHeat: 2, cooling: 4, heatMax: 9, baseHeatMax: 7, speed: 12, evasion: 2,
       hand: true, stowage: 3, capacitor: 0, hasReactor: true, hasCooling: true,
     })
   })
   it('loses a leg', () => {
     const st = deriveStats(FIXTURE_RULES, wound(mule(), 'lleg'))
-    expect(st.speed).toBe(30)
+    expect(st.speed).toBe(6)
     expect(st.evasion).toBe(1)
     expect(st.heatMax).toBe(7)
   })

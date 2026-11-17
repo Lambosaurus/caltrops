@@ -144,8 +144,8 @@ describe('turn economy', () => {
 
   it('Heavy parts slow the mech', () => {
     const m = prefab('Junkyard Dog')
-    expect(deriveStats(mr, m).heavy).toBe(5)
-    expect(deriveStats(mr, m).speed).toBe(55)
+    expect(deriveStats(mr, m).heavy).toBe(1)
+    expect(deriveStats(mr, m).speed).toBe(11)
   })
 
   it('adjustTurn sets values directly, floored at 0', () => {

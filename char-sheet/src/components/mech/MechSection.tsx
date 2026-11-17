@@ -61,7 +61,7 @@ function MechSection({ rules, section, view, editable, loadout = false, onHit, o
   const play = editable >= EditMode.Live
   const dead = sectionDestroyed(mech, section.id)
   const prov = [
-    section.provides?.speed ? `Speed ${section.provides.speed}` : '',
+    section.provides?.speed ? `Speed ${section.provides.speed} tiles` : '',
     section.provides?.evasion ? `Evasion ${section.provides.evasion}` : '',
   ].filter(Boolean)
   const transferName = section.transfer && section.transfer !== 'pilot'
