@@ -22,10 +22,29 @@ const keyOf = (m: Mech, part: string): string => {
 }
 
 describe('Scrap Lancer catalogue', () => {
-  it('has the doc catalogue: 21 chassis, 249 parts plus 6 ammo bins', () => {
-    expect(mr.chassis).toHaveLength(21)
+  it('has the doc catalogue: 31 chassis, 249 parts plus 6 ammo bins', () => {
+    expect(mr.chassis).toHaveLength(31)
     expect(mr.attachments.filter(a => a.group !== 'Ammo')).toHaveLength(249)
     expect(mr.ammo.map(a => a.name)).toEqual(['Light', 'Standard', 'Missile', 'Heavy', 'Slug', 'Fuel'])
+  })
+
+  it('every chassis follows the slot rule, covers d12 1–12 once and has unique section ids', () => {
+    const RULE: { [k: string]: number[] } = {
+      Ultralight: [10, 12, 13, 15, 17], Light: [12, 14, 16, 18, 20], Medium: [17, 19, 21, 23, 25],
+      Heavy: [21, 23, 26, 28, 31], 'Heavy assault': [26, 28, 31, 33, 36], 'Super-heavy': [31, 34, 37, 40, 43],
+    }
+    const MIN_HULL: { [k: string]: number } = { Ultralight: 2, Light: 2, Medium: 3, Heavy: 4, 'Heavy assault': 6, 'Super-heavy': 6 }
+    const TIERS = ['Scrap', 'Salvage', 'Standard', 'Military', 'Elite']
+    for (const c of mr.chassis) {
+      const cls = c.class!.startsWith('Heavy assault') ? 'Heavy assault' : c.class!.startsWith('Super-heavy') ? 'Super-heavy' : c.class!.split(' ')[0]
+      const slots = c.sections.flatMap(s => s.slots)
+      const want = RULE[cls][TIERS.indexOf(c.tier!)] + (['OHS', 'GWC'].includes(c.make!) ? 2 : 0)
+      expect([c.name, slots.length]).toEqual([c.name, want])
+      expect([c.name, slots.filter(s => s === 'Hull').length >= MIN_HULL[cls]]).toEqual([c.name, true])
+      const d12 = c.sections.flatMap(s => Array.from({ length: s.range[1] - s.range[0] + 1 }, (_, i) => s.range[0] + i)).sort((a, b) => a - b)
+      expect([c.name, d12]).toEqual([c.name, Array.from({ length: 12 }, (_, i) => i + 1)])
+      expect([c.name, new Set(c.sections.map(s => s.id)).size]).toEqual([c.name, c.sections.length])
+    }
   })
 
   it('gives every part a make, tier and price, and every chassis a tier', () => {

@@ -31,7 +31,7 @@ Twenty makes, each with a narrow trade. Seven build frames, and a frame maker on
 | Meridian Aerospace | MAS | Light, fast frames, and propulsion: jump jets and thrusters | Salvage–Military | Fast, evasive, lightly built | Hunting bird + letter-number: Kestrel K-12 |
 | Vantor Defence Group | VDG | Sol military frames only | Military | Efficient front-line frames; spares are controlled | Name + VX number: Halberd VX-6 |
 | Greenward Cooperative | GWC | Naturalist frames, and the analog systems that keep them running: Kiln reactors, water cooling, repair rigs | Standard–Military | Analog, EM-proof, heavy, field-repairable | Hardwood or craft + Pattern: Ironbark Pattern 5 |
-| Concord Lattice Foundry | CLF | Elite frames, and the AI systems built into them: tactical cores, veils, aegis fields | Elite | Compact, no Hull, rarely for sale | Name + S number: Wraith S9. Systems by letter: Mind M3 |
+| Concord Lattice Foundry | CLF | Elite frames, and the AI systems built into them: tactical cores, veils, aegis fields | Elite | Compact, little Hull, rarely for sale | Name + S number: Wraith S9. Systems by letter: Mind M3 |
 | Weapons |  |  |  |  |  |
 | Brannoc Ordnance | BRO | Colonial guns: machine guns, autocannons, cannons, mortars | Salvage–Military | Reliable, fairly priced, every calibre | Kind + calibre: M12, AC-30, HC-60 |
 | Ashby-Raine Heavy Ordnance | ARH | Sol heavy guns: big cannons, artillery, mass drivers | Military–Elite | Devastating, huge, hot and hungry | Name + calibre: Thunderer 120. Rails and coils by letter: Rail R4 |
@@ -52,7 +52,7 @@ For parts, the number in a model name is the part's headline stat: energy for a 
 
 ## Chassis overview
 
-Twenty-one frames from seven makes, grouped by make. Prices run from 800 to 70,000, and Heat Max from 5 to 20: junk frames scrape by on small numbers, while super-heavies run big reactors, big coolers and big guns. Jackal J-7, Mule Mk II and Bulwark Block 4 are the original Jackal, Mule and Bulwark under their makers' names; only their Heat Max has changed.
+Thirty-one frames from seven makes, grouped by make. Prices run from 800 to 70,000, and Heat Max from 5 to 20: junk frames scrape by on small numbers, while super-heavies run big reactors, big coolers and big guns. Jackal J-7, Mule Mk II and Bulwark Block 4 are the original Jackal, Mule and Bulwark under their makers' names; only their Heat Max has changed.
 
 Slot counts exclude each section's Armour slot.
 
@@ -64,25 +64,35 @@ Hardpoints are Reactor / Weapon / Tech / Hand / untyped slots.
 |---|---|---|---|---|---|---|---|---|
 | KR | Tinpot R0 | Ultralight | Scrap | 800 | 5 | 10 (3) | 10 / 2 | 1 / 1 / 0 / 1 / 4 |
 | KR | Rattler R1 | Light | Scrap | 1,200 | 6 | 12 (3) | 12 / 2 | 2 / 1 / 0 / 2 / 4 |
-| KR | Hulk R3 | Medium | Scrap | 2,200 | 7 | 15 (5) | 10 / 2 | 2 / 3 / 0 / 1 / 4 |
-| OHS | Ox Mk II | Medium quad | Scrap | 2,500 | 6 | 21 (8) | 12 / 0 | 2 / 1 / 2 / 1 / 7 |
-| OHS | Ox Mk III | Medium quad | Salvage | 4,000 | 7 | 23 (8) | 12 / 0 | 2 / 2 / 3 / 1 / 7 |
-| OHS | Mule Mk II | Medium | Salvage | 6,000 | 7 | 21 (4) | 12 / 2 | 2 / 4 / 2 / 2 / 6 |
-| OHS | Mastodon Mk I | Heavy tracked | Salvage | 8,000 | 9 | 21 (6) | 6 / 0 | 3 / 1 / 2 / 2 / 7 |
+| KR | Hulk R3 | Medium | Scrap | 2,200 | 7 | 17 (6) | 10 / 2 | 2 / 3 / 0 / 1 / 5 |
+| KR | Scuttler R2 | Ultralight quad | Salvage | 2,000 | 5 | 12 (3) | 12 / 2 | 2 / 1 / 1 / 1 / 4 |
+| KR | Brute R5 | Heavy | Salvage | 6,500 | 10 | 23 (7) | 8 / 0 | 3 / 7 / 0 / 1 / 5 |
+| KR | Goliath R9 | Super-heavy tracked | Scrap | 12,000 | 16 | 31 (11) | 4 / 0 | 4 / 2 / 1 / 2 / 11 |
+| OHS | Ox Mk II | Medium quad | Scrap | 2,500 | 6 | 19 (8) | 12 / 0 | 2 / 1 / 1 / 1 / 6 |
+| OHS | Ox Mk III | Medium quad | Salvage | 4,000 | 7 | 21 (8) | 12 / 0 | 2 / 2 / 2 / 1 / 6 |
+| OHS | Mule Mk II | Medium | Salvage | 6,000 | 7 | 21 (4) | 12 / 2 | 2 / 4 / 2 / 2 / 7 |
+| OHS | Mastodon Mk I | Heavy tracked | Salvage | 8,000 | 9 | 25 (9) | 6 / 0 | 3 / 1 / 3 / 2 / 7 |
+| OHS | Yak Mk I | Medium tracked | Salvage | 5,500 | 7 | 21 (7) | 8 / 0 | 2 / 1 / 2 / 1 / 8 |
 | HCA | Picket Block 1 | Light | Salvage | 5,000 | 5 | 14 (3) | 14 / 4 | 2 / 3 / 3 / 1 / 2 |
 | HCA | Warden Block 2 | Medium | Standard | 10,000 | 8 | 21 (5) | 12 / 2 | 2 / 5 / 3 / 1 / 5 |
-| HCA | Bulwark Block 4 | Heavy tracked | Standard | 14,000 | 11 | 25 (7) | 8 / 1 | 3 / 6 / 2 / 0 / 7 |
-| HCA | Rampart Block 6 | Heavy | Standard | 20,000 | 13 | 24 (7) | 6 / 0 | 3 / 6 / 3 / 1 / 4 |
-| MAS | Jackal J-7 | Light | Salvage | 4,000 | 6 | 13 (3) | 16 / 4 | 2 / 3 / 1 / 1 / 3 |
-| MAS | Kestrel K-12 | Light | Military | 18,000 | 7 | 17 (3) | 18 / 4 | 2 / 4 / 4 / 0 / 4 |
-| MAS | Harrier H-3 | Medium | Military | 22,000 | 8 | 19 (3) | 16 / 4 | 2 / 5 / 3 / 1 / 5 |
+| HCA | Bulwark Block 4 | Heavy tracked | Standard | 14,000 | 11 | 26 (7) | 8 / 1 | 3 / 6 / 3 / 0 / 7 |
+| HCA | Rampart Block 6 | Heavy | Standard | 20,000 | 13 | 26 (8) | 6 / 0 | 3 / 6 / 3 / 1 / 5 |
+| HCA | Outrider Block 3 | Light | Standard | 8,000 | 7 | 16 (3) | 16 / 4 | 2 / 5 / 3 / 1 / 2 |
+| HCA | Sentinel Block 5 | Heavy assault | Standard | 26,000 | 14 | 31 (9) | 6 / 0 | 3 / 9 / 3 / 1 / 6 |
+| MAS | Jackal J-7 | Light | Salvage | 4,000 | 6 | 14 (4) | 16 / 4 | 2 / 3 / 1 / 1 / 3 |
+| MAS | Kestrel K-12 | Light | Military | 18,000 | 7 | 18 (4) | 18 / 4 | 2 / 4 / 4 / 0 / 4 |
+| MAS | Harrier H-3 | Medium | Military | 22,000 | 8 | 23 (6) | 16 / 4 | 2 / 5 / 3 / 1 / 6 |
+| MAS | Merlin M-2 | Ultralight | Standard | 6,000 | 6 | 13 (3) | 18 / 4 | 2 / 2 / 3 / 0 / 3 |
+| MAS | Osprey O-5 | Medium | Salvage | 7,000 | 7 | 19 (4) | 14 / 2 | 2 / 4 / 2 / 0 / 7 |
 | VDG | Halberd VX-6 | Medium | Military | 20,000 | 10 | 23 (6) | 12 / 2 | 2 / 5 / 3 / 1 / 6 |
-| VDG | Monolith VX-9 | Heavy assault | Military | 30,000 | 14 | 31 (10) | 8 / 0 | 3 / 7 / 3 / 1 / 7 |
-| VDG | Bastion VX-12 | Super-heavy tracked | Military | 48,000 | 20 | 37 (11) | 4 / 0 | 4 / 11 / 4 / 1 / 6 |
-| GWC | Thornback Pattern 3 | Medium | Standard | 9,000 | 8 | 21 (10) | 12 / 2 | 2 / 3 / 1 / 1 / 4 |
-| GWC | Ironbark Pattern 5 | Heavy | Military | 24,000 | 12 | 27 (10) | 10 / 0 | 3 / 4 / 2 / 2 / 6 |
-| CLF | Wraith S9 | Light | Elite | 45,000 | 8 | 15 (0) | 18 / 6 | 2 / 3 / 5 / 1 / 4 |
-| CLF | Paragon S11 | Heavy | Elite | 70,000 | 15 | 24 (4) | 12 / 2 | 3 / 6 / 4 / 2 / 5 |
+| VDG | Monolith VX-9 | Heavy assault | Military | 30,000 | 14 | 33 (11) | 8 / 0 | 3 / 8 / 3 / 1 / 7 |
+| VDG | Bastion VX-12 | Super-heavy tracked | Military | 48,000 | 20 | 40 (11) | 4 / 0 | 4 / 11 / 4 / 1 / 9 |
+| GWC | Thornback Pattern 3 | Medium | Standard | 9,000 | 8 | 23 (11) | 12 / 2 | 2 / 4 / 1 / 1 / 4 |
+| GWC | Ironbark Pattern 5 | Heavy | Military | 24,000 | 12 | 30 (13) | 10 / 0 | 3 / 4 / 2 / 2 / 6 |
+| GWC | Willow Pattern 2 | Light | Standard | 7,000 | 7 | 18 (7) | 16 / 2 | 2 / 3 / 1 / 1 / 4 |
+| CLF | Wraith S9 | Light | Elite | 45,000 | 8 | 20 (2) | 18 / 6 | 2 / 5 / 6 / 1 / 4 |
+| CLF | Paragon S11 | Heavy | Elite | 70,000 | 15 | 31 (6) | 12 / 2 | 3 / 6 / 6 / 2 / 8 |
+| CLF | Seraph S10 | Medium | Elite | 55,000 | 11 | 25 (5) | 16 / 4 | 2 / 5 / 6 / 1 / 6 |
 
 How the tiers show up in the frame:
 
@@ -136,9 +146,50 @@ A dead OHS Mule rebuilt with slabs of Hull and a second gun arm. Ugly, slow and 
 | Left leg | 1–2 | Hull, untyped | Speed 5, Evasion 1 |
 | Right leg | 3–4 | Hull, untyped | Speed 5, Evasion 1 |
 | Left arm | 5–6 | Hand, Weapon | Hand (with Manipulator) |
-| Core | 7–9 | Hull ×2, Reactor ×2, untyped ×2 | — |
-| Right arm | 10–11 | Weapon ×2 | — |
+| Core | 7–9 | Hull ×2, Reactor ×2, untyped ×3 | — |
+| Right arm | 10–11 | Hull, Weapon ×2 | — |
 | Cockpit | 12 | Hull | — |
+
+### KR Scuttler R2 — ultralight quad, Salvage
+
+A rebuilt dock crawler: four stubby legs and one big claw. Cheap, low and hard to pin down.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Rear left leg | 1 | Hull | Speed 3 |
+| Rear right leg | 2 | Hull | Speed 3 |
+| Front left leg | 3 | untyped | Speed 3, Evasion 1 |
+| Front right leg | 4 | untyped | Speed 3, Evasion 1 |
+| Core | 5–8 | Reactor ×2, untyped ×2 | — |
+| Claw arm | 9–11 | Hull, Hand, Weapon | Hand (with Manipulator) |
+| Cockpit | 12 | Tech | — |
+
+### KR Brute R5 — heavy, Salvage
+
+A heavy reactor bay bolted into a walker, with a three-slot cannon welded across the right shoulder.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Left leg | 1–2 | Hull ×2, untyped | Speed 4 |
+| Right leg | 3–4 | Hull ×2, untyped | Speed 4 |
+| Left arm | 5–6 | Hand, Weapon ×2 | Hand (with Manipulator) |
+| Core | 7–9 | Hull, Reactor ×3, untyped ×2 | — |
+| Right arm | 10 | Hull, Weapon ×2 | — |
+| Welded cannon | 11 | Weapon ×3 | — |
+| Cockpit | 12 | Hull, untyped | — |
+
+### KR Goliath R9 — super-heavy tracked, Scrap
+
+A mining crawler pressed into war: a dozer blade, a cutting boom and a reactor bay big enough for anything.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Left tread | 1–2 | Hull ×2, untyped ×3 | Speed 2 |
+| Right tread | 3–4 | Hull ×2, untyped ×3 | Speed 2 |
+| Dozer blade | 5–6 | Hull ×3, Hand | — |
+| Core | 7–9 | Hull ×2, Reactor ×4, untyped ×4 | — |
+| Cutting boom | 10–11 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
+| Cockpit | 12 | Hull, Tech, untyped | — |
 
 ### OHS Ox Mk II — medium quad, Scrap
 
@@ -150,13 +201,13 @@ A four-legged freight walker with a crane arm. Tough and roomy, but it carries o
 | Rear right leg | 2 | Hull, untyped | Speed 3 |
 | Front left leg | 3 | Hull, untyped | Speed 3 |
 | Front right leg | 4 | Hull, untyped | Speed 3 |
-| Cargo bed (core) | 5–9 | Hull ×2, Reactor ×2, Tech, untyped ×3 | — |
+| Cargo bed (core) | 5–9 | Hull ×2, Reactor ×2, Tech, untyped ×2 | — |
 | Crane arm | 10–11 | Hull, Hand, Weapon | Hand (with Manipulator) |
-| Cockpit | 12 | Hull, Tech | — |
+| Cockpit | 12 | Hull | — |
 
 ### OHS Ox Mk III — medium quad, Salvage
 
-The current Ox. It has the Mk II's legs and cargo bed, plus a second gun on the crane arm and a cab with two Tech slots.
+The current Ox. It has the Mk II's legs and cargo bed, plus a second gun on the crane arm and a cab with a Tech slot.
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
@@ -164,9 +215,9 @@ The current Ox. It has the Mk II's legs and cargo bed, plus a second gun on the 
 | Rear right leg | 2 | Hull, untyped | Speed 3 |
 | Front left leg | 3 | Hull, untyped | Speed 3 |
 | Front right leg | 4 | Hull, untyped | Speed 3 |
-| Cargo bed (core) | 5–9 | Hull ×2, Reactor ×2, Tech, untyped ×3 | — |
+| Cargo bed (core) | 5–9 | Hull ×2, Reactor ×2, Tech, untyped ×2 | — |
 | Crane arm | 10–11 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
-| Cockpit | 12 | Hull, Tech ×2 | — |
+| Cockpit | 12 | Hull, Tech | — |
 
 ### OHS Mastodon Mk I — heavy tracked, Salvage
 
@@ -174,10 +225,22 @@ A tracked mining crawler with a drill arm and a crane. It has a heavy reactor ba
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Treads | 1–3 | Hull ×2, untyped ×3 | Speed 6 |
-| Core | 4–8 | Hull ×2, Reactor ×3, Tech, untyped ×3 | — |
+| Treads | 1–3 | Hull ×3, untyped ×3 | Speed 6 |
+| Core | 4–8 | Hull ×3, Reactor ×3, Tech, untyped ×3 | — |
 | Drill arm | 9–10 | Hull, Hand, Weapon | Hand (with Manipulator) |
-| Crane arm | 11 | Hand, untyped | Hand (with Manipulator) |
+| Crane arm | 11 | Hull, Hand, untyped | Hand (with Manipulator) |
+| Cockpit | 12 | Hull, Tech ×2 | — |
+
+### OHS Yak Mk I — medium tracked, Salvage
+
+A tracked tow rig with a crane boom and an open cargo bed. Slow, tough and full of room.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Treads | 1–3 | Hull ×2, untyped ×3 | Speed 8 |
+| Cargo bed | 4–5 | Hull, untyped ×3 | — |
+| Core | 6–9 | Hull ×2, Reactor ×2, Tech, untyped | — |
+| Crane boom | 10–11 | Hull, Hand, Weapon, untyped | Hand (with Manipulator) |
 | Cockpit | 12 | Hull, Tech | — |
 
 ## Chassis details: Hesper, Meridian and Vantor
@@ -216,9 +279,38 @@ The militia's answer to Sol siege frames: a slow heavy biped with a four-slot ca
 |---|---|---|---|
 | Left leg | 1–2 | Hull ×2, untyped | Speed 3 |
 | Right leg | 3–4 | Hull ×2, untyped | Speed 3 |
-| Core | 5–8 | Hull, Reactor ×3, Tech ×2, untyped ×2 | — |
+| Core | 5–8 | Hull, Reactor ×3, Tech ×2, untyped ×3 | — |
 | Cannon arm | 9–10 | Hull, Weapon ×4 | — |
-| Left arm | 11 | Hand, Weapon ×2 | Hand (with Manipulator) |
+| Left arm | 11 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
+| Cockpit | 12 | Hull, Tech | — |
+
+### HCA Outrider Block 3 — light, Standard
+
+A militia skirmisher with a back-mounted missile rack and a sensor mast.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Left leg | 1–2 | Hull, untyped | Speed 8, Evasion 2 |
+| Right leg | 3–4 | Hull, untyped | Speed 8, Evasion 2 |
+| Left arm | 5–6 | Hand, Weapon | Hand (with Manipulator) |
+| Core | 7–9 | Hull, Reactor ×2, Tech | — |
+| Right arm | 10 | Weapon ×2 | — |
+| Missile rack | 11 | Weapon ×2 | — |
+| Sensor mast (cockpit) | 12 | Tech ×2 | — |
+
+### HCA Sentinel Block 5 — heavy assault, Standard
+
+The militia's walking bunker: two shoulder mounts and a gun arm on a slow, heavy frame.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Left leg | 1–2 | Hull ×2, untyped ×2 | Speed 3 |
+| Right leg | 3–4 | Hull ×2, untyped ×2 | Speed 3 |
+| Left arm | 5 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
+| Core | 6–8 | Hull ×2, Reactor ×3, Tech ×2 | — |
+| Right arm | 9 | Hull, Weapon ×3 | — |
+| Left shoulder | 10 | Weapon ×2, untyped | — |
+| Right shoulder | 11 | Weapon ×2, untyped | — |
 | Cockpit | 12 | Hull, Tech | — |
 
 ### MAS Kestrel K-12 — light, Military
@@ -232,7 +324,7 @@ A front-line skirmisher with gun pods for arms and a sensor head. No hands: it f
 | Left arm | 5 | Weapon ×2 | — |
 | Core | 6–9 | Hull, Reactor ×2, Tech ×2 | — |
 | Right arm | 10 | Weapon ×2 | — |
-| Sensor head (cockpit) | 11–12 | Tech ×2 | — |
+| Sensor head (cockpit) | 11–12 | Hull, Tech ×2 | — |
 
 ### MAS Harrier H-3 — medium, Military
 
@@ -242,10 +334,35 @@ The Kestrel's bigger sibling, built around jump packs: a hand, a three-gun arm a
 |---|---|---|---|
 | Left leg | 1–2 | Hull, untyped ×2 | Speed 8, Evasion 2 |
 | Right leg | 3–4 | Hull, untyped ×2 | Speed 8, Evasion 2 |
-| Left arm | 5–6 | Hand, Weapon ×2 | Hand (with Manipulator) |
-| Core | 7–9 | Hull, Reactor ×2, Tech ×2, untyped | — |
-| Right arm | 10–11 | Weapon ×3 | — |
-| Cockpit | 12 | Tech | — |
+| Left arm | 5–6 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
+| Core | 7–9 | Hull, Reactor ×2, Tech ×2, untyped ×2 | — |
+| Right arm | 10–11 | Hull, Weapon ×3 | — |
+| Cockpit | 12 | Hull, Tech | — |
+
+### MAS Merlin M-2 — ultralight, Standard
+
+A reverse-jointed scout: a sensor head, a gun pod and very fast legs. No hands.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Left leg | 1–3 | Hull, untyped | Speed 9, Evasion 2 |
+| Right leg | 4–6 | Hull, untyped | Speed 9, Evasion 2 |
+| Core | 7–9 | Reactor ×2, Tech, untyped | — |
+| Gun pod | 10 | Weapon ×2 | — |
+| Sensor head (cockpit) | 11–12 | Hull, Tech ×2 | — |
+
+### MAS Osprey O-5 — medium, Salvage
+
+An old atmospheric airframe on legs. Its wing pylons carry guns where arms would be, with room for jets.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Left leg | 1–2 | Hull, untyped ×2 | Speed 7, Evasion 1 |
+| Right leg | 3–4 | Hull, untyped ×2 | Speed 7, Evasion 1 |
+| Left wing pylon | 5–6 | Weapon ×2, untyped | — |
+| Core | 7–9 | Hull, Reactor ×2, Tech, untyped | — |
+| Right wing pylon | 10–11 | Weapon ×2, untyped | — |
+| Cockpit | 12 | Hull, Tech | — |
 
 ### VDG Halberd VX-6 — medium, Military
 
@@ -262,7 +379,7 @@ Vantor's main battle frame: a Warden with Hull in every section, more Heat Max a
 
 ### VDG Monolith VX-9 — heavy assault, Military
 
-A walking gun emplacement with a missile shoulder. Slow, with no Evasion, but 10 Hull slots and Heat Max 14.
+A walking gun emplacement with a missile shoulder. Slow, with no Evasion, but 11 Hull slots and Heat Max 14.
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
@@ -270,8 +387,8 @@ A walking gun emplacement with a missile shoulder. Slow, with no Evasion, but 10
 | Right leg | 3–4 | Hull ×2, untyped ×2 | Speed 4 |
 | Left arm | 5–6 | Hull, Weapon ×3 | — |
 | Core | 7–9 | Hull ×2, Reactor ×3, Tech ×2, untyped ×2 | — |
-| Right arm | 10 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
-| Left shoulder | 11 | Weapon ×2, untyped | — |
+| Right arm | 10 | Hull, Hand, Weapon ×3 | Hand (with Manipulator) |
+| Left shoulder | 11 | Hull, Weapon ×2, untyped | — |
 | Cockpit | 12 | Hull ×2, Tech | — |
 
 ### VDG Bastion VX-12 — super-heavy tracked, Military
@@ -280,9 +397,9 @@ A tracked fortress with a four-slot reactor bay and a five-slot main gun mount. 
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left tread | 1–2 | Hull ×2, untyped ×2 | Speed 2 |
-| Right tread | 3–4 | Hull ×2, untyped ×2 | Speed 2 |
-| Core | 5–7 | Hull ×2, Reactor ×4, Tech ×3, untyped ×2 | — |
+| Left tread | 1–2 | Hull ×2, untyped ×3 | Speed 2 |
+| Right tread | 3–4 | Hull ×2, untyped ×3 | Speed 2 |
+| Core | 5–7 | Hull ×2, Reactor ×4, Tech ×3, untyped ×3 | — |
 | Main gun mount | 8–9 | Hull, Weapon ×5 | — |
 | Left arm | 10 | Hull, Weapon ×3 | — |
 | Right arm | 11 | Hull, Hand, Weapon ×3 | Hand (with Manipulator) |
@@ -290,7 +407,7 @@ A tracked fortress with a four-slot reactor bay and a five-slot main gun mount. 
 
 ## Chassis details: Greenward and Concord
 
-The two ends of the setting's divide. Greenward frames are analog, Hull-heavy and short on Tech slots. Concord frames are compact and AI-designed, with little or no Hull.
+The two ends of the setting's divide. Greenward frames are analog, Hull-heavy and short on Tech slots. Concord frames are compact and AI-designed, with little Hull.
 
 ### GWC Thornback Pattern 3 — medium, Standard
 
@@ -300,35 +417,49 @@ A Naturalist militia frame: hand-built, armoured in Hull, with one Tech slot and
 |---|---|---|---|
 | Left leg | 1–2 | Hull ×2, untyped | Speed 6, Evasion 1 |
 | Right leg | 3–4 | Hull ×2, untyped | Speed 6, Evasion 1 |
-| Left arm | 5–6 | Hull, Hand, Weapon | Hand (with Manipulator) |
-| Core | 7–9 | Hull ×2, Reactor ×2, Tech, untyped ×2 | — |
+| Left arm | 5–6 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
+| Core | 7–9 | Hull ×3, Reactor ×2, Tech, untyped ×2 | — |
 | Right arm | 10–11 | Hull, Weapon ×2 | — |
 | Cockpit | 12 | Hull ×2 | — |
 
 ### GWC Ironbark Pattern 5 — heavy, Military
 
-Greenward's answer to Elite frames: a slow two-handed brawler with a three-slot reactor bay and 10 Hull slots, built to close in and tear things apart.
+Greenward's answer to Elite frames: a slow two-handed brawler with a three-slot reactor bay and 13 Hull slots, built to close in and tear things apart.
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
 | Left leg | 1–2 | Hull ×2, untyped ×2 | Speed 5 |
 | Right leg | 3–4 | Hull ×2, untyped ×2 | Speed 5 |
-| Left arm | 5–6 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
-| Core | 7–9 | Hull ×2, Reactor ×3, Tech, untyped ×2 | — |
-| Right arm | 10–11 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
+| Left arm | 5–6 | Hull ×2, Hand, Weapon ×2 | Hand (with Manipulator) |
+| Core | 7–9 | Hull ×3, Reactor ×3, Tech, untyped ×2 | — |
+| Right arm | 10–11 | Hull ×2, Hand, Weapon ×2 | Hand (with Manipulator) |
 | Cockpit | 12 | Hull ×2, Tech | — |
 
-### CLF Wraith S9 — light, Elite
+### GWC Willow Pattern 2 — light, Standard
 
-An Elite recon and electronic-warfare frame. Five Tech slots and Evasion 6, but no Hull: every wound lands on a part.
+A long-legged Naturalist ranger with a backpack frame for water cooling.
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | untyped ×2 | Speed 9, Evasion 3 |
-| Right leg | 3–4 | untyped ×2 | Speed 9, Evasion 3 |
-| Left arm | 5 | Hand, Weapon | Hand (with Manipulator) |
-| Core | 6–9 | Reactor ×2, Tech ×3 | — |
-| Right arm | 10 | Weapon ×2 | — |
+| Left leg | 1–2 | Hull ×2, untyped | Speed 8, Evasion 1 |
+| Right leg | 3–4 | Hull ×2, untyped | Speed 8, Evasion 1 |
+| Left arm | 5 | Hull, Hand, Weapon | Hand (with Manipulator) |
+| Core | 6–8 | Hull, Reactor ×2 | — |
+| Right arm | 9–10 | Weapon ×2 | — |
+| Backpack | 11 | untyped ×2 | — |
+| Cockpit | 12 | Hull, Tech | — |
+
+### CLF Wraith S9 — light, Elite
+
+An Elite recon and electronic-warfare frame. Six Tech slots and Evasion 6, with only two Hull slots: most wounds land on a part.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Left leg | 1–2 | Hull, untyped ×2 | Speed 9, Evasion 3 |
+| Right leg | 3–4 | Hull, untyped ×2 | Speed 9, Evasion 3 |
+| Left arm | 5 | Hand, Weapon ×2 | Hand (with Manipulator) |
+| Core | 6–9 | Reactor ×2, Tech ×4 | — |
+| Right arm | 10 | Weapon ×3 | — |
 | Cockpit | 11–12 | Tech ×2 | — |
 
 ### CLF Paragon S11 — heavy, Elite
@@ -337,12 +468,26 @@ An Elite command frame with two hands, two three-gun arms, a three-slot reactor 
 
 | Section | d12 | Slots | Provides |
 |---|---|---|---|
-| Left leg | 1–2 | Hull, untyped ×2 | Speed 6, Evasion 1 |
-| Right leg | 3–4 | Hull, untyped ×2 | Speed 6, Evasion 1 |
-| Left arm | 5–6 | Hand, Weapon ×3 | Hand (with Manipulator) |
-| Core | 7–9 | Hull, Reactor ×3, Tech ×2, untyped | — |
-| Right arm | 10–11 | Hand, Weapon ×3 | Hand (with Manipulator) |
-| Cockpit | 12 | Hull, Tech ×2 | — |
+| Left leg | 1–2 | Hull, untyped ×3 | Speed 6, Evasion 1 |
+| Right leg | 3–4 | Hull, untyped ×3 | Speed 6, Evasion 1 |
+| Left arm | 5–6 | Hull, Hand, Weapon ×3 | Hand (with Manipulator) |
+| Core | 7–9 | Hull, Reactor ×3, Tech ×3, untyped ×2 | — |
+| Right arm | 10–11 | Hull, Hand, Weapon ×3 | Hand (with Manipulator) |
+| Cockpit | 12 | Hull, Tech ×3 | — |
+
+### CLF Seraph S10 — medium, Elite
+
+An Elite line frame with a dorsal halo of Tech slots behind the head.
+
+| Section | d12 | Slots | Provides |
+|---|---|---|---|
+| Left leg | 1–2 | Hull, untyped ×2 | Speed 8, Evasion 2 |
+| Right leg | 3–4 | Hull, untyped ×2 | Speed 8, Evasion 2 |
+| Left arm | 5–6 | Hull, Hand, Weapon ×2 | Hand (with Manipulator) |
+| Core | 7–9 | Hull, Reactor ×2, Tech ×2, untyped ×2 | — |
+| Right arm | 10 | Weapon ×3 | — |
+| Halo | 11 | Tech ×3 | — |
+| Cockpit | 12 | Hull, Tech | — |
 
 ## Parts
 
