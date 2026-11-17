@@ -20,7 +20,7 @@ export const TAG_SHORT: { [tag: string]: string } = {
   Scatter: 'Area (1) at Short',
   Disruptor: 'ignores deflection; can disable a part instead of wounding',
   Knockback: 'spend successes to push the target a band (Staggered)',
-  Suppressive: 'spend successes for −1 die on the target\'s next roll (max −3)',
+  Suppressive: "spend successes for −1 die on all the target's rolls through its next turn (max −3)",
   Concussive: 'a wounded target is Staggered: −1 die, no Sprint',
   Grapple: 'spend a success to hold the target in place',
   Grinding: '+1 die per turn on the same target',

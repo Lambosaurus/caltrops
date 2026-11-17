@@ -205,7 +205,7 @@ for am in ammo:
     vol = am['volatility']
     attachments.append({
         'name': f"Ammo Bin: {am['name']}", 'group': 'Ammo', 'family': 'Ammo bins', 'size': 1, 'type': 'Generic',
-        'tags': 'Volatile' if vol else '', 'bin': am['name'],
+        'tags': f'Volatile ({vol})' if vol else '', 'bin': am['name'],
         'description': f"{am['perBin']} {am['name']} rounds. " + (
             'Cooks off if disabled while loaded.' if vol else 'Inert: never cooks off.') + f" Refill {am['refill']} Solari.",
     })

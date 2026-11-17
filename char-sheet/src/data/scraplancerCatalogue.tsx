@@ -8202,7 +8202,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (2)",
   "bin": "Light",
   "description": "16 Light rounds. Cooks off if disabled while loaded. Refill 100 Solari."
  },
@@ -8212,7 +8212,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (4)",
   "bin": "Standard",
   "description": "8 Standard rounds. Cooks off if disabled while loaded. Refill 150 Solari."
  },
@@ -8222,7 +8222,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (8)",
   "bin": "Missile",
   "description": "5 Missile rounds. Cooks off if disabled while loaded. Refill 300 Solari."
  },
@@ -8232,7 +8232,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (6)",
   "bin": "Heavy",
   "description": "4 Heavy rounds. Cooks off if disabled while loaded. Refill 250 Solari."
  },
@@ -8252,7 +8252,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (6)",
   "bin": "Fuel",
   "description": "5 Fuel rounds. Cooks off if disabled while loaded. Refill 150 Solari."
  }
@@ -8262,25 +8262,25 @@ export const AMMO: MechAmmo[] = [
  {
   "name": "Light",
   "perBin": 16,
-  "volatility": 1,
+  "volatility": 2,
   "refill": 100
  },
  {
   "name": "Standard",
   "perBin": 8,
-  "volatility": 2,
+  "volatility": 4,
   "refill": 150
  },
  {
   "name": "Missile",
   "perBin": 5,
-  "volatility": 3,
+  "volatility": 8,
   "refill": 300
  },
  {
   "name": "Heavy",
   "perBin": 4,
-  "volatility": 4,
+  "volatility": 6,
   "refill": 250
  },
  {
@@ -8292,7 +8292,7 @@ export const AMMO: MechAmmo[] = [
  {
   "name": "Fuel",
   "perBin": 5,
-  "volatility": 3,
+  "volatility": 6,
   "refill": 150
  }
 ]
@@ -8306,7 +8306,7 @@ export const TAGS: { [tag: string]: string } = {
  "Deflection": "Gain X deflection until your next turn; each cancels one incoming success",
  "Indirect": "May fire without line of sight at a locked target",
  "Area": "Roll once against every target within X tiles of the point of impact",
- "Volatile": "when disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins keep rounds × volatility",
+ "Volatile": "When disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins are Volatile (X) by ammo type, and cook off only while they hold rounds",
  "Kinetic": "Damage types, used by Armoured and Weak",
  "Thermal": "Damage types, used by Armoured and Weak",
  "Explosive": "Damage types, used by Armoured and Weak",
@@ -8317,7 +8317,7 @@ export const TAGS: { [tag: string]: string } = {
  "Scatter": "Against a target at Short, it also has Area (1)",
  "Disruptor": "Ignores deflection. Successes can be spent to disrupt an attachment in the hit section instead of wounding: spend 1 success per slot it occupies (a size-3 part costs 3). A disrupted part is disabled until it is repaired, but takes no wounds. Analog parts cannot be disrupted",
  "Knockback": "Successes can be spent on movement instead of wounds: each one pushes the target one range band away, or moves this mech one band after it. The first success must push the target, and a pushed target is Staggered: its next roll is −1 die and it cannot Sprint until the end of its next turn. The rest are wounds as normal",
- "Suppressive": "Successes can be spent to suppress instead of wounding: each gives the target −1 die on its next roll, to a maximum of −3 from all sources. Machine guns pin a target down rather than wreck it",
+ "Suppressive": "Successes can be spent to suppress instead of wounding: each gives the target −1 die on every roll it makes until the end of its next turn, to a maximum of −3 from all sources. Machine guns pin a target down rather than wreck it",
  "Concussive": "If the attack deals at least one wound, the target is Staggered (see Knockback)",
  "Grapple": "Spend a success to grab the target instead of wounding: it cannot move away from this mech until it breaks free or this part is disabled. Breaking free is an action: roll Violence + Melee and spend a success. While it is held, spend a success from any of this part's later attacks to drag it one range band with you",
  "Grinding": "+1 die for each consecutive turn it has attacked the same target",

@@ -49,7 +49,7 @@ test('slot tags and passive text', () => {
 test('a weapon shows its dice, range, cost and repeats as headline numbers', () => {
   expect(keyStats(FIXTURE_RULES, att('Machine Gun')).map(s => `${s.value} ${s.label ?? ''}`.trim()))
     .toEqual(['+2 dice', 'Short', '1E +1H each', '×2 a turn', '1 Light ammo'])
-  expect(text(attachmentPop(FIXTURE_RULES, att('Ammo Bin: Light')))).toContain('1d4 per round on cook-off')
+  expect(text(attachmentPop(FIXTURE_RULES, att('Ammo Bin: Light')))).toContain('2d4 cook-off while loaded')
 })
 
 test('tags get one short line each, with their number filled in', () => {

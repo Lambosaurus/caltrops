@@ -83,6 +83,13 @@ describe('Scrap Lancer pilot skills', () => {
     for (const a of evasive) expect([a.name, a.roll]).toEqual([a.name, { aspect: 'Reflex', skill: 'Mobility', bonus: 0, evasion: true }])
   })
 
+  it('gives ammo bins a flat Volatile (X) cook-off by ammo type', () => {
+    expect(Object.fromEntries(mechs.ammo.map(a => [a.name, a.volatility]))).toEqual({ Light: 2, Standard: 4, Missile: 8, Heavy: 6, Slug: 0, Fuel: 6 })
+    expect(mechs.attachments.find(a => a.name === 'Ammo Bin: Missile')!.tags).toBe('Volatile (8)')
+    expect(mechs.attachments.find(a => a.name === 'Ammo Bin: Slug')!.tags).toBe('')
+    expect(mechs.tags!.Suppressive).toMatch(/every roll it makes until the end of its next turn/)
+  })
+
   it('keeps pilot skills when a sheet loads', () => {
     expect(caltrops.importSheet({ pilotSkills: { Tech: 2, Melee: 0 } }).pilotSkills).toEqual({ Tech: 2 })
     expect(caltrops.importSheet({}).pilotSkills).toEqual({})

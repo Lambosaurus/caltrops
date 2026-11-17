@@ -113,16 +113,16 @@ Armour sits in each section's Armour slot as a stack of points. Each point absor
 
 ### Ammo bins
 
-Ammo lives in Ammo Bin attachments: Size 1, Generic, holding one ammo type. More ammo costs slots. Bins are Volatile: if a bin is disabled while it holds ammo, it cooks off. Roll d4s equal to the rounds left times the ammo's volatility; each success is a hit to that section, and its armour soaks them first.
+Ammo lives in Ammo Bin attachments: Size 1, Generic, holding one ammo type. More ammo costs slots. Bins are Volatile (X), with X set by the ammo type: if a bin is disabled while it holds any ammo, it cooks off. Roll Xd4, however many rounds are left; each success is a hit to that section, and its armour soaks them first. An empty bin does not cook off.
 
-| Ammo | Rounds per bin | Volatility | Full-bin cook-off |
+| Ammo | Rounds per bin | Volatile (X) | Cook-off |
 |---|---|---|---|
-| Light | 16 | ×1 | 16d4 |
-| Standard | 8 | ×2 | 16d4 |
-| Missile | 5 | ×3 | 15d4 |
-| Heavy | 4 | ×4 | 16d4 |
+| Light | 16 | 2 | 2d4 |
+| Standard | 8 | 4 | 4d4 |
+| Heavy | 4 | 6 | 6d4 |
+| Missile | 5 | 8 | 8d4 |
 
-A full bin of any type averages about 4 wounds, so where you put ammo matters. The Catalogue tab adds Slug (8 rounds, ×0, never cooks off) and Fuel (5 rounds, ×3). To be confirmed in play-testing.
+Heavier ammo is more dangerous to carry. The Catalogue tab adds Slug (8 rounds, never cooks off) and Fuel (5 rounds, Volatile (6)). To be confirmed in play-testing.
 
 ### Tags
 
@@ -136,7 +136,7 @@ A full bin of any type averages about 4 wounds, so where you put ammo matters. T
 | Deflection (X) | Gain X deflection until your next turn; each cancels one incoming success |
 | Indirect | May fire without line of sight at a locked target |
 | Area (X) | Roll once against every target within X tiles of the point of impact |
-| Volatile | Cooks off when disabled (see Ammo bins). Other parts use Volatile (X), defined on the Catalogue tab with about forty more tags |
+| Volatile (X) | Cooks off when disabled: roll Xd4, each success a hit to that section, armour first (see Ammo bins). Defined on the Catalogue tab with about forty more tags |
 | Kinetic / Thermal / Explosive / EM | Damage types, used by Armoured and Weak |
 
 ### Scale
@@ -356,7 +356,7 @@ A starter set to play-test the economy: the original starter parts under their m
 | SBL Field Generator FG1 | 2 | Tech | 2 | 4 | — | Deflection (1), Armoured vs Kinetic, Weak vs EM | Its tags last until your next turn |
 | MAS Jump Jets JJ2 | 1 | Generic | 2 | 3 | — | Jump | Leap up to Speed; +2 dice to a melee attack on landing |
 | OHS Rack R3 (stowage rack) | 1 | Generic | — | — | — | Passive, Stowage (3) | Pilot-scale inventory (scrap, supplies, salvage). Destroyed: its items are lost or unreachable until repaired |
-| Ammo Bin | 1 | Generic | — | — | Light 16, Standard 8, Missile 5, Heavy 4, Slug 8, Fuel 5 | Volatile | Feeds weapons of its ammo type |
+| Ammo Bin | 1 | Generic | — | — | Light 16, Standard 8, Missile 5, Heavy 4, Slug 8, Fuel 5 | Volatile (X) by ammo type | Feeds weapons of its ammo type |
 
 ### Armour (Armour slot)
 
