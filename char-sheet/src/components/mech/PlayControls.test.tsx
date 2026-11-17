@@ -56,6 +56,7 @@ test('Sprint pays energy and heat; New turn clears used marks', () => {
   render(withDnd(<MechPanel view={view} editable={EditMode.Live}/>))
   fireEvent.click(screen.getByText('Sprint (2E +2H)'))
   expect(view.read('mech').turn.used.sprint).toBe(1)
+  expect(alertInfo).toHaveBeenCalledWith(expect.stringMatching(/^Dodge: \d+ tokens? \(\d+d4: /))
   expect((screen.getByText('Sprint (2E +2H)') as HTMLButtonElement).disabled).toBe(true)
   fireEvent.click(screen.getByText(/New turn/))
   expect(view.read('mech').turn.used).toEqual({})

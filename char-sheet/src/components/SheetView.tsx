@@ -73,6 +73,16 @@ function SheetView( { view, editable=EditMode.Live }: {
             maxCostTotal={caltrops.skillCostMax(rules, level)}
             editable={editable}
           />
+          {rules.pilotSkills ?
+            <SkillTable
+              title='Pilot skills'
+              skills={rules.pilotSkills.skills}
+              skillView={view.view('sheet/pilotSkills')}
+              rollView={view.view('roll')}
+              maxCostTotal={caltrops.pilotSkillCostMax(rules, level)}
+              editable={editable}
+            /> : null
+          }
         </section>
 
         {/* Mech widget, about three columns wide, before the items column (wraps to full width on narrow screens) */}

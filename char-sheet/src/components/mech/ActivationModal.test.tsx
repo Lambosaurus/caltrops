@@ -16,7 +16,8 @@ function setup(mode: 'sheet' | 'mech' = 'sheet', change?: (m: any) => void) {
   view.publish('rules', rules)
   view.publish('mode', mode)
   view.publish('mech', mech)
-  view.publish('sheet', { attributes: { Precision: 3 }, skills: { Gunnery: 2 } })
+  // The character's own Gunnery (9) must not count: mech rolls use the pilot's Gunnery (2).
+  view.publish('sheet', { attributes: { Precision: 3 }, skills: { Gunnery: 9 }, pilotSkills: { Gunnery: 2 } })
   render(withDnd(<MechPanel view={view} editable={EditMode.Live}/>))
   return { view, energy: mech.turn.energy }
 }

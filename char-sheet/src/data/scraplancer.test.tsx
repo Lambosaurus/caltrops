@@ -50,3 +50,35 @@ describe('Scrap Lancer data', () => {
     expect(scrapLancerRuleset.skills.map(s => s.name)).not.toContain('Gunnary')
   })
 })
+
+describe('Scrap Lancer pilot skills', () => {
+  const pilot = scrapLancerRuleset.pilotSkills!
+
+  it('levels aspects, not attributes', () => {
+    expect(scrapLancerRuleset.levelup).toEqual({ aspects: 0.5, attributes: 0, skills: 2.5 })
+  })
+
+  it('keeps the body skills, drops Piloting, and has its own pilot track', () => {
+    const names = scrapLancerRuleset.skills.map(s => s.name)
+    expect(names).toEqual(expect.arrayContaining(['Gunnery', 'Melee', 'Repair']))
+    expect(names).not.toContain('Piloting')
+    expect(pilot.skills.map(s => s.name)).toEqual(['Gunnery', 'Melee', 'Mobility', 'Tech', 'Repair'])
+    expect([1, 2, 3].map(l => caltrops.pilotSkillCostMax(scrapLancerRuleset, l))).toEqual([2, 3, 5])
+    expect(lancerRuleset.skills.map(s => s.name)).toContain('Piloting')
+  })
+
+  it('rolls every part on a pilot skill, with Tech for energy weapons and sensors', () => {
+    const names = pilot.skills.map(s => s.name)
+    const skillOf = (family: string) => Array.from(new Set(mechs.attachments.filter(a => a.family === family).map(a => a.roll?.skill)))
+    for (const a of mechs.attachments) if (a.roll) expect([a.name, names.includes(a.roll.skill)]).toEqual([a.name, true])
+    for (const f of ['Lasers', 'Plasma', 'EM weapons']) expect([f, skillOf(f)]).toEqual([f, ['Tech']])
+    for (const f of ['Machine guns', 'Autocannons', 'Cannons', 'Mortars and artillery', 'Mass drivers', 'Flamers', 'Rockets and missiles']) expect([f, skillOf(f)]).toEqual([f, ['Gunnery']])
+    expect(mechs.attachments.find(a => a.name === 'SBL Sensor SA1')!.roll).toMatchObject({ aspect: 'Wit', skill: 'Tech' })
+    expect(mechs.attachments.find(a => a.name === 'OHS Welding Rig WR1')!.roll).toMatchObject({ aspect: 'Knowledge', skill: 'Repair' })
+  })
+
+  it('keeps pilot skills when a sheet loads', () => {
+    expect(caltrops.importSheet({ pilotSkills: { Tech: 2, Melee: 0 } }).pilotSkills).toEqual({ Tech: 2 })
+    expect(caltrops.importSheet({}).pilotSkills).toEqual({})
+  })
+})

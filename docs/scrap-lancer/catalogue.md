@@ -523,7 +523,7 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 | Missiles |  |
 | Missile | The attack is a missile: Point-defence and Spoofing work against it |
 | Guided | Against a locked target, each activation adds 1 extra die to its roll |
-| Seeking | Ignores Evasion, and Spoofing does not stop its Guided dice |
+| Seeking | Dodge tokens cannot thwart its successes, and Spoofing does not stop its Guided dice |
 | Locks and sensors |  |
 | Targeting | Activation: roll the listed Roll; each success places a lock on a target in line of sight until your next turn. Attacks against a locked target roll +1 die, and Indirect and Guided weapons use locks |
 | Datalink | Locks it places count for every mech in your lance |
@@ -551,7 +551,7 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 | Tow | Activation: roll the listed Roll against a target at Short or Mid. Spend a success to pull the target one range band closer, or to haul this mech one band to it; the first success must pull the target. Out of combat it drags a wreck or load at half Speed |
 | Repair | Activation: roll the listed Roll at Short; each success spends 1 Scrap to clear one slot wound on this mech or an engaged ally, as a field repair |
 | Jump | Activation: move up to Speed in one leap, over terrain and out of engagement. A melee attack after landing this turn rolls +2 dice |
-| Evasive | Activation: this turn counts as Sprinting for Evasion, without spending a Sprint |
+| Evasive | Activation: make the Sprint dodge roll (Reflex + Mobility + Evasion) without spending a Sprint |
 | Stowage (X) | Holds X items of cargo or salvage |
 | Frame and build |  |
 | Volatile (X) | Replaces plain Volatile on non-ammo parts: when disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins keep rounds × volatility |

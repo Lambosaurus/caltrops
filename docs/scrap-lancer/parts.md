@@ -259,21 +259,21 @@ All go in Weapon slots. With no ammo there is nothing to cook off or run out of,
 
 | Make | Model | Tier | Size | Energy | Heat | Range | Tags | Roll | Price | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| OHS | Weldbeam W2 | Scrap | 2 | 3 | 6 | Short | Thermal, Cutter | Gunnery +3 | 900 | An industrial cutting beam |
-| LDE | LZ-1 | Salvage | 1 | 2 | 3 | Short | Thermal | Gunnery +2 | 1,200 | Light laser |
-| KR | LZ-3R | Scrap | 2 | 3 | 5 | Mid | Thermal, Jams | Gunnery +4 | 1,600 | Rebuilt LDE LZ-3 |
-| LDE | LZ-2 | Salvage | 2 | 3 | 5 | Mid | Thermal | Gunnery +4 | 2,000 | The older LZ |
-| LDE | LZ-3 | Standard | 2 | 3 | 3 | Mid | Thermal, Accurate | Gunnery +5 | 4,000 | Was Laser |
-| LDE | LZ-3E | Standard | 2 | 3 | 4 | Long | Thermal, Accurate | Gunnery +5 | 6,000 | Extended focus |
-| LDE | HL-4X | Standard | 3 | 5 | 6 | Long | Thermal, Powerful | Gunnery +7 | 6,000 | Export HL-4 |
-| LDE | Pulse PL2 | Military | 1 | 1 | 1 | Short | Repeating (2), Thermal | Gunnery +2 | 6,000 |  |
-| LDE | LZ-4 | Military | 2 | 3 | 2 | Mid | Thermal, Accurate | Gunnery +6 | 8,000 | An LZ-3 that runs cool |
-| LDE | Pulse PL3 | Military | 1 | 1 | 1 | Short | Repeating (3), Thermal | Gunnery +1 | 9,000 |  |
-| LDE | HL-4 | Military | 3 | 5 | 5 | Long | Thermal, Powerful, Accurate | Gunnery +10 | 12,000 |  |
-| LDE | Lance HL-6 | Military | 4 | 9 | 10 | Long | Thermal, Powerful, Piercing (1), Accurate | Gunnery +15 | 24,000 | Heavy beam: needs a reactor of its own |
-| LDE | Focus F2 | Elite | 1 | 2 | 1 | Mid | Thermal, Accurate | Gunnery +3 | 16,000 |  |
-| LDE | Focus F4 | Elite | 2 | 3 | 2 | Long | Thermal, Accurate | Gunnery +8 | 25,000 |  |
-| LDE | Focus F8 | Elite | 4 | 6 | 4 | Long | Thermal, Powerful, Piercing (2), Accurate | Gunnery +18 | 45,000 |  |
+| OHS | Weldbeam W2 | Scrap | 2 | 3 | 6 | Short | Thermal, Cutter | Tech +3 | 900 | An industrial cutting beam |
+| LDE | LZ-1 | Salvage | 1 | 2 | 3 | Short | Thermal | Tech +2 | 1,200 | Light laser |
+| KR | LZ-3R | Scrap | 2 | 3 | 5 | Mid | Thermal, Jams | Tech +4 | 1,600 | Rebuilt LDE LZ-3 |
+| LDE | LZ-2 | Salvage | 2 | 3 | 5 | Mid | Thermal | Tech +4 | 2,000 | The older LZ |
+| LDE | LZ-3 | Standard | 2 | 3 | 3 | Mid | Thermal, Accurate | Tech +5 | 4,000 | Was Laser |
+| LDE | LZ-3E | Standard | 2 | 3 | 4 | Long | Thermal, Accurate | Tech +5 | 6,000 | Extended focus |
+| LDE | HL-4X | Standard | 3 | 5 | 6 | Long | Thermal, Powerful | Tech +7 | 6,000 | Export HL-4 |
+| LDE | Pulse PL2 | Military | 1 | 1 | 1 | Short | Repeating (2), Thermal | Tech +2 | 6,000 |  |
+| LDE | LZ-4 | Military | 2 | 3 | 2 | Mid | Thermal, Accurate | Tech +6 | 8,000 | An LZ-3 that runs cool |
+| LDE | Pulse PL3 | Military | 1 | 1 | 1 | Short | Repeating (3), Thermal | Tech +1 | 9,000 |  |
+| LDE | HL-4 | Military | 3 | 5 | 5 | Long | Thermal, Powerful, Accurate | Tech +10 | 12,000 |  |
+| LDE | Lance HL-6 | Military | 4 | 9 | 10 | Long | Thermal, Powerful, Piercing (1), Accurate | Tech +15 | 24,000 | Heavy beam: needs a reactor of its own |
+| LDE | Focus F2 | Elite | 1 | 2 | 1 | Mid | Thermal, Accurate | Tech +3 | 16,000 |  |
+| LDE | Focus F4 | Elite | 2 | 3 | 2 | Long | Thermal, Accurate | Tech +8 | 25,000 |  |
+| LDE | Focus F8 | Elite | 4 | 6 | 4 | Long | Thermal, Powerful, Piercing (2), Accurate | Tech +18 | 45,000 |  |
 
 ### Plasma
 
@@ -281,12 +281,12 @@ Plasma heats the target as fast as it heats you.
 
 | Make | Model | Tier | Size | Energy | Heat | Range | Tags | Roll | Price | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| KR | Slagger ST3 | Salvage | 2 | 4 | 8 | Short | Thermal, Searing (2), Volatile (4) | Gunnery +4 | 4,000 | Bottled plasma from a smelter |
-| LDE | Plasma PX2 | Standard | 1 | 3 | 4 | Short | Thermal, Searing (1) | Gunnery +2 | 4,500 | Plasma pistol |
-| LDE | Plasma PX4 | Military | 2 | 4 | 5 | Mid | Thermal, Searing (2) | Gunnery +6 | 14,000 |  |
-| LDE | Plasma PX6 | Military | 3 | 6 | 6 | Mid | Thermal, Searing (3), Powerful | Gunnery +10 | 20,000 |  |
-| LDE | Plasma PX8 | Military | 4 | 8 | 10 | Mid | Thermal, Searing (4), Powerful, Area (1) | Gunnery +15 | 28,000 | Plasma cannon |
-| LDE | Sun S5 | Elite | 2 | 4 | 3 | Long | Thermal, Searing (2) | Gunnery +8 | 32,000 |  |
+| KR | Slagger ST3 | Salvage | 2 | 4 | 8 | Short | Thermal, Searing (2), Volatile (4) | Tech +4 | 4,000 | Bottled plasma from a smelter |
+| LDE | Plasma PX2 | Standard | 1 | 3 | 4 | Short | Thermal, Searing (1) | Tech +2 | 4,500 | Plasma pistol |
+| LDE | Plasma PX4 | Military | 2 | 4 | 5 | Mid | Thermal, Searing (2) | Tech +6 | 14,000 |  |
+| LDE | Plasma PX6 | Military | 3 | 6 | 6 | Mid | Thermal, Searing (3), Powerful | Tech +10 | 20,000 |  |
+| LDE | Plasma PX8 | Military | 4 | 8 | 10 | Mid | Thermal, Searing (4), Powerful, Area (1) | Tech +15 | 28,000 | Plasma cannon |
+| LDE | Sun S5 | Elite | 2 | 4 | 3 | Long | Thermal, Searing (2) | Tech +8 | 32,000 |  |
 
 ### EM weapons
 
@@ -294,13 +294,13 @@ Stormglass builds these to fight Concord's Elite frames: Disruptor attacks switc
 
 | Make | Model | Tier | Size | Energy | Heat | Range | Tags | Roll | Price | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| KR | Zapper Z1 | Scrap | 1 | 2 | 4 | Short | EM, Disruptor, Jams | Gunnery +1 | 900 | A mains cable on a pole |
-| SGW | Arc Lance Pattern 1 | Salvage | 2 | 3 | 4 | Short | EM, Disruptor | Gunnery +4 | 2,500 |  |
-| SGW | Arc Lance Pattern 2 | Standard | 2 | 3 | 2 | Short | EM, Disruptor | Gunnery +5 | 5,000 | Was Arc Lance |
-| SGW | Ion Disruptor Pattern 3 | Military | 2 | 4 | 2 | Mid | EM, Disruptor | Gunnery +6 | 14,000 |  |
-| SGW | Ion Disruptor Pattern 4 | Military | 2 | 4 | 2 | Long | EM, Disruptor | Gunnery +6 | 18,000 |  |
-| SGW | Storm Pattern 5 | Military | 3 | 5 | 3 | Mid | EM, Disruptor, Area (1) | Gunnery +10 | 20,000 | Arc projector |
-| SGW | Tempest Pattern 7 | Military | 4 | 8 | 5 | Long | EM, Disruptor, Area (2), Reload (1) | Gunnery +15 | 30,000 | Blacks out a whole Concord lance |
+| KR | Zapper Z1 | Scrap | 1 | 2 | 4 | Short | EM, Disruptor, Jams | Tech +1 | 900 | A mains cable on a pole |
+| SGW | Arc Lance Pattern 1 | Salvage | 2 | 3 | 4 | Short | EM, Disruptor | Tech +4 | 2,500 |  |
+| SGW | Arc Lance Pattern 2 | Standard | 2 | 3 | 2 | Short | EM, Disruptor | Tech +5 | 5,000 | Was Arc Lance |
+| SGW | Ion Disruptor Pattern 3 | Military | 2 | 4 | 2 | Mid | EM, Disruptor | Tech +6 | 14,000 |  |
+| SGW | Ion Disruptor Pattern 4 | Military | 2 | 4 | 2 | Long | EM, Disruptor | Tech +6 | 18,000 |  |
+| SGW | Storm Pattern 5 | Military | 3 | 5 | 3 | Mid | EM, Disruptor, Area (1) | Tech +10 | 20,000 | Arc projector |
+| SGW | Tempest Pattern 7 | Military | 4 | 8 | 5 | Long | EM, Disruptor, Area (2), Reload (1) | Tech +15 | 30,000 | Blacks out a whole Concord lance |
 
 ## Fire and missiles
 
@@ -406,17 +406,17 @@ Parts that make the mech useful between fights or help the lance. A roll is list
 
 | Make | Model | Kind | Tier | Type | Size | Energy | Heat | Tags | Roll | Price |
 |---|---|---|---|---|---|---|---|---|---|---|
-| KR | Scope S1 | Salvaged scope | Scrap | Tech | 1 | 1 | 2 | Targeting, Jams | Wit + Computing −1 | 400 |
+| KR | Scope S1 | Salvaged scope | Scrap | Tech | 1 | 1 | 2 | Targeting, Jams | Wit + Tech −1 | 400 |
 | SBL | Rangefinder RF1 | Rangefinder | Salvage | Tech | 1 | — | — | Passive, Ranging | — | 1,000 |
-| SBL | Sensor SA1 | Sensor array | Standard | Tech | 1 | 1 | 1 | Targeting | Wit + Computing +1 | 2,000 |
+| SBL | Sensor SA1 | Sensor array | Standard | Tech | 1 | 1 | 1 | Targeting | Wit + Tech +1 | 2,000 |
 | SBL | Rangefinder RF2 | Rangefinder | Standard | Tech | 1 | — | — | Passive, Ranging, Long-sight | — | 3,000 |
 | SBL | Fire Control FC1-X | Targeting computer | Standard | Tech | 1 | — | — | Passive, Fire control (1), Linked | — | 3,500 |
-| SBL | Sensor SA2 | Sensor array | Military | Tech | 1 | 1 | 1 | Targeting | Wit + Computing +2 | 6,000 |
-| SBL | Recon Mast RM3 | Sensor mast | Military | Tech | 1 | 1 | 0 | Targeting, Thermal sight | Wit + Computing +2 | 7,000 |
+| SBL | Sensor SA2 | Sensor array | Military | Tech | 1 | 1 | 1 | Targeting | Wit + Tech +2 | 6,000 |
+| SBL | Recon Mast RM3 | Sensor mast | Military | Tech | 1 | 1 | 0 | Targeting, Thermal sight | Wit + Tech +2 | 7,000 |
 | SBL | Fire Control FC1 | Targeting computer | Military | Tech | 1 | — | — | Passive, Fire control (1) | — | 8,000 |
 | SBL | Fire Control FC2 | Targeting computer | Military | Tech | 1 | — | — | Passive, Fire control (2) | — | 14,000 |
-| CLF | Mind M2 | Tactical AI core | Elite | Tech | 1 | 1 | 1 | Targeting, Datalink | Wit + Computing +3 | 18,000 |
-| CLF | Mind M3 | Tactical AI core | Elite | Tech | 2 | 2 | 1 | Targeting, Datalink, Shielded (1) | Wit + Computing +5 | 25,000 |
+| CLF | Mind M2 | Tactical AI core | Elite | Tech | 1 | 1 | 1 | Targeting, Datalink | Wit + Tech +3 | 18,000 |
+| CLF | Mind M3 | Tactical AI core | Elite | Tech | 2 | 2 | 1 | Targeting, Datalink, Shielded (1) | Wit + Tech +5 | 25,000 |
 
 ### Smoke, electronic warfare and repair
 
@@ -429,9 +429,9 @@ Parts that make the mech useful between fights or help the lance. A roll is list
 | SBL | ECM-2 | ECM suite | Military | Tech | 1 | 2 | 2 | Jamming, Spoofing | — | 7,000 |
 | SBL | ECM-3 | ECM suite | Military | Tech | 1 | 2 | 1 | Jamming, Spoofing | — | 10,000 |
 | CLF | Veil V1 | Ghost veil | Elite | Tech | 1 | 1 | 1 | Jamming, Spoofing, Cloak (1) | — | 20,000 |
-| OHS | Welding Rig WR1 | Welding rig | Salvage | Hand | 1 | 2 | 3 | Repair, Cutter | Knowledge + Tech +0 | 1,000 |
-| GWC | Repair Arm Pattern 1 | Field repair rig | Standard | Hand | 1 | 2 | 1 | Repair, Analog | Knowledge + Tech +1 | 3,000 |
-| GWC | Repair Arm Pattern 2 | Field repair rig | Military | Hand | 1 | 2 | 1 | Repair, Analog | Knowledge + Tech +2 | 7,000 |
+| OHS | Welding Rig WR1 | Welding rig | Salvage | Hand | 1 | 2 | 3 | Repair, Cutter | Knowledge + Repair +0 | 1,000 |
+| GWC | Repair Arm Pattern 1 | Field repair rig | Standard | Hand | 1 | 2 | 1 | Repair, Analog | Knowledge + Repair +1 | 3,000 |
+| GWC | Repair Arm Pattern 2 | Field repair rig | Military | Hand | 1 | 2 | 1 | Repair, Analog | Knowledge + Repair +2 | 7,000 |
 
 ## Defence
 

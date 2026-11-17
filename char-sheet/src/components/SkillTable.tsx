@@ -8,12 +8,13 @@ import { Skill, Dictionary } from '../lib/rules'
 import { View, useListener } from '../lib/objectservice'
 
 
-function SkillTable({skills, skillView, maxCostTotal, editable = EditMode.Live, rollView}: {
+function SkillTable({skills, skillView, maxCostTotal, editable = EditMode.Live, rollView, title = 'Skills'}: {
     skills: Skill[],
     skillView: View,
     maxCostTotal: number,
     editable?: EditMode,
     rollView: View,
+    title?: string,
   }): JSX.Element {
 
   const scores: Dictionary<number> = useListener(skillView) ?? {}
@@ -36,7 +37,7 @@ function SkillTable({skills, skillView, maxCostTotal, editable = EditMode.Live, 
       <table className="table table-compact w-80">
         <thead>
           <tr className='px-2'>
-            <th>Skills</th>
+            <th>{title}</th>
             <th></th>
           </tr>
         </thead>

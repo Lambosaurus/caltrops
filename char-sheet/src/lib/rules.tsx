@@ -68,6 +68,8 @@ export interface Rules {
         skills: number,
         attributes: number,
     }
+    // A second skill track used only for mech rolls, with its own points per level (Scrap Lancer).
+    pilotSkills?: { skills: Skill[], perLevel: number },
     mechs?: MechRules,
 }
 
@@ -100,6 +102,7 @@ export interface Sheet {
     currency: Dictionary<number>,
     equipment: Dictionary<SheetEquipment[]>,
     skills: Dictionary<number>,
+    pilotSkills: Dictionary<number>,
     attributes: Dictionary<number>,
     powers: Dictionary<number>,
     wounds: Dictionary<SheetWound[]>,

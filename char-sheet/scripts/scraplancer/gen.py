@@ -66,7 +66,7 @@ def has_tag(tags, name):
 
 
 def parse_roll(s):
-    """'Gunnery +5', 'Violence + Melee +2', 'Wit + Computing −1', 'Knowledge + Tech +0'."""
+    """'Gunnery +5', 'Violence + Melee +2', 'Wit + Computing −1', 'Knowledge + Repair +0'."""
     if not s or s in DASH:
         return None
     s = s.replace('−', '-')
@@ -74,8 +74,6 @@ def parse_roll(s):
     if not m:
         raise ValueError('roll ' + s)
     aspect, skill, bonus = m.group(1), m.group(2), int(m.group(3))
-    if skill == 'Tech':
-        skill = 'Repair'  # the pilot skill list has Repair, not Tech (call)
     r = {'skill': skill, 'bonus': bonus}
     if aspect:
         r['aspect'] = aspect

@@ -37,8 +37,22 @@ const scrapLancerRuleset: Rules = {
     theme: 'lancers',
     useAspects: true,
     attributes: DEFAULT_RULES.attributes,
-    levelup: { ...lancerRuleset.levelup },
-    skills: lancerRuleset.skills.map(s => s.name === 'Gunnary' ? { ...s, name: 'Gunnery' } : { ...s }),
+    // Aspects, not attributes, go up with level (the Lancer ruleset has no aspects).
+    levelup: { aspects: 0.5, attributes: 0, skills: lancerRuleset.levelup.skills },
+    // The character's own body skills; piloting is the separate pilot track below.
+    skills: lancerRuleset.skills
+        .filter(s => s.name !== 'Piloting')
+        .map(s => s.name === 'Gunnary' ? { ...s, name: 'Gunnery' } : { ...s }),
+    pilotSkills: {
+        perLevel: 1.5,
+        skills: [
+            { name: 'Gunnery', description: 'Ballistic guns, mass drivers, mortars, flamers, rockets and missiles.' },
+            { name: 'Melee', description: 'Mech melee weapons, claws, hands and winches.' },
+            { name: 'Mobility', description: 'The Sprint dodge roll: Reflex + Mobility + Evasion.' },
+            { name: 'Tech', description: 'Lasers, plasma, EM weapons, sensors and Mind parts.' },
+            { name: 'Repair', description: 'Repair rigs and field repair.' },
+        ],
+    },
     currency: [
         { name: 'Solari', precision: 1 },
         { name: 'U', precision: 1 },

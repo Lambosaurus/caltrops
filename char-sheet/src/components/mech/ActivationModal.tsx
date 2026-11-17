@@ -35,7 +35,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
   const mech: Mech | undefined = useListener(view, 'mech')
   const mode: string | undefined = useListener(view, 'mode')
   const attributes: Dictionary<number> | undefined = useListener(view, 'sheet/attributes')
-  const skills: Dictionary<number> | undefined = useListener(view, 'sheet/skills')
+  const skills: Dictionary<number> | undefined = useListener(view, 'sheet/pilotSkills')
   const [aspectScore, setAspectScore] = useState(0)
   const [skillScore, setSkillScore] = useState(0)
   const [other, setOther] = useState(0)

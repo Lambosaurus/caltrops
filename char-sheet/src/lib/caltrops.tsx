@@ -46,6 +46,10 @@ function skillCostMax(rules: Rules, level: number): number {
     return Math.ceil(level * rules.levelup.skills);
 }
 
+function pilotSkillCostMax(rules: Rules, level: number): number {
+    return Math.ceil(level * (rules.pilotSkills?.perLevel ?? 0));
+}
+
 function skillIsRollable(skill: Skill, scores: Dictionary<number>): boolean {
     return scores[skill.name] > 0 || !skill.trained;
 }
@@ -178,6 +182,7 @@ function loadSheet(obj: any = {}): Sheet {
         owner: obj.owner ?? null,
         equipment: filterObject(obj.equipment, truthyValues ),
         skills: filterObject(obj.skills, truthyValues),
+        pilotSkills: filterObject(obj.pilotSkills, truthyValues),
         attributes: filterObject(obj.attributes, truthyValues),
         powers: filterObject(obj.powers, truthyValues),
         wounds: filterObject(obj.wounds, truthyValues),
@@ -284,6 +289,7 @@ const caltrops = {
     skillIncrementCost: skillIncrementCost,
     skillCostTotal: skillCostTotal,
     skillCostMax: skillCostMax,
+    pilotSkillCostMax: pilotSkillCostMax,
     skillIsRollable: skillIsRollable,
     attributeMin: ATTRIBUTE_MIN,
     attributeMax: attributeMax,

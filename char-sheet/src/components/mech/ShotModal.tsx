@@ -40,7 +40,7 @@ function ShotModal({ rules, view, target, close }: {
   const mech: Mech | undefined = useListener(view, 'mech')
   const mode: string | undefined = useListener(view, 'mode')
   const attributes: Dictionary<number> | undefined = useListener(view, 'sheet/attributes')
-  const skills: Dictionary<number> | undefined = useListener(view, 'sheet/skills')
+  const skills: Dictionary<number> | undefined = useListener(view, 'sheet/pilotSkills')
   const [shots, setShots] = useState(1)
   const [band, setBand] = useState(null as TargetBand | null)
   const [bonus, setBonus] = useState(0)
