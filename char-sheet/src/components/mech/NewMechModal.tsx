@@ -71,7 +71,6 @@ function NewMechModal({open, close, rules, setMech}:{
       </select>
       {info?.tier ? <div className="text-xs opacity-70 mt-1">
         {info.class} · {info.tier} · {info.price?.toLocaleString()} Solari · Heat Max {info.heatMax}
-        {info.trait ? <div>Trait: {info.trait}</div> : null}
       </div> : null}
 
       <label className="label">

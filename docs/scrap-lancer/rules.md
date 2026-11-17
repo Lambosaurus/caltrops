@@ -101,7 +101,7 @@ Armour sits in each section's Armour slot as a stack of points. Each point absor
 
 ### Ammo bins
 
-Ammo lives in Ammo Bin attachments: Size 1, Generic, holding one ammo type. More ammo costs slots. Bins are Volatile: if a bin is disabled while it holds ammo, it cooks off. Roll d4s equal to the rounds left times the ammo's volatility; each success is a wound to that section that ignores armour.
+Ammo lives in Ammo Bin attachments: Size 1, Generic, holding one ammo type. More ammo costs slots. Bins are Volatile: if a bin is disabled while it holds ammo, it cooks off. Roll d4s equal to the rounds left times the ammo's volatility; each success is a hit to that section, and its armour soaks them first.
 
 | Ammo | Rounds per bin | Volatility | Full-bin cook-off |
 |---|---|---|---|
@@ -261,7 +261,7 @@ Three starting frames, all numbers (call) and untested. Every section also has o
 
 ### MAS Jackal J-7 — light scout
 
-Heat Max 6. 13 slots, 4 of them Hull. Fast, with an exposed canopy that is easy to snipe and a left arm that is a hand and little else.
+Heat Max 6. 14 slots, 4 of them Hull. Fast, with an exposed canopy that is easy to snipe and a left arm that is a hand and little else.
 
 | Section | d12 | Aim cost | Slots | Provides | Transfers to |
 |---|---|---|---|---|---|
@@ -270,7 +270,7 @@ Heat Max 6. 13 slots, 4 of them Hull. Fast, with an exposed canopy that is easy 
 | Left arm | 5 | 4 | Hand, Weapon | Hand (with Manipulator) | Core |
 | Core | 6–9 | 1 | Hull, Reactor ×2, untyped | — | — |
 | Right arm | 10 | 4 | Weapon, Weapon | — | Core |
-| Cockpit | 11–12 | 3 | Tech | — | Pilot |
+| Cockpit | 11–12 | 3 | Hull, Tech | — | Pilot |
 
 ### OHS Mule Mk II — medium salvager
 
@@ -288,17 +288,17 @@ Heat Max 7. 21 slots, 4 of them Hull. Two working hands, a lighter right arm, a 
 
 ### HCA Bulwark Block 4 — heavy tracked
 
-Heat Max 11. 25 slots, 7 of them Hull. One treads section: a lucky hit there immobilises it.
+Heat Max 11. 26 slots, 7 of them Hull. One treads section: a lucky hit there immobilises it.
 
 | Section | d12 | Aim cost | Slots | Provides | Transfers to |
 |---|---|---|---|---|---|
 | Treads | 1–2 | 3 | Hull ×2, untyped ×3 | Speed 8, Evasion 1 | Core |
 | Left arm | 3–4 | 3 | Hull, Weapon ×3 | — | Core |
-| Core | 5–9 | 1 | Hull ×2, Reactor ×3, untyped ×4 | — | — |
+| Core | 5–9 | 1 | Hull ×2, Reactor ×3, Tech, untyped ×4 | — | — |
 | Right arm | 10–11 | 3 | Hull, Weapon ×3 | — | Core |
 | Cockpit | 12 | 4 | Hull, Tech, Tech | — | Pilot |
 
-Only the Bulwark's three-slot reactor bay can take a size-3 reactor such as the HRW Arc-point A9; the Jackal and Mule top out at size-2 reactors. The other eighteen frames are on the Catalogue tab.
+Only the Bulwark's three-slot reactor bay can take a size-3 reactor such as the HRW Arc-point A9; the Jackal and Mule top out at size-2 reactors. The other twenty-eight frames are on the Catalogue tab.
 
 ## Example attachments
 
@@ -418,7 +418,7 @@ Ejection and pilots on foot once a mech is lost.
 | Multi-slot attachments sit in consecutive slots of one section | Chassis |
 | One Armour slot per section, holding a stack of points | Chassis, Attachments |
 | Attachments work at full strength until every slot is wounded | Attachments |
-| Missile bin holds 5 (so a full bin cooks off at 15d4, close to the others' 16d4); cook-off wounds ignore armour | Attachments |
+| Missile bin holds 5 (so a full bin cooks off at 15d4, close to the others' 16d4); cook-off hits go through armour like any other | Attachments |
 | Stowage Rack: Size 1 Generic, +3 stowage slots; items lost or unreachable while it is destroyed | Attachments |
 | Inside a weapon's range band: −1 die per band closer | Attachments |
 | Melee needs an Engaged (base-to-base) target; guns treat Engaged as Short | Attachments |

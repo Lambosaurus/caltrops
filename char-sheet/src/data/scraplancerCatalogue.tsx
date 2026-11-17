@@ -11,7 +11,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Scrap",
   "price": 800,
   "heatMax": 5,
-  "trait": "Tiny: attacks against it from Long range roll −1 die",
   "description": "A one-seat walker built round a car engine. It runs on a single small reactor and a heat bank of 5, so every shot is a decision.",
   "shape": "biped",
   "sections": [
@@ -104,7 +103,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Scrap",
   "price": 1200,
   "heatMax": 6,
-  "trait": "Open cab: an Area attack that hits the cockpit also hits the pilot",
   "description": "A cargo loader with a roll cage and a gun welded to one claw. With no Tech slot, it cools with fins alone.",
   "shape": "biped",
   "sections": [
@@ -211,7 +209,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Scrap",
   "price": 2200,
   "heatMax": 7,
-  "trait": "Junker: rebuilding a destroyed section costs only Scrap, never Solari",
   "description": "A dead OHS Mule rebuilt with slabs of Hull and a second gun arm. Ugly, slow and cheap to keep running.",
   "shape": "biped",
   "sections": [
@@ -278,6 +275,7 @@ export const CHASSIS: Chassis[] = [
      "Reactor",
      "Reactor",
      "",
+     "",
      ""
     ],
     "transfer": null,
@@ -291,6 +289,7 @@ export const CHASSIS: Chassis[] = [
      11
     ],
     "slots": [
+     "Hull",
      "Weapon",
      "Weapon"
     ],
@@ -313,6 +312,380 @@ export const CHASSIS: Chassis[] = [
   ]
  },
  {
+  "name": "KR Scuttler R2",
+  "make": "KR",
+  "model": "Scuttler R2",
+  "class": "Ultralight quad",
+  "size": 1,
+  "tier": "Salvage",
+  "price": 2000,
+  "heatMax": 5,
+  "description": "A rebuilt dock crawler: four stubby legs and one big claw. Cheap, low and hard to pin down.",
+  "shape": "quad",
+  "sections": [
+   {
+    "id": "rlleg",
+    "name": "Rear left leg",
+    "range": [
+     1,
+     1
+    ],
+    "slots": [
+     "Hull"
+    ],
+    "transfer": "core",
+    "area": "4 / 1 / 5 / 4",
+    "provides": {
+     "speed": 3
+    }
+   },
+   {
+    "id": "rrleg",
+    "name": "Rear right leg",
+    "range": [
+     2,
+     2
+    ],
+    "slots": [
+     "Hull"
+    ],
+    "transfer": "core",
+    "area": "4 / 4 / 5 / 7",
+    "provides": {
+     "speed": 3
+    }
+   },
+   {
+    "id": "flleg",
+    "name": "Front left leg",
+    "range": [
+     3,
+     3
+    ],
+    "slots": [
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 1 / 4 / 4",
+    "provides": {
+     "speed": 3,
+     "evasion": 1
+    }
+   },
+   {
+    "id": "frleg",
+    "name": "Front right leg",
+    "range": [
+     4,
+     4
+    ],
+    "slots": [
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 4 / 4 / 7",
+    "provides": {
+     "speed": 3,
+     "evasion": 1
+    }
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     5,
+     8
+    ],
+    "slots": [
+     "Reactor",
+     "Reactor",
+     "",
+     ""
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Claw arm",
+    "range": [
+     9,
+     11
+    ],
+    "slots": [
+     "Hull",
+     "Hand",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "cockpit",
+    "name": "Cockpit",
+    "range": [
+     12,
+     12
+    ],
+    "slots": [
+     "Tech"
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
+  "name": "KR Brute R5",
+  "make": "KR",
+  "model": "Brute R5",
+  "class": "Heavy",
+  "size": 4,
+  "tier": "Salvage",
+  "price": 6500,
+  "heatMax": 10,
+  "description": "A heavy reactor bay bolted into a walker, with a three-slot cannon welded across the right shoulder.",
+  "shape": "biped",
+  "sections": [
+   {
+    "id": "lleg",
+    "name": "Left leg",
+    "range": [
+     1,
+     2
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 2 / 4 / 4",
+    "provides": {
+     "speed": 4
+    }
+   },
+   {
+    "id": "rleg",
+    "name": "Right leg",
+    "range": [
+     3,
+     4
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 4 / 4 / 6",
+    "provides": {
+     "speed": 4
+    }
+   },
+   {
+    "id": "larm",
+    "name": "Left arm",
+    "range": [
+     5,
+     6
+    ],
+    "slots": [
+     "Hand",
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 1 / 3 / 3"
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     7,
+     9
+    ],
+    "slots": [
+     "Hull",
+     "Reactor",
+     "Reactor",
+     "Reactor",
+     "",
+     ""
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Right arm",
+    "range": [
+     10,
+     10
+    ],
+    "slots": [
+     "Hull",
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "shoulder",
+    "name": "Welded cannon",
+    "range": [
+     11,
+     11
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "1 / 5 / 2 / 7"
+   },
+   {
+    "id": "cockpit",
+    "name": "Cockpit",
+    "range": [
+     12,
+     12
+    ],
+    "slots": [
+     "Hull",
+     ""
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
+  "name": "KR Goliath R9",
+  "make": "KR",
+  "model": "Goliath R9",
+  "class": "Super-heavy tracked",
+  "size": 5,
+  "tier": "Scrap",
+  "price": 12000,
+  "heatMax": 16,
+  "description": "A mining crawler pressed into war: a dozer blade, a cutting boom and a reactor bay big enough for anything.",
+  "shape": "tracked",
+  "sections": [
+   {
+    "id": "ltread",
+    "name": "Left tread",
+    "range": [
+     1,
+     2
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     "",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 1 / 4 / 4",
+    "provides": {
+     "speed": 2
+    }
+   },
+   {
+    "id": "rtread",
+    "name": "Right tread",
+    "range": [
+     3,
+     4
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     "",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 4 / 4 / 7",
+    "provides": {
+     "speed": 2
+    }
+   },
+   {
+    "id": "larm",
+    "name": "Dozer blade",
+    "range": [
+     5,
+     6
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     "Hull",
+     "Hand"
+    ],
+    "transfer": "core",
+    "area": "2 / 1 / 3 / 3"
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     7,
+     9
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     "Reactor",
+     "Reactor",
+     "Reactor",
+     "Reactor",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Cutting boom",
+    "range": [
+     10,
+     11
+    ],
+    "slots": [
+     "Hull",
+     "Hand",
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "cockpit",
+    "name": "Cockpit",
+    "range": [
+     12,
+     12
+    ],
+    "slots": [
+     "Hull",
+     "Tech",
+     ""
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
   "name": "OHS Ox Mk II",
   "make": "OHS",
   "model": "Ox Mk II",
@@ -321,8 +694,7 @@ export const CHASSIS: Chassis[] = [
   "tier": "Scrap",
   "price": 2500,
   "heatMax": 6,
-  "trait": "Unshakeable: cannot be knocked down, shoved or grappled",
-  "description": "A four-legged freight walker with a crane arm. Tough and roomy, but it carries one gun and cannot dodge. Losing a leg costs only 15 Speed.",
+  "description": "A four-legged freight walker with a crane arm. Tough and roomy, but it carries one gun and cannot dodge. Losing a leg costs only 3 tiles of Speed.",
   "shape": "quad",
   "sections": [
    {
@@ -406,7 +778,6 @@ export const CHASSIS: Chassis[] = [
      "Reactor",
      "Reactor",
      "Tech",
-     "",
      "",
      ""
     ],
@@ -436,8 +807,7 @@ export const CHASSIS: Chassis[] = [
      12
     ],
     "slots": [
-     "Hull",
-     "Tech"
+     "Hull"
     ],
     "transfer": "pilot",
     "area": "1 / 3 / 2 / 5"
@@ -453,8 +823,7 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 4000,
   "heatMax": 7,
-  "trait": "Unshakeable",
-  "description": "The current Ox. It has the Mk II's legs and cargo bed, plus a second gun on the crane arm and a cab with two Tech slots.",
+  "description": "The current Ox. It has the Mk II's legs and cargo bed, plus a second gun on the crane arm and a cab with a Tech slot.",
   "shape": "quad",
   "sections": [
    {
@@ -538,7 +907,6 @@ export const CHASSIS: Chassis[] = [
      "Reactor",
      "Reactor",
      "Tech",
-     "",
      "",
      ""
     ],
@@ -570,7 +938,6 @@ export const CHASSIS: Chassis[] = [
     ],
     "slots": [
      "Hull",
-     "Tech",
      "Tech"
     ],
     "transfer": "pilot",
@@ -587,7 +954,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 6000,
   "heatMax": 7,
-  "trait": "Workhorse: field repairs on it roll +1 die",
   "description": "Two working hands, a lighter right arm, a missile pod on the right shoulder, and tough, roomy legs.",
   "shape": "biped",
   "sections": [
@@ -715,7 +1081,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 8000,
   "heatMax": 9,
-  "trait": "Hauler: each Stowage part on it holds +2",
   "description": "A tracked mining crawler with a drill arm and a crane. It has a heavy reactor bay and lots of room, but only one Weapon slot. A Treads hit can stop it dead.",
   "shape": "tracked",
   "sections": [
@@ -727,6 +1092,7 @@ export const CHASSIS: Chassis[] = [
      3
     ],
     "slots": [
+     "Hull",
      "Hull",
      "Hull",
      "",
@@ -747,6 +1113,7 @@ export const CHASSIS: Chassis[] = [
      8
     ],
     "slots": [
+     "Hull",
      "Hull",
      "Hull",
      "Reactor",
@@ -783,7 +1150,107 @@ export const CHASSIS: Chassis[] = [
      11
     ],
     "slots": [
+     "Hull",
      "Hand",
+     ""
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "cockpit",
+    "name": "Cockpit",
+    "range": [
+     12,
+     12
+    ],
+    "slots": [
+     "Hull",
+     "Tech",
+     "Tech"
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
+  "name": "OHS Yak Mk I",
+  "make": "OHS",
+  "model": "Yak Mk I",
+  "class": "Medium tracked",
+  "size": 3,
+  "tier": "Salvage",
+  "price": 5500,
+  "heatMax": 7,
+  "description": "A tracked tow rig with a crane boom and an open cargo bed. Slow, tough and full of room.",
+  "shape": "tracked",
+  "sections": [
+   {
+    "id": "treads",
+    "name": "Treads",
+    "range": [
+     1,
+     3
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     "",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 2 / 4 / 6",
+    "provides": {
+     "speed": 8
+    }
+   },
+   {
+    "id": "larm",
+    "name": "Cargo bed",
+    "range": [
+     4,
+     5
+    ],
+    "slots": [
+     "Hull",
+     "",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "2 / 1 / 3 / 3"
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     6,
+     9
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     "Reactor",
+     "Reactor",
+     "Tech",
+     ""
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Crane boom",
+    "range": [
+     10,
+     11
+    ],
+    "slots": [
+     "Hull",
+     "Hand",
+     "Weapon",
      ""
     ],
     "transfer": "core",
@@ -814,7 +1281,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 5000,
   "heatMax": 5,
-  "trait": "Spotter: its target locks also count for allies' attacks",
   "description": "The militia's scout: a sensor head on fast legs, with a hand for field work. Cheap enough to lose.",
   "shape": "biped",
   "sections": [
@@ -923,7 +1389,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Standard",
   "price": 10000,
   "heatMax": 8,
-  "trait": "Militia standard: armour refills at half price in any colony town",
   "description": "The colony militia's line mech: nothing special, nothing missing. A gun arm on the right, a working hand on the left.",
   "shape": "biped",
   "sections": [
@@ -1039,7 +1504,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Standard",
   "price": 14000,
   "heatMax": 11,
-  "trait": "Stable platform: Long weapons roll +1 die if it did not move this turn",
   "description": "One treads section: a lucky hit there immobilises it.",
   "shape": "tracked",
   "sections": [
@@ -1093,6 +1557,7 @@ export const CHASSIS: Chassis[] = [
      "Reactor",
      "Reactor",
      "Reactor",
+     "Tech",
      "",
      "",
      "",
@@ -1143,7 +1608,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Standard",
   "price": 20000,
   "heatMax": 13,
-  "trait": "Gun platform: a size-4 weapon on its cannon arm ignores Braced",
   "description": "The militia's answer to Sol siege frames: a slow heavy biped with a four-slot cannon arm, built to carry a Brannoc HC-60.",
   "shape": "biped",
   "sections": [
@@ -1198,6 +1662,7 @@ export const CHASSIS: Chassis[] = [
      "Tech",
      "Tech",
      "",
+     "",
      ""
     ],
     "transfer": null,
@@ -1228,12 +1693,282 @@ export const CHASSIS: Chassis[] = [
      11
     ],
     "slots": [
+     "Hull",
      "Hand",
      "Weapon",
      "Weapon"
     ],
     "transfer": "core",
     "area": "2 / 1 / 3 / 3"
+   },
+   {
+    "id": "cockpit",
+    "name": "Cockpit",
+    "range": [
+     12,
+     12
+    ],
+    "slots": [
+     "Hull",
+     "Tech"
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
+  "name": "HCA Outrider Block 3",
+  "make": "HCA",
+  "model": "Outrider Block 3",
+  "class": "Light",
+  "size": 2,
+  "tier": "Standard",
+  "price": 8000,
+  "heatMax": 7,
+  "description": "A militia skirmisher with a back-mounted missile rack and a sensor mast.",
+  "shape": "biped",
+  "sections": [
+   {
+    "id": "lleg",
+    "name": "Left leg",
+    "range": [
+     1,
+     2
+    ],
+    "slots": [
+     "Hull",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 2 / 4 / 4",
+    "provides": {
+     "speed": 8,
+     "evasion": 2
+    }
+   },
+   {
+    "id": "rleg",
+    "name": "Right leg",
+    "range": [
+     3,
+     4
+    ],
+    "slots": [
+     "Hull",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 4 / 4 / 6",
+    "provides": {
+     "speed": 8,
+     "evasion": 2
+    }
+   },
+   {
+    "id": "larm",
+    "name": "Left arm",
+    "range": [
+     5,
+     6
+    ],
+    "slots": [
+     "Hand",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 1 / 3 / 3"
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     7,
+     9
+    ],
+    "slots": [
+     "Hull",
+     "Reactor",
+     "Reactor",
+     "Tech"
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Right arm",
+    "range": [
+     10,
+     10
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "shoulder",
+    "name": "Missile rack",
+    "range": [
+     11,
+     11
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "1 / 5 / 2 / 7"
+   },
+   {
+    "id": "cockpit",
+    "name": "Sensor mast",
+    "range": [
+     12,
+     12
+    ],
+    "slots": [
+     "Tech",
+     "Tech"
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
+  "name": "HCA Sentinel Block 5",
+  "make": "HCA",
+  "model": "Sentinel Block 5",
+  "class": "Heavy assault",
+  "size": 5,
+  "tier": "Standard",
+  "price": 26000,
+  "heatMax": 14,
+  "description": "The militia's walking bunker: two shoulder mounts and a gun arm on a slow, heavy frame.",
+  "shape": "biped",
+  "sections": [
+   {
+    "id": "lleg",
+    "name": "Left leg",
+    "range": [
+     1,
+     2
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 2 / 4 / 4",
+    "provides": {
+     "speed": 3
+    }
+   },
+   {
+    "id": "rleg",
+    "name": "Right leg",
+    "range": [
+     3,
+     4
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 4 / 4 / 6",
+    "provides": {
+     "speed": 3
+    }
+   },
+   {
+    "id": "larm",
+    "name": "Left arm",
+    "range": [
+     5,
+     5
+    ],
+    "slots": [
+     "Hull",
+     "Hand",
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 1 / 3 / 3"
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     6,
+     8
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     "Reactor",
+     "Reactor",
+     "Reactor",
+     "Tech",
+     "Tech"
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Right arm",
+    "range": [
+     9,
+     9
+    ],
+    "slots": [
+     "Hull",
+     "Weapon",
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "lshoulder",
+    "name": "Left shoulder",
+    "range": [
+     10,
+     10
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon",
+     ""
+    ],
+    "transfer": "core",
+    "area": "1 / 1 / 2 / 3"
+   },
+   {
+    "id": "shoulder",
+    "name": "Right shoulder",
+    "range": [
+     11,
+     11
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon",
+     ""
+    ],
+    "transfer": "core",
+    "area": "1 / 5 / 2 / 7"
    },
    {
     "id": "cockpit",
@@ -1260,7 +1995,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Salvage",
   "price": 4000,
   "heatMax": 6,
-  "trait": "Light frame: Sprint costs 1 less energy",
   "description": "Fast, with an exposed canopy that is easy to snipe and a left arm that is a hand and little else.",
   "shape": "biped",
   "sections": [
@@ -1352,6 +2086,7 @@ export const CHASSIS: Chassis[] = [
      12
     ],
     "slots": [
+     "Hull",
      "Tech"
     ],
     "transfer": "pilot",
@@ -1368,7 +2103,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 18000,
   "heatMax": 7,
-  "trait": "Gyro-stabilised: Sprint and jump parts cost 1 less heat",
   "description": "A front-line skirmisher with gun pods for arms and a sensor head. No hands: it fights, it does not salvage.",
   "shape": "biped",
   "sections": [
@@ -1463,6 +2197,7 @@ export const CHASSIS: Chassis[] = [
      12
     ],
     "slots": [
+     "Hull",
      "Tech",
      "Tech"
     ],
@@ -1480,7 +2215,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 22000,
   "heatMax": 8,
-  "trait": "Built to jump: jump parts cost 1 less energy",
   "description": "The Kestrel's bigger sibling, built around jump packs: a hand, a three-gun arm and roomy legs for jets.",
   "shape": "biped",
   "sections": [
@@ -1530,6 +2264,7 @@ export const CHASSIS: Chassis[] = [
      6
     ],
     "slots": [
+     "Hull",
      "Hand",
      "Weapon",
      "Weapon"
@@ -1550,6 +2285,7 @@ export const CHASSIS: Chassis[] = [
      "Reactor",
      "Tech",
      "Tech",
+     "",
      ""
     ],
     "transfer": null,
@@ -1563,6 +2299,7 @@ export const CHASSIS: Chassis[] = [
      11
     ],
     "slots": [
+     "Hull",
      "Weapon",
      "Weapon",
      "Weapon"
@@ -1578,6 +2315,215 @@ export const CHASSIS: Chassis[] = [
      12
     ],
     "slots": [
+     "Hull",
+     "Tech"
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
+  "name": "MAS Merlin M-2",
+  "make": "MAS",
+  "model": "Merlin M-2",
+  "class": "Ultralight",
+  "size": 1,
+  "tier": "Standard",
+  "price": 6000,
+  "heatMax": 6,
+  "description": "A reverse-jointed scout: a sensor head, a gun pod and very fast legs. No hands.",
+  "shape": "biped",
+  "sections": [
+   {
+    "id": "lleg",
+    "name": "Left leg",
+    "range": [
+     1,
+     3
+    ],
+    "slots": [
+     "Hull",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 2 / 4 / 4",
+    "provides": {
+     "speed": 9,
+     "evasion": 2
+    }
+   },
+   {
+    "id": "rleg",
+    "name": "Right leg",
+    "range": [
+     4,
+     6
+    ],
+    "slots": [
+     "Hull",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 4 / 4 / 6",
+    "provides": {
+     "speed": 9,
+     "evasion": 2
+    }
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     7,
+     9
+    ],
+    "slots": [
+     "Reactor",
+     "Reactor",
+     "Tech",
+     ""
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Gun pod",
+    "range": [
+     10,
+     10
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "cockpit",
+    "name": "Sensor head",
+    "range": [
+     11,
+     12
+    ],
+    "slots": [
+     "Hull",
+     "Tech",
+     "Tech"
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
+  "name": "MAS Osprey O-5",
+  "make": "MAS",
+  "model": "Osprey O-5",
+  "class": "Medium",
+  "size": 3,
+  "tier": "Salvage",
+  "price": 7000,
+  "heatMax": 7,
+  "description": "An old atmospheric airframe on legs. Its wing pylons carry guns where arms would be, with room for jets.",
+  "shape": "biped",
+  "sections": [
+   {
+    "id": "lleg",
+    "name": "Left leg",
+    "range": [
+     1,
+     2
+    ],
+    "slots": [
+     "Hull",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 2 / 4 / 4",
+    "provides": {
+     "speed": 7,
+     "evasion": 1
+    }
+   },
+   {
+    "id": "rleg",
+    "name": "Right leg",
+    "range": [
+     3,
+     4
+    ],
+    "slots": [
+     "Hull",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 4 / 4 / 6",
+    "provides": {
+     "speed": 7,
+     "evasion": 1
+    }
+   },
+   {
+    "id": "larm",
+    "name": "Left wing pylon",
+    "range": [
+     5,
+     6
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon",
+     ""
+    ],
+    "transfer": "core",
+    "area": "2 / 1 / 3 / 3"
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     7,
+     9
+    ],
+    "slots": [
+     "Hull",
+     "Reactor",
+     "Reactor",
+     "Tech",
+     ""
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Right wing pylon",
+    "range": [
+     10,
+     11
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon",
+     ""
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "cockpit",
+    "name": "Cockpit",
+    "range": [
+     12,
+     12
+    ],
+    "slots": [
+     "Hull",
      "Tech"
     ],
     "transfer": "pilot",
@@ -1594,7 +2540,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 20000,
   "heatMax": 10,
-  "trait": "Fire control: once per turn, one weapon ignores the −1 die for a closer band",
   "description": "Vantor's main battle frame: a Warden with Hull in every section, more Heat Max and fire control.",
   "shape": "biped",
   "sections": [
@@ -1712,8 +2657,7 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 30000,
   "heatMax": 14,
-  "trait": "Siege frame: cannot Sprint; gains Deflection (1) on any turn it does not move",
-  "description": "A walking gun emplacement with a missile shoulder. Slow, with no Evasion, but 10 Hull slots and Heat Max 14.",
+  "description": "A walking gun emplacement with a missile shoulder. Slow, with no Evasion, but 11 Hull slots and Heat Max 14.",
   "shape": "biped",
   "sections": [
    {
@@ -1802,6 +2746,7 @@ export const CHASSIS: Chassis[] = [
      "Hull",
      "Hand",
      "Weapon",
+     "Weapon",
      "Weapon"
     ],
     "transfer": "core",
@@ -1815,6 +2760,7 @@ export const CHASSIS: Chassis[] = [
      11
     ],
     "slots": [
+     "Hull",
      "Weapon",
      "Weapon",
      ""
@@ -1848,7 +2794,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 48000,
   "heatMax": 20,
-  "trait": "Emplacement: its Braced weapons can still fire after it moves up to 10",
   "description": "A tracked fortress with a four-slot reactor bay and a five-slot main gun mount. It is the only frame that can carry a Siege-size weapon, and it needs every cooler it can fit.",
   "shape": "tracked",
   "sections": [
@@ -1862,6 +2807,7 @@ export const CHASSIS: Chassis[] = [
     "slots": [
      "Hull",
      "Hull",
+     "",
      "",
      ""
     ],
@@ -1881,6 +2827,7 @@ export const CHASSIS: Chassis[] = [
     "slots": [
      "Hull",
      "Hull",
+     "",
      "",
      ""
     ],
@@ -1907,6 +2854,7 @@ export const CHASSIS: Chassis[] = [
      "Tech",
      "Tech",
      "Tech",
+     "",
      "",
      ""
     ],
@@ -1990,7 +2938,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Standard",
   "price": 9000,
   "heatMax": 8,
-  "trait": "Analog: EM cannot disable its parts and it is never Weak vs EM; cannot mount CLF parts",
   "description": "A Naturalist militia frame: hand-built, armoured in Hull, with one Tech slot and nothing an EM weapon can switch off.",
   "shape": "biped",
   "sections": [
@@ -2042,6 +2989,7 @@ export const CHASSIS: Chassis[] = [
     "slots": [
      "Hull",
      "Hand",
+     "Weapon",
      "Weapon"
     ],
     "transfer": "core",
@@ -2055,6 +3003,7 @@ export const CHASSIS: Chassis[] = [
      9
     ],
     "slots": [
+     "Hull",
      "Hull",
      "Hull",
      "Reactor",
@@ -2106,8 +3055,7 @@ export const CHASSIS: Chassis[] = [
   "tier": "Military",
   "price": 24000,
   "heatMax": 12,
-  "trait": "Analog; Hull wounds on it can be field-repaired without Scrap",
-  "description": "Greenward's answer to Elite frames: a slow two-handed brawler with a three-slot reactor bay and 10 Hull slots, built to close in and tear things apart.",
+  "description": "Greenward's answer to Elite frames: a slow two-handed brawler with a three-slot reactor bay and 13 Hull slots, built to close in and tear things apart.",
   "shape": "biped",
   "sections": [
    {
@@ -2157,6 +3105,7 @@ export const CHASSIS: Chassis[] = [
     ],
     "slots": [
      "Hull",
+     "Hull",
      "Hand",
      "Weapon",
      "Weapon"
@@ -2172,6 +3121,7 @@ export const CHASSIS: Chassis[] = [
      9
     ],
     "slots": [
+     "Hull",
      "Hull",
      "Hull",
      "Reactor",
@@ -2192,6 +3142,7 @@ export const CHASSIS: Chassis[] = [
      11
     ],
     "slots": [
+     "Hull",
      "Hull",
      "Hand",
      "Weapon",
@@ -2218,16 +3169,15 @@ export const CHASSIS: Chassis[] = [
   ]
  },
  {
-  "name": "CLF Wraith S9",
-  "make": "CLF",
-  "model": "Wraith S9",
+  "name": "GWC Willow Pattern 2",
+  "make": "GWC",
+  "model": "Willow Pattern 2",
   "class": "Light",
   "size": 2,
-  "tier": "Elite",
-  "price": 45000,
-  "heatMax": 8,
-  "trait": "Ghost skin: until it fires a weapon this turn, attacks from beyond Short range roll −2 dice",
-  "description": "An Elite recon and electronic-warfare frame. Five Tech slots and Evasion 6, but no Hull: every wound lands on a part.",
+  "tier": "Standard",
+  "price": 7000,
+  "heatMax": 7,
+  "description": "A long-legged Naturalist ranger with a backpack frame for water cooling.",
   "shape": "biped",
   "sections": [
    {
@@ -2238,6 +3188,131 @@ export const CHASSIS: Chassis[] = [
      2
     ],
     "slots": [
+     "Hull",
+     "Hull",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 2 / 4 / 4",
+    "provides": {
+     "speed": 8,
+     "evasion": 1
+    }
+   },
+   {
+    "id": "rleg",
+    "name": "Right leg",
+    "range": [
+     3,
+     4
+    ],
+    "slots": [
+     "Hull",
+     "Hull",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 4 / 4 / 6",
+    "provides": {
+     "speed": 8,
+     "evasion": 1
+    }
+   },
+   {
+    "id": "larm",
+    "name": "Left arm",
+    "range": [
+     5,
+     5
+    ],
+    "slots": [
+     "Hull",
+     "Hand",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 1 / 3 / 3"
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     6,
+     8
+    ],
+    "slots": [
+     "Hull",
+     "Reactor",
+     "Reactor"
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Right arm",
+    "range": [
+     9,
+     10
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "lshoulder",
+    "name": "Backpack",
+    "range": [
+     11,
+     11
+    ],
+    "slots": [
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "1 / 1 / 2 / 3"
+   },
+   {
+    "id": "cockpit",
+    "name": "Cockpit",
+    "range": [
+     12,
+     12
+    ],
+    "slots": [
+     "Hull",
+     "Tech"
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
+  "name": "CLF Wraith S9",
+  "make": "CLF",
+  "model": "Wraith S9",
+  "class": "Light",
+  "size": 2,
+  "tier": "Elite",
+  "price": 45000,
+  "heatMax": 8,
+  "description": "An Elite recon and electronic-warfare frame. Six Tech slots and Evasion 6, with only two Hull slots: most wounds land on a part.",
+  "shape": "biped",
+  "sections": [
+   {
+    "id": "lleg",
+    "name": "Left leg",
+    "range": [
+     1,
+     2
+    ],
+    "slots": [
+     "Hull",
      "",
      ""
     ],
@@ -2256,6 +3331,7 @@ export const CHASSIS: Chassis[] = [
      4
     ],
     "slots": [
+     "Hull",
      "",
      ""
     ],
@@ -2275,6 +3351,7 @@ export const CHASSIS: Chassis[] = [
     ],
     "slots": [
      "Hand",
+     "Weapon",
      "Weapon"
     ],
     "transfer": "core",
@@ -2292,6 +3369,7 @@ export const CHASSIS: Chassis[] = [
      "Reactor",
      "Tech",
      "Tech",
+     "Tech",
      "Tech"
     ],
     "transfer": null,
@@ -2305,6 +3383,7 @@ export const CHASSIS: Chassis[] = [
      10
     ],
     "slots": [
+     "Weapon",
      "Weapon",
      "Weapon"
     ],
@@ -2336,7 +3415,6 @@ export const CHASSIS: Chassis[] = [
   "tier": "Elite",
   "price": 70000,
   "heatMax": 15,
-  "trait": "Neural link: once per turn, reroll one die on any mech roll",
   "description": "An Elite command frame with two hands, two three-gun arms, a three-slot reactor bay and Heat Max 15.",
   "shape": "biped",
   "sections": [
@@ -2349,6 +3427,7 @@ export const CHASSIS: Chassis[] = [
     ],
     "slots": [
      "Hull",
+     "",
      "",
      ""
     ],
@@ -2369,6 +3448,7 @@ export const CHASSIS: Chassis[] = [
     "slots": [
      "Hull",
      "",
+     "",
      ""
     ],
     "transfer": "core",
@@ -2386,6 +3466,7 @@ export const CHASSIS: Chassis[] = [
      6
     ],
     "slots": [
+     "Hull",
      "Hand",
      "Weapon",
      "Weapon",
@@ -2408,6 +3489,8 @@ export const CHASSIS: Chassis[] = [
      "Reactor",
      "Tech",
      "Tech",
+     "Tech",
+     "",
      ""
     ],
     "transfer": null,
@@ -2421,6 +3504,7 @@ export const CHASSIS: Chassis[] = [
      11
     ],
     "slots": [
+     "Hull",
      "Hand",
      "Weapon",
      "Weapon",
@@ -2439,6 +3523,138 @@ export const CHASSIS: Chassis[] = [
     "slots": [
      "Hull",
      "Tech",
+     "Tech",
+     "Tech"
+    ],
+    "transfer": "pilot",
+    "area": "1 / 3 / 2 / 5"
+   }
+  ]
+ },
+ {
+  "name": "CLF Seraph S10",
+  "make": "CLF",
+  "model": "Seraph S10",
+  "class": "Medium",
+  "size": 3,
+  "tier": "Elite",
+  "price": 55000,
+  "heatMax": 11,
+  "description": "An Elite line frame with a dorsal halo of Tech slots behind the head.",
+  "shape": "biped",
+  "sections": [
+   {
+    "id": "lleg",
+    "name": "Left leg",
+    "range": [
+     1,
+     2
+    ],
+    "slots": [
+     "Hull",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 2 / 4 / 4",
+    "provides": {
+     "speed": 8,
+     "evasion": 2
+    }
+   },
+   {
+    "id": "rleg",
+    "name": "Right leg",
+    "range": [
+     3,
+     4
+    ],
+    "slots": [
+     "Hull",
+     "",
+     ""
+    ],
+    "transfer": "core",
+    "area": "3 / 4 / 4 / 6",
+    "provides": {
+     "speed": 8,
+     "evasion": 2
+    }
+   },
+   {
+    "id": "larm",
+    "name": "Left arm",
+    "range": [
+     5,
+     6
+    ],
+    "slots": [
+     "Hull",
+     "Hand",
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 1 / 3 / 3"
+   },
+   {
+    "id": "core",
+    "name": "Core",
+    "range": [
+     7,
+     9
+    ],
+    "slots": [
+     "Hull",
+     "Reactor",
+     "Reactor",
+     "Tech",
+     "Tech",
+     "",
+     ""
+    ],
+    "transfer": null,
+    "area": "2 / 3 / 3 / 5"
+   },
+   {
+    "id": "rarm",
+    "name": "Right arm",
+    "range": [
+     10,
+     10
+    ],
+    "slots": [
+     "Weapon",
+     "Weapon",
+     "Weapon"
+    ],
+    "transfer": "core",
+    "area": "2 / 5 / 3 / 7"
+   },
+   {
+    "id": "shoulder",
+    "name": "Halo",
+    "range": [
+     11,
+     11
+    ],
+    "slots": [
+     "Tech",
+     "Tech",
+     "Tech"
+    ],
+    "transfer": "core",
+    "area": "1 / 5 / 2 / 7"
+   },
+   {
+    "id": "cockpit",
+    "name": "Cockpit",
+    "range": [
+     12,
+     12
+    ],
+    "slots": [
+     "Hull",
      "Tech"
     ],
     "transfer": "pilot",
@@ -7078,7 +8294,7 @@ export const TAGS: { [tag: string]: string } = {
  "Deflection": "Gain X deflection until your next turn; each cancels one incoming success",
  "Indirect": "May fire without line of sight at a locked target",
  "Area": "Roll once against every target within X tiles of the point of impact",
- "Volatile": "when disabled, roll Xd4, each success a wound to that section that ignores armour. Ammo bins keep rounds × volatility",
+ "Volatile": "when disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins keep rounds × volatility",
  "Kinetic": "Damage types, used by Armoured and Weak",
  "Thermal": "Damage types, used by Armoured and Weak",
  "Explosive": "Damage types, used by Armoured and Weak",

@@ -35,11 +35,20 @@ function submitChat(text: string): void {
     window.opener.postMessage({ chat: text }, "*")
 }
 
+/**
+ * Shows dice the sheet has already rolled (and applied) as a normal Foundry d4 roll card, so it reads like any other
+ * roll (module 1.1.1 and later).
+ */
+function submitRolled(rolled: number[], text: string): void {
+    window.opener.postMessage({ dice: rolled.length, rolled: rolled, text: text }, "*")
+}
+
 const foundry = {
     isPresent: isPresent,
     submitRoll: submitRoll,
     submitDice: submitDice,
     submitChat: submitChat,
+    submitRolled: submitRolled,
 }
 
 export default foundry;

@@ -221,7 +221,7 @@ for l in CAT[i + 1:]:
     c = cells(l)
     sp, ev = [num(x) for x in c[7].split('/')]
     overview[f'{c[0]} {c[1]}'] = {'make': c[0], 'model': c[1], 'class': c[2], 'tier': c[3], 'price': num(c[4]),
-                                   'heatMax': num(c[5]), 'trait': c[9]}
+                                   'heatMax': num(c[5])}
 
 def class_size(cls):
     """Chassis size 1-5 from its class: Ultralight 1, Light 2, Medium 3, Heavy 4, Heavy assault / Super-heavy 5."""
@@ -237,6 +237,10 @@ ROLE = {
     'Rear left leg': 'rlleg', 'Rear right leg': 'rrleg', 'Front left leg': 'flleg', 'Front right leg': 'frleg',
     'Drill arm': 'larm', 'Crane arm': 'rarm', 'Cannon arm': 'rarm', 'Right shoulder': 'shoulder',
     'Left shoulder': 'lshoulder', 'Main gun mount': 'gun',
+    'Claw arm': 'rarm', 'Gun pod': 'rarm', 'Right wing pylon': 'rarm', 'Crane boom': 'rarm', 'Cutting boom': 'rarm',
+    'Left wing pylon': 'larm', 'Cargo bed': 'larm', 'Dozer blade': 'larm',
+    'Welded cannon': 'shoulder', 'Missile rack': 'shoulder', 'Halo': 'shoulder',
+    'Backpack': 'lshoulder', 'Sensor mast (cockpit)': 'cockpit',
 }
 AREA = {  # CSS grid-area on the 6-column body grid: row-start / col-start / row-end / col-end
     'cockpit': '1 / 3 / 2 / 5', 'shoulder': '1 / 5 / 2 / 7', 'gun': '1 / 5 / 2 / 7', 'lshoulder': '1 / 1 / 2 / 3',
@@ -309,7 +313,7 @@ for src in (CAT, RULES):
         ids = {s['id'] for s in secs}
         shape = 'tracked' if ids & {'treads', 'ltread'} else 'quad' if 'flleg' in ids else 'biped'
         chassis[name] = {'name': name, 'make': o['make'], 'model': o['model'], 'class': o['class'], 'size': class_size(o['class']), 'tier': o['tier'],
-                         'price': o['price'], 'heatMax': o['heatMax'], 'trait': o['trait'], 'description': desc,
+                         'price': o['price'], 'heatMax': o['heatMax'], 'description': desc,
                          'shape': shape, 'sections': secs}
 
 missing = set(overview) - set(chassis)

@@ -9,7 +9,7 @@ export const TAG_SHORT: { [tag: string]: string } = {
   Deflection: 'cancels X incoming successes until your next turn',
   Indirect: 'no line of sight needed against a locked target',
   Area: 'rolls once against everything within X tiles of impact',
-  Volatile: 'when disabled: Xd4 to its section, ignoring armour',
+  Volatile: 'when disabled: Xd4 hits to its section',
   Kinetic: 'damage type',
   Thermal: 'damage type',
   Explosive: 'damage type',

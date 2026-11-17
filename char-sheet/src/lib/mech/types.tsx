@@ -15,7 +15,7 @@ export interface ChassisLoadout { armour?: string, mounts: [string, number][] /*
 export interface Chassis {
   name: string, description?: string, heatMax: number, shape: 'biped' | 'tracked' | 'quad',
   size?: number /* 1 (ultralight) to 5 (super-heavy): Sprint costs this much energy and heat */,
-  make?: string, model?: string, class?: string, tier?: string, price?: number, trait?: string,
+  make?: string, model?: string, class?: string, tier?: string, price?: number,
   sections: ChassisSection[], loadout?: { [sectionId: string]: ChassisLoadout },
 }
 /** A ready-made mech: a chassis plus a full loadout, for quick test runs. */
