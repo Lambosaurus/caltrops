@@ -101,7 +101,7 @@ Armour sits in each section's Armour slot as a stack of points. Each point absor
 
 ### Ammo bins
 
-Ammo lives in Ammo Bin attachments: Size 1, Generic, holding one ammo type. More ammo costs slots. Bins are Volatile: if a bin is disabled while it holds ammo, it cooks off. Roll d4s equal to the rounds left times the ammo's volatility; each success is a wound to that section that ignores armour.
+Ammo lives in Ammo Bin attachments: Size 1, Generic, holding one ammo type. More ammo costs slots. Bins are Volatile: if a bin is disabled while it holds ammo, it cooks off. Roll d4s equal to the rounds left times the ammo's volatility; each success is a hit to that section, and its armour soaks them first.
 
 | Ammo | Rounds per bin | Volatility | Full-bin cook-off |
 |---|---|---|---|
@@ -418,7 +418,7 @@ Ejection and pilots on foot once a mech is lost.
 | Multi-slot attachments sit in consecutive slots of one section | Chassis |
 | One Armour slot per section, holding a stack of points | Chassis, Attachments |
 | Attachments work at full strength until every slot is wounded | Attachments |
-| Missile bin holds 5 (so a full bin cooks off at 15d4, close to the others' 16d4); cook-off wounds ignore armour | Attachments |
+| Missile bin holds 5 (so a full bin cooks off at 15d4, close to the others' 16d4); cook-off hits go through armour like any other | Attachments |
 | Stowage Rack: Size 1 Generic, +3 stowage slots; items lost or unreachable while it is destroyed | Attachments |
 | Inside a weapon's range band: −1 die per band closer | Attachments |
 | Melee needs an Engaged (base-to-base) target; guns treat Engaged as Short | Attachments |

@@ -51,7 +51,7 @@ describe('applyWounds', () => {
     expect(mech.sections.core.mounts.find(x => x.name === 'Ammo Bin: Standard')!.ammo).toBe(8)
     expect(events.some(e => e.includes('16d4'))).toBe(true)
   })
-  it('rolls the cook-off and applies its wounds ignoring armour', () => {
+  it('rolls the cook-off and applies its hits', () => {
     const calls: number[] = []
     const roller = (n: number) => { calls.push(n); return Array(n).fill(4) }
     // Light bin (slot 4, 16 rounds x1) is the last slot but one; the hit disables it.
@@ -61,6 +61,17 @@ describe('applyWounds', () => {
     expect(mech.sections.core.mounts.find(x => x.name === 'Ammo Bin: Light')!.ammo).toBe(0)
     expect(events.some(e => e.includes('COOK-OFF'))).toBe(true)
     expect(mech.turn.out).toBe(true)
+  })
+  it('cook-off hits are soaked by the section armour first', () => {
+    // An armour-piercing hit disables the Light bin (slot 5); its cook-off rolls 2 successes, which the core's armour soaks.
+    const roller = (n: number) => Array.from({ length: n }, (_, i) => (i < 2 ? 4 : 1))
+    let m = setWounds(mule(), 'core', [true, true, true, true, false, false])
+    m = setArmourPoints(FIXTURE_RULES, m, 'core', 3)
+    const { mech, events } = applyWounds(FIXTURE_RULES, m, 'core', 1, { cookoff: true, roller, ignoreArmour: true })
+    expect(events.some(e => e.includes('2 hits on the Core, armour first'))).toBe(true)
+    expect(mech.sections.core.armour!.points).toBe(1)
+    expect(mech.sections.core.wounds[5]).toBe(false)
+    expect(mech.turn.out).toBe(false)
   })
   it('cook-off with no successes adds no extra wounds', () => {
     const m = setWounds(mule(), 'lleg', [true, true, false])

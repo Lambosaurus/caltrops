@@ -23,11 +23,23 @@ function setup(mode: 'sheet' | 'mech' = 'sheet', change?: (m: any) => void) {
 
 const why = (label: string) => screen.getByLabelText(label).closest('[data-why]')?.getAttribute('data-why') ?? null
 
-test('clicking a weapon opens the attack dialog with one shot picked; Fire pays and rolls it with a d12', () => {
+/** Clicks part activate buttons until the dialog titled `name` opens. */
+function open(name: string | RegExp) {
+  for (const b of screen.getAllByText(/^\dE \+\dH/)) {
+    fireEvent.click(b)
+    if (screen.queryByRole('heading', { name })) return
+    const cancel = screen.queryAllByText('Cancel').slice(-1)[0]
+    if (cancel) fireEvent.click(cancel)
+  }
+  throw new Error(`no dialog ${name}`)
+}
+
+test('clicking a weapon opens its own attack dialog; Fire pays and rolls it with a d12', () => {
   const { view, energy } = setup()
-  fireEvent.click(screen.getAllByText(/^2E \+2H/)[0])
-  expect(screen.getByRole('heading', { name: 'Ranged attack' })).toBeTruthy()
-  expect(screen.getByLabelText('Autocannon 1 shot').getAttribute('aria-pressed')).toBe('true')
+  open('Autocannon')
+  expect(screen.queryByLabelText('Autocannon 1 shot')).toBeNull() // not Repeating: no shot picker
+  expect(screen.queryByLabelText('Machine Gun 1 shot')).toBeNull() // no other weapons in the dialog
+  expect(screen.queryByTestId('roll-rarm:1')).toBeNull()
   // Precision 3 + Gunnery 2 + Autocannon 3
   expect(screen.getByTestId('roll-larm:1').textContent).toContain('8d4 + d12')
   expect(view.read('mech').turn.energy).toBe(energy)
@@ -38,59 +50,51 @@ test('clicking a weapon opens the attack dialog with one shot picked; Fire pays 
   expect(d12).toBeLessThanOrEqual(12)
 })
 
-test('each weapon rolls on its own: shots are picked per weapon and the bonus applies to each roll', () => {
+test('a Repeating weapon picks how many shots; the bonus and band apply to its roll', () => {
   const { view, energy } = setup()
-  fireEvent.click(screen.getByText('Attack'))
-  fireEvent.click(screen.getByText('Short', { selector: 'button' }))
-  fireEvent.click(screen.getByLabelText('Autocannon 1 shot'))
-  fireEvent.click(screen.getByLabelText('Machine Gun 2 shots'))
+  open('Machine Gun')
+  expect(screen.getByLabelText('Machine Gun 1 shot').getAttribute('aria-pressed')).toBe('true')
   expect(screen.queryByLabelText('Machine Gun 3 shots')).toBeNull() // Repeating 2
+  fireEvent.click(screen.getByLabelText('Machine Gun 2 shots'))
   fireEvent.change(screen.getByLabelText('Bonus'), { target: { value: '-2' } })
-  // Autocannon: Reflex 0 + Gunnery 2 + 3 − 1 (closer band) − 2 = 2. Machine Gun: 0 + 2 + 2 × 2 − 2 = 4.
-  expect(screen.getByTestId('roll-larm:1').textContent).toContain('2d4 + d12')
+  // Short is its own band: Reflex 0 + Gunnery 2 + 2 × 2 − 2 = 4.
   expect(screen.getByTestId('roll-rarm:1').textContent).toContain('Machine Gun ×2')
   expect(screen.getByTestId('roll-rarm:1').textContent).toContain('4d4 + d12')
-  fireEvent.click(screen.getByText('Fire 2 weapons'))
-  expect(view.read('mech').turn.energy).toBe(energy - 4)
-  expect(screen.getByTestId('result-larm:1')).toBeTruthy()
+  fireEvent.click(screen.getByText('Fire'))
+  expect(view.read('mech').turn.energy).toBe(energy - 2)
   expect(screen.getByTestId('result-rarm:1').textContent).toContain('Machine Gun ×2')
 })
 
 test('a shot count the mech cannot make is disabled and says why', () => {
-  setup('sheet', m => { m.turn.energy = 3 })
-  fireEvent.click(screen.getByText('Attack'))
-  fireEvent.click(screen.getByText('Short', { selector: 'button' }))
-  fireEvent.click(screen.getByLabelText('Autocannon 1 shot'))
+  setup('sheet', m => { m.turn.energy = 1 })
+  open('Machine Gun')
   expect((screen.getByLabelText('Machine Gun 2 shots') as HTMLButtonElement).disabled).toBe(true)
-  expect(why('Machine Gun 2 shots')).toBe('Not enough energy: 2 shots need 2 (+2 for the other weapons), have 3.')
-  expect(why('Machine Gun 1 shot')).toBeNull()
+  expect(why('Machine Gun 2 shots')).toBe('Not enough energy: 2 shots need 2, have 1.')
   fireEvent.click(screen.getByText('Long', { selector: 'button' }))
-  expect(why('Machine Gun 1 shot')).toBe('Out of range: reaches Short, target is Long.')
+  expect(screen.getByTestId('fire-why').textContent).toBe('Out of range: reaches Short, target is Long.')
+  expect((screen.getByText('Fire').closest('button') as HTMLButtonElement).disabled).toBe(true)
 })
 
-test('an empty ammo bin is named as the reason', () => {
+test('a weapon with an empty ammo bin cannot be clicked', () => {
   setup('sheet', m => {
     for (const s of Object.values<any>(m.sections)) for (const x of s.mounts) if (x.name === 'Ammo Bin: Light') x.ammo = 0
   })
-  fireEvent.click(screen.getByText('Attack'))
-  fireEvent.click(screen.getByText('Short', { selector: 'button' }))
-  expect(why('Machine Gun 1 shot')).toBe('Not enough Light ammo: needs 1 round, 0 left.')
+  expect(() => open('Machine Gun')).toThrow('no dialog Machine Gun') // its button is disabled
 })
 
-test('melee attacks are against an Engaged target', () => {
+test('melee weapons strike an Engaged target', () => {
   const { view, energy } = setup()
-  fireEvent.click(screen.getByText('Strike'))
-  expect(screen.getByRole('heading', { name: 'Melee attack' })).toBeTruthy()
+  open('Breaching Hammer (melee)')
   expect(screen.getByText('Engaged', { selector: 'button' })).toBeTruthy()
   expect(screen.queryByText('Mid', { selector: 'button' })).toBeNull()
-  fireEvent.click(screen.getByLabelText('Breaching Hammer 1 shot'))
   fireEvent.click(screen.getByText('Fire'))
   expect(view.read('mech').turn.energy).toBe(energy - 1)
 })
 
-test('status-bar buttons say why they are disabled', () => {
+test('there are no grouped Attack or Strike buttons; status-bar buttons say why they are disabled', () => {
   setup('sheet', m => { m.turn.shutdown = true; m.turn.holdShutdown = true })
-  expect(screen.getByText('Attack').closest('[data-why]')!.getAttribute('data-why')).toBe('Shut down: stays down through the next turn.')
+  expect(screen.queryByText('Attack')).toBeNull()
+  expect(screen.queryByText('Strike')).toBeNull()
   expect(screen.getByText('Shut down & purge').closest('[data-why]')!.getAttribute('data-why')).toBe('Already shut down.')
 })
 
@@ -120,24 +124,20 @@ test('Sensor Array still rolls on its own', () => {
   expect(screen.getByText(/Roll \d+ dice & activate/)).toBeTruthy()
 })
 
-test('each weapon goes to the VTT as its own roll, with a d12 location', () => {
+test('a weapon goes to the VTT as its own roll, with a d12 location', () => {
   const postMessage = jest.fn()
   Object.defineProperty(window, 'opener', { value: { postMessage }, configurable: true })
   try {
     const { view, energy } = setup()
-    fireEvent.click(screen.getByText('Attack'))
+    open('Autocannon')
     fireEvent.click(screen.getByText('Short', { selector: 'button' }))
-    fireEvent.click(screen.getByLabelText('Autocannon 1 shot'))
-    fireEvent.click(screen.getByLabelText('Machine Gun 1 shot'))
     fireEvent.click(screen.getByText('Send to VTT'))
-    expect(postMessage).toHaveBeenCalledTimes(2)
-    const [ac, mg] = postMessage.mock.calls.map(c => c[0])
+    expect(postMessage).toHaveBeenCalledTimes(1)
+    const ac = postMessage.mock.calls[0][0]
     expect(ac).toMatchObject({ dice: 4, location: true })
     expect(ac.text).toContain('Autocannon at Short ·')
-    expect(mg).toMatchObject({ dice: 4, location: true })
-    expect(mg.text).toContain('Machine Gun at Short')
-    expect(view.read('mech').turn.energy).toBe(energy - 3)
-    expect(screen.getAllByTestId('shot-vtt')).toHaveLength(2)
+    expect(view.read('mech').turn.energy).toBe(energy - 2)
+    expect(screen.getByTestId('shot-vtt')).toBeTruthy()
   } finally {
     Object.defineProperty(window, 'opener', { value: null, configurable: true })
   }

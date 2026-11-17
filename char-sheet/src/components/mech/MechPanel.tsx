@@ -16,10 +16,10 @@ import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { deriveStats, overheated, turnEnergy } from '../../lib/mech/derive'
 import { adjustAmmo, setArmourPoints, toggleWound } from '../../lib/mech/damage'
-import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, shutdownText, sprint, sprintBlocker, sprintCost, weaponKeys } from '../../lib/mech/turn'
+import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, shutdownText, sprint, sprintBlocker, sprintCost } from '../../lib/mech/turn'
 import { findAttachment, findChassis, mountCovering } from '../../lib/mech/loadout'
 import { copyMechLink } from '../../lib/mech/store'
-import type { Mech, MechResult, MechRules, ShotKind } from '../../lib/mech/types'
+import type { Mech, MechResult, MechRules } from '../../lib/mech/types'
 import type { Rules } from '../../lib/rules'
 import { roller } from './roller'
 
@@ -92,9 +92,6 @@ function MechPanel({ view, editable, showStowage = true }: {
   // Why each status-bar control is disabled, shown on hover (null = enabled).
   const readOnly = play ? null : 'Read only: you cannot play this mech.'
   const sprintWhy = readOnly ?? sprintBlocker(mechRules, mech)
-  const attackWhy = (kind: ShotKind): string | null => readOnly
-    ?? (t.out ? 'Mech is out of action.' : t.shutdown ? shutdownText(mech)
-      : weaponKeys(mechRules, mech, kind).length ? null : `No ${kind === 'shot' ? 'ranged' : 'melee'} weapons fitted.`)
   const purgeWhy = readOnly ?? (t.out ? 'Mech is out of action.' : t.shutdown ? 'Already shut down.' : null)
   const newTurnWhy = readOnly ?? (t.out ? 'Out of action: repair the core (or untick it in Adjust…) first.' : null)
   const off = (why: string | null) => (why ? 'pointer-events-none' : '')
@@ -108,7 +105,7 @@ function MechPanel({ view, editable, showStowage = true }: {
         onClick={() => nudge(field, delta)}
       >{delta < 0 ? '−' : '+'}</button>
     : null
-  // Weapon buttons open the attack dialog with that weapon selected; other parts use the activation dialog.
+  // A weapon's button opens the attack dialog for that weapon alone; other parts use the activation dialog.
   function onActivate(key: string) {
     const [sectionId, start] = key.split(':')
     const m = mountCovering(mechRules!, mech!, sectionId, Number(start))
@@ -151,12 +148,6 @@ function MechPanel({ view, editable, showStowage = true }: {
         </span>
         : hot ? <span className='badge badge-error rounded-none font-bold'>OVERHEATED</span> : null}
       <span className='flex-1'/>
-      <Why why={attackWhy('shot')}>
-        <button className={`btn btn-xs btn-warning rounded-none ${off(attackWhy('shot'))}`} disabled={!!attackWhy('shot')} onClick={() => setAttackOn({ kind: 'shot' })}>Attack</button>
-      </Why>
-      <Why why={attackWhy('strike')}>
-        <button className={`btn btn-xs btn-warning btn-outline rounded-none ${off(attackWhy('strike'))}`} disabled={!!attackWhy('strike')} onClick={() => setAttackOn({ kind: 'strike' })}>Strike</button>
-      </Why>
       <Why why={sprintWhy}>
         <button className={`btn btn-xs btn-outline rounded-none ${off(sprintWhy)}`} disabled={!!sprintWhy} onClick={() => run(sprint(mechRules, mech, roller))}>
           Sprint ({sprintCosts.energy}E +{sprintCosts.heat}H)

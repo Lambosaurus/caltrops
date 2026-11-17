@@ -409,7 +409,7 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 | Evasive | Activation: this turn counts as Sprinting for Evasion, without spending a Sprint |
 | Stowage (X) | Holds X items of cargo or salvage |
 | Frame and build |  |
-| Volatile (X) | Replaces plain Volatile on non-ammo parts: when disabled, roll Xd4, each success a wound to that section that ignores armour. Ammo bins keep rounds × volatility |
+| Volatile (X) | Replaces plain Volatile on non-ammo parts: when disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins keep rounds × volatility |
 | Analog | It cannot be disrupted by Disruptor attacks |
 | Shielded (X) | Disrupting this part costs X more successes |
 | Faraday (X) | Passive: while it works, every other part in its section has Shielded (X). Faraday (X, mech) covers every part on the mech instead |

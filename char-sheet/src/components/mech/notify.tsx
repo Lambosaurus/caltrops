@@ -16,7 +16,7 @@ export function showNotices(notices: string[]): void {
 
 /**
  * Sends a result's rolls to the VTT, labelled with the mech's name: a roll the player must make goes as a d4 pool for
- * Foundry to roll; one the sheet already rolled and applied goes as a chat line with its dice.
+ * Foundry to roll; one the sheet already rolled and applied goes with its dice, shown as a normal roll card.
  */
 export function sendRolls(rolls: MechRoll[], who?: string): void {
   if (!rolls.length || !foundry.isPresent()) {
@@ -25,7 +25,7 @@ export function sendRolls(rolls: MechRoll[], who?: string): void {
   for (const r of rolls) {
     const text = who ? `${who}: ${r.label}` : r.label
     if (r.rolled) {
-      foundry.submitChat(`${text}. Rolled ${r.dice}d4 [${r.rolled.join(' ')}].`)
+      foundry.submitRolled(r.rolled, text)
     } else {
       foundry.submitDice(r.dice, text)
     }

@@ -322,7 +322,7 @@ export const CHASSIS: Chassis[] = [
   "price": 2500,
   "heatMax": 6,
   "trait": "Unshakeable: cannot be knocked down, shoved or grappled",
-  "description": "A four-legged freight walker with a crane arm. Tough and roomy, but it carries one gun and cannot dodge. Losing a leg costs only 15 Speed.",
+  "description": "A four-legged freight walker with a crane arm. Tough and roomy, but it carries one gun and cannot dodge. Losing a leg costs only 3 tiles of Speed.",
   "shape": "quad",
   "sections": [
    {
@@ -7078,7 +7078,7 @@ export const TAGS: { [tag: string]: string } = {
  "Deflection": "Gain X deflection until your next turn; each cancels one incoming success",
  "Indirect": "May fire without line of sight at a locked target",
  "Area": "Roll once against every target within X tiles of the point of impact",
- "Volatile": "when disabled, roll Xd4, each success a wound to that section that ignores armour. Ammo bins keep rounds × volatility",
+ "Volatile": "when disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins keep rounds × volatility",
  "Kinetic": "Damage types, used by Armoured and Weak",
  "Thermal": "Damage types, used by Armoured and Weak",
  "Explosive": "Damage types, used by Armoured and Weak",

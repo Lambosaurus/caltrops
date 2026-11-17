@@ -202,7 +202,7 @@ describe('turn economy', () => {
     expect(calls).toEqual([8])
     expect(res.notices.some(n => n.includes('COOK-OFF: KR Hotpile F6'))).toBe(true)
     expect(res.rolls).toEqual([expect.objectContaining({ dice: 8, rolled: Array(8).fill(1) })])
-    expect(res.rolls![0].label).toContain('Cook-off: KR Hotpile F6 (Volatile (8)) in the Core')
+    expect(res.rolls![0].label).toContain('Cook-off: KR Hotpile F6 in the Core → 0 hits (applied)')
     const pile = res.mech.sections.core.mounts.find(x => x.name === 'KR Hotpile F6')!
     expect(cookoffDice(mr, pile)).toBe(0)
   })

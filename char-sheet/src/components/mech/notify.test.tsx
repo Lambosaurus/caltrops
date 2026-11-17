@@ -17,10 +17,10 @@ test('a roll to make by hand goes to the VTT as a d4 pool, labelled with the mec
   })
 })
 
-test('a roll already applied goes to the VTT as a chat line with its dice', () => {
+test('a roll already applied goes to the VTT with its own dice', () => {
   withOpener(post => {
     sendRolls([{ label: 'Overheat self-damage on BRO AC-30 → 1 wound (applied)', dice: 3, rolled: [4, 2, 1] }], 'Rusty')
-    expect(post).toHaveBeenCalledWith({ chat: 'Rusty: Overheat self-damage on BRO AC-30 → 1 wound (applied). Rolled 3d4 [4 2 1].' }, '*')
+    expect(post).toHaveBeenCalledWith({ dice: 3, rolled: [4, 2, 1], text: 'Rusty: Overheat self-damage on BRO AC-30 → 1 wound (applied)' }, '*')
   })
 })
 

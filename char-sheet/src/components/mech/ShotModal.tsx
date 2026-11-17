@@ -11,7 +11,7 @@ import { View, useListener } from '../../lib/objectservice'
 import caltrops from '../../lib/caltrops'
 import foundry from '../../lib/foundry'
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
-import { attack, gunBand, planCost, rangePenalty, shotsBlocker, TARGET_BANDS, weaponKeys, weaponRoll, weaponTags, type AttackCounts } from '../../lib/mech/turn'
+import { attack, gunBand, planCost, rangePenalty, shotsBlocker, TARGET_BANDS, weaponRoll, weaponTags, type AttackCounts } from '../../lib/mech/turn'
 import type { Mech, ShotKind, TargetBand, Volley } from '../../lib/mech/types'
 import type { Dictionary, Rules } from '../../lib/rules'
 import { roller } from './roller'
@@ -22,14 +22,14 @@ const signed = (n: number) => (n >= 0 ? '+' : '') + n
 /** Rolls a d12 hit-location die. */
 export const rollD12 = (): number => Math.floor(Math.random() * 12) + 1
 
-export interface AttackTarget { kind: ShotKind, key?: string /* weapon to start with one shot picked */ }
+export interface AttackTarget { kind: ShotKind, key: string /* the weapon that fires */ }
 
 interface Result { volley: Volley, dice: number[] | null /* null: rolled in the VTT */, d12: number | null, tags: string[], short: boolean }
 
 /**
- * The attack dialog. Pick the target's band, then how many shots each weapon fires ([1] [2] [3] for Repeating
- * weapons); a choice the mech cannot afford is disabled and says why on hover. Each weapon rolls on its own: the
- * pilot's aspect + skill + that weapon's dice for each shot + the bonus, with its own tags and d12 hit location.
+ * The attack dialog for one weapon. Pick the target's band and, for a Repeating weapon, how many shots ([1] [2] [3]);
+ * a choice the mech cannot make is disabled and says why on hover. The roll is the pilot's aspect + skill + the
+ * weapon's dice for each shot + the bonus, with the weapon's tags and a d12 hit location.
  */
 function ShotModal({ rules, view, target, close }: {
     rules: Rules,
@@ -41,13 +41,13 @@ function ShotModal({ rules, view, target, close }: {
   const mode: string | undefined = useListener(view, 'mode')
   const attributes: Dictionary<number> | undefined = useListener(view, 'sheet/attributes')
   const skills: Dictionary<number> | undefined = useListener(view, 'sheet/skills')
-  const [counts, setCounts] = useState({} as AttackCounts)
+  const [shots, setShots] = useState(1)
   const [band, setBand] = useState(null as TargetBand | null)
   const [bonus, setBonus] = useState(0)
-  const [done, setDone] = useState(null as Result[] | null)
+  const [done, setDone] = useState(null as Result | null)
 
   useEffect(() => {
-    setCounts(target?.key ? { [target.key]: 1 } : {})
+    setShots(1)
     setBand(null)
     setBonus(0)
     setDone(null)
@@ -57,84 +57,80 @@ function ShotModal({ rules, view, target, close }: {
   if (!target || !mech || !mr) {
     return null
   }
-  const kind = target.kind
+  const { kind, key } = target
   const chassis = findChassis(mr, mech.chassis)
-  const keys = weaponKeys(mr, mech, kind)
-  const attOf = (key: string) => {
-    const [sectionId, start] = key.split(':')
-    const m = mech.sections[sectionId]?.mounts.find(x => x.start === Number(start))
-    return { att: m ? findAttachment(mr, m.name) : undefined, section: chassis?.sections.find(s => s.id === sectionId)?.name ?? sectionId }
+  const [sectionId, start] = key.split(':')
+  const mount = mech.sections[sectionId]?.mounts.find(x => x.start === Number(start))
+  const att = mount ? findAttachment(mr, mount.name) : undefined
+  if (!att) {
+    return null
   }
-  // Default band: the first picked weapon's own band (no penalty). Melee is always Engaged.
-  const firstRange = Object.keys(counts).map(k => attOf(k).att?.range).find(r => r && r !== 'Melee') as TargetBand | undefined
-  const targetBand: TargetBand = kind === 'strike' ? 'Engaged' : band ?? firstRange ?? 'Mid'
+  const section = chassis?.sections.find(s => s.id === sectionId)?.name ?? sectionId
+  // Default band: the weapon's own band (no penalty). Melee is always Engaged.
+  const own = att.range && att.range !== 'Melee' ? att.range as TargetBand : undefined
+  const targetBand: TargetBand = kind === 'strike' ? 'Engaged' : band ?? own ?? 'Mid'
   const bands = kind === 'strike' ? ['Engaged' as TargetBand] : TARGET_BANDS
+  const counts: AttackCounts = { [key]: shots }
 
   const scores: Dictionary<number> = mode === 'mech' ? {} : { ...(attributes ?? {}), ...(skills ?? {}) }
-  const picked = Object.entries(counts).filter(([, n]) => n > 0)
   const cost = planCost(mr, mech, counts)
-
-  function pick(key: string, n: number) {
-    setCounts(c => {
-      const next = { ...c }
-      if (!n || c[key] === n) delete next[key] // clicking the picked number again clears it
-      else next[key] = n
-      return next
-    })
-  }
+  const options = Array.from({ length: att.repeat ?? 1 }, (_, i) => i + 1)
+  const per = att.roll?.bonus ?? 0
+  const pen = rangePenalty(att, targetBand)
+  const fireWhy = done ? null : shotsBlocker(mr, mech, {}, key, shots, targetBand)
+  const tags = weaponTags(mr, att.name)
 
   function fire(toVtt: boolean) {
-    if (!mech || !mr || !picked.length) return
+    if (!mech || !mr || fireWhy) return
     const res = attack(mr, mech, targetBand, counts, roller)
     view.publish('mech', res.mech)
     showResult(res, mech.name)
-    const vtt = toVtt && foundry.isPresent()
-    const out: Result[] = []
-    for (const v of res.volleys) {
-      const base = weaponRoll(rules, v, targetBand, scores)
-      if (!base) continue
-      const roll = { ...base, bonus: (base.bonus ?? 0) + bonus }
-      const tags = weaponTags(mr, v.name)
-      const short = v.shots < (counts[v.key] ?? 0)
-      if (vtt) {
-        const what = `${v.name}${v.shots > 1 ? ` ×${v.shots}` : ''} at ${targetBand}`
-        foundry.submitRoll(roll, { detail: [what, tags.join(', ')].filter(Boolean).join(' · '), location: true })
-        out.push({ volley: v, dice: null, d12: null, tags, short })
-      } else {
-        out.push({ volley: v, dice: caltrops.rollDice(roll), d12: rollD12(), tags, short })
-      }
+    const v = res.volleys[0]
+    const base = v && weaponRoll(rules, v, targetBand, scores)
+    if (!v || !base) {
+      close()
+      return
     }
-    setDone(out)
+    const roll = { ...base, bonus: (base.bonus ?? 0) + bonus }
+    const short = v.shots < shots
+    if (toVtt && foundry.isPresent()) {
+      const what = `${v.name}${v.shots > 1 ? ` ×${v.shots}` : ''} at ${targetBand}`
+      foundry.submitRoll(roll, { detail: [what, tags.join(', ')].filter(Boolean).join(' · '), location: true })
+      setDone({ volley: v, dice: null, d12: null, tags, short })
+    } else {
+      setDone({ volley: v, dice: caltrops.rollDice(roll), d12: rollD12(), tags, short })
+    }
   }
 
-  const noneReason = !picked.length ? 'Pick at least one shot.' : null
+  const info = weaponRoll(rules, { key, name: att.name, shots, dice: per, penalty: pen }, targetBand, scores)
+  const total = info ? Math.max(0, caltrops.rollDiceCount(info) + bonus) : 0
+
   const actions: ModalActionInfo[] = done
     ? [{ name: 'Done', type: 'primary', callback: () => {} }]
     : [
         { name: 'Cancel', callback: () => {} },
-        { name: picked.length > 1 ? `Fire ${picked.length} weapons` : 'Fire', type: 'primary', disabled: !!noneReason, callback: () => fire(false), stayOpen: true },
+        { name: 'Fire', type: 'primary', disabled: !!fireWhy, callback: () => fire(false), stayOpen: true },
         ...(foundry.isPresent()
-          ? [{ name: 'Send to VTT', type: 'primary', disabled: !!noneReason, callback: () => fire(true), stayOpen: true } as ModalActionInfo]
+          ? [{ name: 'Send to VTT', type: 'primary', disabled: !!fireWhy, callback: () => fire(true), stayOpen: true } as ModalActionInfo]
           : []),
       ]
 
-  return <ActionModal open={true} close={close} title={kind === 'shot' ? 'Ranged attack' : 'Melee attack'} actions={actions}>
-    {done ? <div className='flex flex-col gap-2 my-2'>
-      {done.map(r => {
-        const hits = r.dice ? r.dice.filter(d => d >= 4).length : 0
-        return <div key={r.volley.key} className='border border-base-300 p-2' data-testid={`result-${r.volley.key}`}>
-          <div className='flex justify-between font-bold'>
-            <span>{r.volley.name}{r.volley.shots > 1 ? ` ×${r.volley.shots}` : ''}</span>
-            {r.dice ? <span>{hits} success{hits === 1 ? '' : 'es'} · <span data-testid='shot-d12'>d12 {r.d12}</span></span>
-              : <span data-testid='shot-vtt'>Rolled in the VTT, with its d12</span>}
-          </div>
-          {r.dice ? <DiceResult dice={r.dice}/> : null}
-          {r.tags.length ? <div className='text-xs opacity-70'>{r.tags.join(', ')}</div> : null}
-          {r.short ? <div className='text-xs text-warning'>Fired {r.volley.shots} of {counts[r.volley.key]}: it ran out partway.</div> : null}
-        </div>
-      })}
-      {!done.length ? <div className='text-warning'>Nothing could fire.</div> : null}
+  const hits = done?.dice ? done.dice.filter(d => d >= 4).length : 0
+  return <ActionModal open={true} close={close} title={kind === 'strike' ? `${att.name} (melee)` : att.name} actions={actions}>
+    {done ? <div className='flex flex-col gap-2 my-2' data-testid={`result-${key}`}>
+      <div className='flex justify-between font-bold'>
+        <span>{done.volley.name}{done.volley.shots > 1 ? ` ×${done.volley.shots}` : ''} at {targetBand}</span>
+        {done.dice ? <span>{hits} success{hits === 1 ? '' : 'es'} · <span data-testid='shot-d12'>d12 {done.d12}</span></span>
+          : <span data-testid='shot-vtt'>Rolled in the VTT, with its d12</span>}
+      </div>
+      {done.dice ? <DiceResult dice={done.dice}/> : null}
+      {done.tags.length ? <div className='text-xs opacity-70'>{done.tags.join(', ')}</div> : null}
+      {done.short ? <div className='text-xs text-warning'>Fired {done.volley.shots} of {shots}: it ran out partway.</div> : null}
     </div> : <div className='my-2 flex flex-col gap-1'>
+      <div className='opacity-60'>
+        {section} · {signed(per)} dice/shot{pen ? `, −${pen} at ${gunBand(targetBand)}` : ''} · {att.energy ?? 0}E {signed(att.heat ?? 0)}H
+        {tags.length ? ` · ${tags.join(', ')}` : ''}
+      </div>
       <div className='flex items-center gap-2'>
         <span>Target</span>
         {bands.map(b => <button
@@ -146,39 +142,27 @@ function ShotModal({ rules, view, target, close }: {
         >{b}</button>)}
       </div>
 
-      {keys.length ? keys.map(key => {
-        const { att, section } = attOf(key)
-        if (!att) return null
-        const n = counts[key] ?? 0
-        const options = Array.from({ length: att.repeat ?? 1 }, (_, i) => i + 1)
-        const per = att.roll?.bonus ?? 0
-        const pen = rangePenalty(att, targetBand)
-        const rowBlock = shotsBlocker(mr, mech, {}, key, 1, targetBand)
-        return <div key={key} className='flex items-center gap-2 border-t border-dashed border-base-300 pt-1'>
-          <span className='flex-1 min-w-0'>
-            <span className={rowBlock && !n ? 'opacity-50' : 'font-bold'}>{att.name}</span>
-            <span className='opacity-60'> · {section} · {signed(per)} dice/shot{pen ? `, −${pen} at ${gunBand(targetBand)}` : ''} · {att.energy ?? 0}E {signed(att.heat ?? 0)}H</span>
-          </span>
-          <span className='flex gap-0.5' role='group' aria-label={`${att.name} shots`}>
-            {options.map(k => {
-              const why = k === n ? null : shotsBlocker(mr, mech, counts, key, k, targetBand)
-              return <Why key={k} why={why}>
-                <button
-                  type='button'
-                  className={`btn btn-xs rounded-none px-2 min-w-[1.75rem] ${k === n ? 'btn-primary' : 'btn-outline'} ${why ? 'pointer-events-none' : ''}`}
-                  aria-label={`${att.name} ${k} shot${k === 1 ? '' : 's'}`}
-                  aria-pressed={k === n}
-                  disabled={!!why}
-                  onClick={() => pick(key, k)}
-                >{k}</button>
-              </Why>
-            })}
-          </span>
-        </div>
-      }) : <div className='opacity-60'>No {kind === 'shot' ? 'ranged' : 'melee'} weapons fitted.</div>}
+      {options.length > 1 ? <div className='flex items-center gap-2'>
+        <span>Shots</span>
+        <span className='flex gap-0.5' role='group' aria-label={`${att.name} shots`}>
+          {options.map(k => {
+            const why = k === shots ? null : shotsBlocker(mr, mech, {}, key, k, targetBand)
+            return <Why key={k} why={why}>
+              <button
+                type='button'
+                className={`btn btn-xs rounded-none px-2 min-w-[1.75rem] ${k === shots ? 'btn-primary' : 'btn-outline'} ${why ? 'pointer-events-none' : ''}`}
+                aria-label={`${att.name} ${k} shot${k === 1 ? '' : 's'}`}
+                aria-pressed={k === shots}
+                disabled={!!why}
+                onClick={() => setShots(k)}
+              >{k}</button>
+            </Why>
+          })}
+        </span>
+      </div> : null}
 
       <div className='flex items-center justify-between gap-2 border-t border-base-300 pt-2 mt-1'>
-        <span>Bonus <span className='opacity-60'>(+ or −, each roll)</span></span>
+        <span>Bonus <span className='opacity-60'>(+ or −)</span></span>
         <span className='flex items-center gap-1'>
           <button className='btn btn-xs btn-outline px-2' aria-label='Bonus minus' onClick={() => setBonus(bonus - 1)}>−</button>
           <input
@@ -191,16 +175,11 @@ function ShotModal({ rules, view, target, close }: {
           <button className='btn btn-xs btn-outline px-2' aria-label='Bonus plus' onClick={() => setBonus(bonus + 1)}>+</button>
         </span>
       </div>
-      {picked.map(([key, shots]) => {
-        const att = attOf(key).att
-        if (!att) return null
-        const info = weaponRoll(rules, { key, name: att.name, shots, dice: att.roll?.bonus ?? 0, penalty: rangePenalty(att, targetBand) }, targetBand, scores)
-        const total = info ? Math.max(0, caltrops.rollDiceCount(info) + bonus) : 0
-        return <div key={key} className='flex justify-between font-bold' data-testid={`roll-${key}`}>
-          <span>{att.name}{shots > 1 ? ` ×${shots}` : ''}{info && mode !== 'mech' ? <span className='font-normal opacity-60'> · {info.attribute!.name} + {info.skill!.name}</span> : null}</span>
-          <span>{total}d4 + d12</span>
-        </div>
-      })}
+      <div className='flex justify-between font-bold' data-testid={`roll-${key}`}>
+        <span>{att.name}{shots > 1 ? ` ×${shots}` : ''}{info && mode !== 'mech' ? <span className='font-normal opacity-60'> · {info.attribute!.name} + {info.skill!.name}</span> : null}</span>
+        <span>{total}d4 + d12</span>
+      </div>
+      {fireWhy ? <div className='text-warning' data-testid='fire-why'>{fireWhy}</div> : null}
       <div className='opacity-60'>Costs {cost.energy} of {mech.turn.energy} energy, {signed(cost.heat)} heat.</div>
     </div>}
   </ActionModal>

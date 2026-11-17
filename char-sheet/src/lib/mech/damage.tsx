@@ -102,19 +102,19 @@ function checkCookoffs(rules: MechRules, mech: Mech, sectionId: string, opts: Op
     if (!att.bin) m.state = { ...(m.state ?? {}), cooked: true }
     const where = sectionName(findChassis(rules, mech.chassis), sectionId)
     if (!opts.cookoff) {
-      events.push(`  ${m.name} disabled${att.bin ? ` with ${m.ammo} rounds` : ''}: cook-off is ${dice}d4 to this section, ignoring armour. Apply by hand.`)
-      notices.push(`${m.name} cook-off: roll ${dice}d4 on this section, ignoring armour. Apply by hand.`)
-      opts.rolls?.push({ label: `Cook-off: ${m.name} (${what}) in the ${where}. Each success is a wound there, ignoring armour: apply by hand`, dice })
+      events.push(`  ${m.name} disabled${att.bin ? ` with ${m.ammo} rounds` : ''}: cook-off is ${dice}d4 to this section, armour first. Apply by hand.`)
+      notices.push(`${m.name} cook-off: roll ${dice}d4 on this section, armour first. Apply by hand.`)
+      opts.rolls?.push({ label: `Cook-off: ${m.name} (${what}) in the ${where}. Each success is a hit there, armour first: apply by hand`, dice })
       continue
     }
     const rolled = opts.roller(dice)
     const k = rolled.filter(x => x === 4).length
-    const line = `COOK-OFF: ${m.name}, ${what} = ${dice}d4 [${rolled.join(' ')}] → ${plural(k, 'wound')}, ignoring armour.`
+    const line = `COOK-OFF: ${m.name}, ${what} = ${dice}d4 [${rolled.join(' ')}] → ${plural(k, 'hit')} on the ${where}, armour first.`
     events.push(`  ${line}`)
     notices.push(line)
-    opts.rolls?.push({ label: `Cook-off: ${m.name} (${what}) in the ${where} → ${plural(k, 'wound')}, ignoring armour (applied)`, dice, rolled })
+    opts.rolls?.push({ label: `Cook-off: ${m.name} in the ${where} → ${plural(k, 'hit')} (applied)`, dice, rolled })
     if (att.bin) m.ammo = 0
-    if (k) apply(rules, mech, sectionId, k, true, opts, events, notices)
+    if (k) apply(rules, mech, sectionId, k, false, opts, events, notices)
   }
 }
 
