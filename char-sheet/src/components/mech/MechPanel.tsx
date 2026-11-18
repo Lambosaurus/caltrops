@@ -7,6 +7,7 @@ import ActivationModal from './ActivationModal'
 import ShotModal, { type AttackTarget } from './ShotModal'
 import MechAdjustModal from './MechAdjustModal'
 import MechStowage from './MechStowage'
+import MechEffects from './MechEffects'
 import { statPop, StatKind } from './mechText'
 import { showResult } from './notify'
 import { useEffect, useState } from 'react'
@@ -194,6 +195,8 @@ function MechPanel({ view, editable, showStowage = true }: {
     </div>
 
     {warns.length ? <div className='border border-error bg-error/10 p-2'>⚠ {warns.join(' · ')}</div> : null}
+
+    <MechEffects rules={mechRules} mech={mech}/>
 
     {/* Legend */}
     <div className='flex flex-wrap items-center gap-1.5 opacity-90'>

@@ -1,6 +1,6 @@
 import { EditMode } from '../util'
 import { ObjectService } from '../objectservice'
-import { readMechEditable, mechEditMode, openMech, leaveMechMode } from './store'
+import { readMechEditable, mechEditMode, openMech, leaveMechMode, claimMech, MECH_DOC_TYPE } from './store'
 import { newMech } from './loadout'
 import { FIXTURE_RULES } from './fixture'
 import { DEFAULT_RULES } from '../rules'
@@ -94,5 +94,37 @@ describe('leaveMechMode', () => {
     view.publish('mode', 'sheet')
     leaveMechMode(view)
     expect(window.location.search).toBe('?mech=abc')
+  })
+})
+
+describe('claimMech', () => {
+  const chassis = FIXTURE_RULES.chassis[0].name
+  beforeEach(() => {
+    ;(server.parseToken as jest.Mock).mockImplementation((t: string) => t)
+    ;(server.write as jest.Mock).mockReset().mockResolvedValue({})
+  })
+
+  test('assigns a mech you own as it is', async () => {
+    const mech = { ...newMech(RULES, chassis, 'Mine'), id: 'm1', owner: 'alice' }
+    ;(server.read as jest.Mock).mockResolvedValue({ content: mech })
+    expect(await claimMech('alice', 'm1')).toBe('m1')
+    expect(server.write).not.toHaveBeenCalled()
+  })
+
+  test("saves a copy of someone else's mech under your name and returns the copy", async () => {
+    const mech = { ...newMech(RULES, chassis, 'Cleaver'), id: 'gm1', owner: 'gm' }
+    ;(server.read as jest.Mock).mockResolvedValue({ content: mech })
+    const id = await claimMech('alice', 'gm1')
+    expect(id).not.toBe('gm1')
+    expect(server.write).toHaveBeenCalledWith('alice', id, MECH_DOC_TYPE, 'Cleaver',
+      expect.objectContaining({ id, owner: 'alice', name: 'Cleaver', chassis: mech.chassis, sections: mech.sections }))
+  })
+
+  test('copies an unowned mech too, so it is saved to your account', async () => {
+    const mech = { ...newMech(RULES, chassis, 'Loose'), id: 'u1', owner: null }
+    ;(server.read as jest.Mock).mockResolvedValue({ content: mech })
+    const id = await claimMech('alice', 'u1')
+    expect(id).not.toBe('u1')
+    expect(server.write).toHaveBeenCalledTimes(1)
   })
 })

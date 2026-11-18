@@ -2,6 +2,7 @@
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
 import { aimCost, deriveStats, hitLabel, mountDisabled, sectionDestroyed, slotsOf, turnEnergy } from '../../lib/mech/derive'
 import { activationBlocker, isWeapon, sprintCost, travel } from '../../lib/mech/turn'
+import { tagClean, tagSummary } from '../../lib/mech/effects'
 import type { ChassisSection, Mech, MechAttachment, MechRules, Mount } from '../../lib/mech/types'
 
 /** A headline number: `value` big and bold, `label` small beside it. */
@@ -63,13 +64,9 @@ export function tagList(rules: MechRules, tags: string | undefined): PopTag[] {
   if (!tags) return []
   const out: PopTag[] = []
   for (const raw of tags.split(',')) {
-    const tag = raw.trim().replace(/ \(while it has points\)$/, '')
+    const tag = tagClean(raw)
     if (!tag || SHOWN_AS_STATS.test(tag) || out.some(t => t.name === tag)) continue
-    const base = tag.replace(/ \(.*\)$/, '').replace(/ vs \w+$/, '')
-    const x = /\((\d+)/.exec(tag)?.[1] ?? 'X'
-    const y = / vs (\w+)/.exec(tag)?.[1] ?? 'Y'
-    const text = rules.tagsShort?.[base] ?? rules.tags?.[base] ?? ''
-    out.push({ name: tag, text: text.replace(/\bX\b/g, x).replace(/\bY\b/g, y) })
+    out.push({ name: tag, text: tagSummary(rules, tag) })
   }
   return out
 }

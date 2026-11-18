@@ -4,6 +4,7 @@ import server from '../server'
 import caltrops from '../caltrops'
 import { alertError, alertSuccess, alertWarning } from '../alerts'
 import { loadMech, normaliseMech } from './loadout'
+import { v4 as uuidv4 } from 'uuid'
 
 export const MECH_DOC_TYPE = 'mech'
 
@@ -21,6 +22,23 @@ export function mechEditMode(owner: string | null | undefined, username: string 
  */
 export function readMechEditable(view: View): EditMode {
   return view.read('mechEditable') ?? EditMode.None
+}
+
+/**
+ * The mech id to assign to a sheet for the logged-in user (`token`). A mech they own is assigned as it is; anyone
+ * else's (or an unowned one) is copied: saved as a new mech owned by them, so they can play and edit it, and the
+ * copy's id is returned. The original is left untouched.
+ */
+export async function claimMech(token: string, id: string): Promise<string> {
+  const username = server.parseToken(token)
+  const doc = await server.read(id)
+  const mech = loadMech(doc.content)
+  if (username && mech.owner === username) {
+    return id
+  }
+  const copy = { ...mech, id: uuidv4(), owner: username }
+  await server.write(token, copy.id, MECH_DOC_TYPE, copy.name, copy)
+  return copy.id
 }
 
 // Guards against an older, slower read overwriting a newer one.

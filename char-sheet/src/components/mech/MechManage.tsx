@@ -15,9 +15,9 @@ import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { applyPrefab, changeChassis, dropOnCatalogue, dropPart, findChassis, refitMech, setArmour, unmount, type PartDrag } from '../../lib/mech/loadout'
 import { deriveStats } from '../../lib/mech/derive'
-import { MECH_DOC_TYPE, copyMechLink, openMech } from '../../lib/mech/store'
+import { MECH_DOC_TYPE, claimMech, copyMechLink, openMech } from '../../lib/mech/store'
 import server, { Document } from '../../lib/server'
-import { alertError } from '../../lib/alerts'
+import { alertError, alertSuccess } from '../../lib/alerts'
 import type { Mech, MechRules } from '../../lib/mech/types'
 import type { Rules } from '../../lib/rules'
 
@@ -51,6 +51,20 @@ function MechManage({ view, editable, sheetEditable }: {
   const standalone = mode === 'mech'
   const attach = standalone || (sheetEditable ?? editable) > EditMode.None
   const unassign = !standalone && !!sheetMechId && (sheetEditable ?? editable) >= EditMode.Live
+
+  // Assigning someone else's mech (e.g. a link the GM shared) saves your own copy, so you can play and edit it.
+  function assignMech(id: string) {
+    if (!token) {
+      view.publish('sheet/mech', id)
+      return
+    }
+    claimMech(token, id)
+      .then(mine => {
+        if (mine !== id) alertSuccess('Saved your own copy of the mech')
+        view.publish('sheet/mech', mine)
+      })
+      .catch(e => alertError(`Error assigning mech: ${e.message}`))
+  }
 
   function chooseMech(id: string) {
     if (standalone) {
@@ -100,7 +114,7 @@ function MechManage({ view, editable, sheetEditable }: {
       open={assigning}
       close={() => setAssigning(false)}
       token={token}
-      assign={id => view.publish('sheet/mech', id)}
+      assign={assignMech}
     />
   </>
 

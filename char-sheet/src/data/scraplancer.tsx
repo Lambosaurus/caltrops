@@ -29,6 +29,10 @@ const mechs: MechRules = {
     rangeAspects: { Short: 'Reflex', Mid: 'Precision', Long: 'Precision' },
     skillSet: 'pilot', // mech rolls use the pilot skills
     sprintRoll: { label: 'Dodge', aspect: 'Reflex', skill: 'Mobility', add: ['evasion'], note: 'each success is a dodge token until your next turn' },
+    // Standing effects for the mech's Effects panel: defences, then sensor bonuses, then penalties.
+    effectTags: ['Deflection', 'Point-defence', 'Grounding', 'Armoured', 'Weak', 'Faraday', 'Jamming', 'Spoofing', 'Cloak',
+      'Self-repairing', 'Fire control', 'Ranging', 'Long-sight', 'Thermal sight', 'Datalink', 'Heavy'],
+    effectNotes: ['Frontal', 'Linked', 'Charges', 'Recharging'],
     sprint: { energy: 2, heat: 2 }, // every chassis here has a size, which sets the Sprint cost instead
 }
 
