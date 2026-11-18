@@ -208,7 +208,7 @@ export function sprint(rules: MechRules, mech: Mech, roller: Roller): MechResult
   t.heat += heat
   t.used = { ...t.used, sprint: 1 }
   const d = deriveStats(rules, next)
-  const events = [`Sprint: −${energy}E +${heat}H, move up to ${d.speed * 2} tiles in total. Evasion ${d.evasion}.`]
+  const events = [`Sprint: −${energy}E +${heat}H, move up to ${d.speed * 2} tiles in total.`]
   const notices: string[] = []
   const rolls: MechRoll[] = []
   return { mech: heatAfterAction(rules, next, wasOver, null, roller, events, notices, rolls), events, notices, rolls }

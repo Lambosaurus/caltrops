@@ -1,3 +1,4 @@
+import { Skill, SkillSet } from "../lib/rules";
 import airlockRuleset from "./airlocks";
 import bludgeonRuleset from "./bludgeon";
 import felfuturesRuleset from "./felfutures";
@@ -22,7 +23,8 @@ const RULESETS = [
 ];
 
 RULESETS.forEach(r => {
-    r.skills.sort( (a,b) => a.name > b.name ? 1 : -1 )
+    const sets = r.skills.length > 0 && 'skills' in r.skills[0] ? (r.skills as SkillSet[]).map(s => s.skills) : [r.skills as Skill[]]
+    sets.forEach(skills => skills.sort( (a,b) => a.name > b.name ? 1 : -1 ))
 })
 
 export default RULESETS;

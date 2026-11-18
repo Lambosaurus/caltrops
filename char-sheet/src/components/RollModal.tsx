@@ -22,6 +22,7 @@ function RollCreateModal({scoreView, attributes, useAspects, rollView}: {
   }): JSX.Element | null {
 
   const [result, setResult] = useState(null as number[] | null)
+  const [sent, setSent] = useState(false)
 
   const roll: RollInfo = useListener(rollView)
   const scores: Dictionary<number> = useListener(scoreView)
@@ -32,14 +33,17 @@ function RollCreateModal({scoreView, attributes, useAspects, rollView}: {
   function closeModal() {
     rollView.delete('')
     setResult(null)
+    setSent(false)
   }
 
   if (result) {
     
+    const send = foundry.sendResultAction(result, caltrops.rollDescribe(roll), sent, setSent)
     return <ActionModal
       open={true}
       close={closeModal}
       title={caltrops.rollDescribe(roll)}
+      actions={send ? [send] : []}
       >
       <DiceResult dice={result}/>
     </ActionModal>

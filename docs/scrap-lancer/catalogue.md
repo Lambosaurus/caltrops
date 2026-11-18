@@ -506,7 +506,7 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 | Scatter | Against a target at Short, it also has Area (1) |
 | Disruptor | Ignores deflection. Successes can be spent to disrupt an attachment in the hit section instead of wounding: spend 1 success per slot it occupies (a size-3 part costs 3). A disrupted part is disabled until it is repaired, but takes no wounds. Analog parts cannot be disrupted |
 | Knockback | Successes can be spent on movement instead of wounds: each one pushes the target one range band away, or moves this mech one band after it. The first success must push the target, and a pushed target is Staggered: its next roll is −1 die and it cannot Sprint until the end of its next turn (call). The rest are wounds as normal |
-| Suppressive | Successes can be spent to suppress instead of wounding: each gives the target −1 die on its next roll, to a maximum of −3 from all sources (call). Machine guns pin a target down rather than wreck it |
+| Suppressive | Successes can be spent to suppress instead of wounding: each gives the target −1 die on every roll it makes until the end of its next turn, to a maximum of −3 from all sources (call). Machine guns pin a target down rather than wreck it |
 | Concussive | If the attack deals at least one wound, the target is Staggered (see Knockback) |
 | Grapple | Spend a success to grab the target instead of wounding: it cannot move away from this mech until it breaks free or this part is disabled. Breaking free is an action: roll Violence + Melee and spend a success. While it is held, spend a success from any of this part's later attacks to drag it one range band with you |
 | Grinding | +1 die for each consecutive turn it has attacked the same target |
@@ -523,7 +523,7 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 | Missiles |  |
 | Missile | The attack is a missile: Point-defence and Spoofing work against it |
 | Guided | Against a locked target, each activation adds 1 extra die to its roll |
-| Seeking | Ignores Evasion, and Spoofing does not stop its Guided dice |
+| Seeking | Dodge tokens cannot thwart its successes, and Spoofing does not stop its Guided dice |
 | Locks and sensors |  |
 | Targeting | Activation: roll the listed Roll; each success places a lock on a target in line of sight until your next turn. Attacks against a locked target roll +1 die, and Indirect and Guided weapons use locks |
 | Datalink | Locks it places count for every mech in your lance |
@@ -551,23 +551,23 @@ The catalogue adds about forty new tags, widens Volatile and Charges, and adds t
 | Tow | Activation: roll the listed Roll against a target at Short or Mid. Spend a success to pull the target one range band closer, or to haul this mech one band to it; the first success must pull the target. Out of combat it drags a wreck or load at half Speed |
 | Repair | Activation: roll the listed Roll at Short; each success spends 1 Scrap to clear one slot wound on this mech or an engaged ally, as a field repair |
 | Jump | Activation: move up to Speed in one leap, over terrain and out of engagement. A melee attack after landing this turn rolls +2 dice |
-| Evasive | Activation: this turn counts as Sprinting for Evasion, without spending a Sprint |
+| Evasive | Activation: make the Sprint dodge roll (Reflex + Mobility + Evasion) without spending a Sprint |
 | Stowage (X) | Holds X items of cargo or salvage |
 | Frame and build |  |
-| Volatile (X) | Replaces plain Volatile on non-ammo parts: when disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins keep rounds × volatility |
+| Volatile (X) | When disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins are Volatile (X) by ammo type, and cook off only while they hold rounds |
 | Analog | It cannot be disrupted by Disruptor attacks |
 | Shielded (X) | Disrupting this part costs X more successes |
 | Faraday (X) | Passive: while it works, every other part in its section has Shielded (X). Faraday (X, mech) covers every part on the mech instead |
 | Heavy (X) | −X tiles of mech Speed while it is fitted |
 | Cheap recharge | Refilling it costs half price: armour points on armour, or Charges on a part that has them |
 | Self-repairing | Armour only: regains 1 point at the start of each of your turns, up to its maximum |
-| Ammo | Rounds per bin | Volatility | Full-bin cook-off | Refill price per bin |
-| Light | 16 | ×1 | 16d4 | 100 |
-| Standard | 8 | ×2 | 16d4 | 150 |
-| Missile | 5 | ×3 | 15d4 | 300 |
-| Heavy | 4 | ×4 | 16d4 | 250 |
-| Slug (new) | 8 | ×0 | none | 200 |
-| Fuel (new) | 5 | ×3 | 15d4 | 150 |
+| Ammo | Rounds per bin | Volatile (X) | Cook-off | Refill price per bin |
+| Light | 16 | 2 | 2d4 | 100 |
+| Standard | 8 | 4 | 4d4 | 150 |
+| Missile | 5 | 8 | 8d4 | 300 |
+| Heavy | 4 | 6 | 6d4 | 250 |
+| Slug (new) | 8 | 0 | none | 200 |
+| Fuel (new) | 5 | 6 | 6d4 | 150 |
 
 For the web tool:
 

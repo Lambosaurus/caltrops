@@ -5774,7 +5774,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 6,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 3
   },
   "range": "Short"
@@ -5794,7 +5794,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 2,
   "heat": 3,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 2
   },
   "range": "Short"
@@ -5814,7 +5814,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 5,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 4
   },
   "range": "Mid"
@@ -5834,7 +5834,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 5,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 4
   },
   "range": "Mid"
@@ -5853,7 +5853,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 3,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 5
   },
   "range": "Mid"
@@ -5873,7 +5873,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 4,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 5
   },
   "range": "Long"
@@ -5893,7 +5893,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 5,
   "heat": 6,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 7
   },
   "range": "Long"
@@ -5912,7 +5912,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 1,
   "heat": 1,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 2
   },
   "range": "Short",
@@ -5933,7 +5933,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 2,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 6
   },
   "range": "Mid"
@@ -5952,7 +5952,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 1,
   "heat": 1,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 1
   },
   "range": "Short",
@@ -5972,7 +5972,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 5,
   "heat": 5,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 10
   },
   "range": "Long"
@@ -5992,7 +5992,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 9,
   "heat": 10,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 15
   },
   "range": "Long"
@@ -6011,7 +6011,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 2,
   "heat": 1,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 3
   },
   "range": "Mid"
@@ -6030,7 +6030,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 2,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 8
   },
   "range": "Long"
@@ -6049,7 +6049,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 6,
   "heat": 4,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 18
   },
   "range": "Long"
@@ -6069,7 +6069,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 4,
   "heat": 8,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 4
   },
   "range": "Short",
@@ -6090,7 +6090,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 4,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 2
   },
   "range": "Short"
@@ -6109,7 +6109,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 4,
   "heat": 5,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 6
   },
   "range": "Mid"
@@ -6128,7 +6128,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 6,
   "heat": 6,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 10
   },
   "range": "Mid"
@@ -6148,7 +6148,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 8,
   "heat": 10,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 15
   },
   "range": "Mid"
@@ -6167,7 +6167,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 4,
   "heat": 3,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 8
   },
   "range": "Long"
@@ -6187,7 +6187,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 2,
   "heat": 4,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 1
   },
   "range": "Short"
@@ -6206,7 +6206,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 4,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 4
   },
   "range": "Short"
@@ -6225,7 +6225,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 3,
   "heat": 2,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 5
   },
   "range": "Short"
@@ -6244,7 +6244,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 4,
   "heat": 2,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 6
   },
   "range": "Mid"
@@ -6263,7 +6263,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 4,
   "heat": 2,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 6
   },
   "range": "Long"
@@ -6283,7 +6283,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 5,
   "heat": 3,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 10
   },
   "range": "Mid"
@@ -6303,7 +6303,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 8,
   "heat": 5,
   "roll": {
-   "skill": "Gunnery",
+   "skill": "Tech",
    "bonus": 15
   },
   "range": "Long"
@@ -7376,7 +7376,15 @@ export const ATTACHMENTS: MechAttachment[] = [
   "type": "Generic",
   "tags": "Jump, Evasive",
   "energy": 1,
-  "heat": 2
+  "heat": 2,
+  "roll": {
+   "skill": "Mobility",
+   "bonus": 0,
+   "aspect": "Reflex",
+   "add": [
+    "evasion"
+   ]
+  }
  },
  {
   "name": "MAS Flicker FL1",
@@ -7391,7 +7399,15 @@ export const ATTACHMENTS: MechAttachment[] = [
   "type": "Generic",
   "tags": "Evasive",
   "energy": 2,
-  "heat": 2
+  "heat": 2,
+  "roll": {
+   "skill": "Mobility",
+   "bonus": 0,
+   "aspect": "Reflex",
+   "add": [
+    "evasion"
+   ]
+  }
  },
  {
   "name": "MAS Heavy Jets JJ6",
@@ -7424,7 +7440,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 1,
   "heat": 2,
   "roll": {
-   "skill": "Computing",
+   "skill": "Tech",
    "bonus": -1,
    "aspect": "Wit"
   }
@@ -7457,7 +7473,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 1,
   "heat": 1,
   "roll": {
-   "skill": "Computing",
+   "skill": "Tech",
    "bonus": 1,
    "aspect": "Wit"
   }
@@ -7503,7 +7519,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 1,
   "heat": 1,
   "roll": {
-   "skill": "Computing",
+   "skill": "Tech",
    "bonus": 2,
    "aspect": "Wit"
   }
@@ -7523,7 +7539,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 1,
   "heat": 0,
   "roll": {
-   "skill": "Computing",
+   "skill": "Tech",
    "bonus": 2,
    "aspect": "Wit"
   }
@@ -7569,7 +7585,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 1,
   "heat": 1,
   "roll": {
-   "skill": "Computing",
+   "skill": "Tech",
    "bonus": 3,
    "aspect": "Wit"
   }
@@ -7589,7 +7605,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "energy": 2,
   "heat": 1,
   "roll": {
-   "skill": "Computing",
+   "skill": "Tech",
    "bonus": 5,
    "aspect": "Wit"
   }
@@ -8190,8 +8206,9 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (2)",
   "bin": "Light",
+  "volatile": 2,
   "description": "16 Light rounds. Cooks off if disabled while loaded. Refill 100 Solari."
  },
  {
@@ -8200,8 +8217,9 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (4)",
   "bin": "Standard",
+  "volatile": 4,
   "description": "8 Standard rounds. Cooks off if disabled while loaded. Refill 150 Solari."
  },
  {
@@ -8210,8 +8228,9 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (8)",
   "bin": "Missile",
+  "volatile": 8,
   "description": "5 Missile rounds. Cooks off if disabled while loaded. Refill 300 Solari."
  },
  {
@@ -8220,8 +8239,9 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (6)",
   "bin": "Heavy",
+  "volatile": 6,
   "description": "4 Heavy rounds. Cooks off if disabled while loaded. Refill 250 Solari."
  },
  {
@@ -8240,8 +8260,9 @@ export const ATTACHMENTS: MechAttachment[] = [
   "family": "Ammo bins",
   "size": 1,
   "type": "Generic",
-  "tags": "Volatile",
+  "tags": "Volatile (6)",
   "bin": "Fuel",
+  "volatile": 6,
   "description": "5 Fuel rounds. Cooks off if disabled while loaded. Refill 150 Solari."
  }
 ]
@@ -8250,37 +8271,31 @@ export const AMMO: MechAmmo[] = [
  {
   "name": "Light",
   "perBin": 16,
-  "volatility": 1,
   "refill": 100
  },
  {
   "name": "Standard",
   "perBin": 8,
-  "volatility": 2,
   "refill": 150
  },
  {
   "name": "Missile",
   "perBin": 5,
-  "volatility": 3,
   "refill": 300
  },
  {
   "name": "Heavy",
   "perBin": 4,
-  "volatility": 4,
   "refill": 250
  },
  {
   "name": "Slug",
   "perBin": 8,
-  "volatility": 0,
   "refill": 200
  },
  {
   "name": "Fuel",
   "perBin": 5,
-  "volatility": 3,
   "refill": 150
  }
 ]
@@ -8294,7 +8309,7 @@ export const TAGS: { [tag: string]: string } = {
  "Deflection": "Gain X deflection until your next turn; each cancels one incoming success",
  "Indirect": "May fire without line of sight at a locked target",
  "Area": "Roll once against every target within X tiles of the point of impact",
- "Volatile": "when disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins keep rounds × volatility",
+ "Volatile": "When disabled, roll Xd4, each success a hit to that section (armour soaks first). Ammo bins are Volatile (X) by ammo type, and cook off only while they hold rounds",
  "Kinetic": "Damage types, used by Armoured and Weak",
  "Thermal": "Damage types, used by Armoured and Weak",
  "Explosive": "Damage types, used by Armoured and Weak",
@@ -8305,7 +8320,7 @@ export const TAGS: { [tag: string]: string } = {
  "Scatter": "Against a target at Short, it also has Area (1)",
  "Disruptor": "Ignores deflection. Successes can be spent to disrupt an attachment in the hit section instead of wounding: spend 1 success per slot it occupies (a size-3 part costs 3). A disrupted part is disabled until it is repaired, but takes no wounds. Analog parts cannot be disrupted",
  "Knockback": "Successes can be spent on movement instead of wounds: each one pushes the target one range band away, or moves this mech one band after it. The first success must push the target, and a pushed target is Staggered: its next roll is −1 die and it cannot Sprint until the end of its next turn. The rest are wounds as normal",
- "Suppressive": "Successes can be spent to suppress instead of wounding: each gives the target −1 die on its next roll, to a maximum of −3 from all sources. Machine guns pin a target down rather than wreck it",
+ "Suppressive": "Successes can be spent to suppress instead of wounding: each gives the target −1 die on every roll it makes until the end of its next turn, to a maximum of −3 from all sources. Machine guns pin a target down rather than wreck it",
  "Concussive": "If the attack deals at least one wound, the target is Staggered (see Knockback)",
  "Grapple": "Spend a success to grab the target instead of wounding: it cannot move away from this mech until it breaks free or this part is disabled. Breaking free is an action: roll Violence + Melee and spend a success. While it is held, spend a success from any of this part's later attacks to drag it one range band with you",
  "Grinding": "+1 die for each consecutive turn it has attacked the same target",
@@ -8320,7 +8335,7 @@ export const TAGS: { [tag: string]: string } = {
  "Renewable": "Its Charges also refill for free, out of combat, wherever what it uses can be found: open water for a spray or quench tank",
  "Missile": "The attack is a missile: Point-defence and Spoofing work against it",
  "Guided": "Against a locked target, each activation adds 1 extra die to its roll",
- "Seeking": "Ignores Evasion, and Spoofing does not stop its Guided dice",
+ "Seeking": "Dodge tokens cannot thwart its successes, and Spoofing does not stop its Guided dice",
  "Targeting": "Activation: roll the listed Roll; each success places a lock on a target in line of sight until your next turn. Attacks against a locked target roll +1 die, and Indirect and Guided weapons use locks",
  "Datalink": "Locks it places count for every mech in your lance",
  "Thermal sight": "Its locks are not broken by Smoke",
@@ -8344,7 +8359,7 @@ export const TAGS: { [tag: string]: string } = {
  "Tow": "Activation: roll the listed Roll against a target at Short or Mid. Spend a success to pull the target one range band closer, or to haul this mech one band to it; the first success must pull the target. Out of combat it drags a wreck or load at half Speed",
  "Repair": "Activation: roll the listed Roll at Short; each success spends 1 Scrap to clear one slot wound on this mech or an engaged ally, as a field repair",
  "Jump": "Activation: move up to Speed in one leap, over terrain and out of engagement. A melee attack after landing this turn rolls +2 dice",
- "Evasive": "Activation: this turn counts as Sprinting for Evasion, without spending a Sprint",
+ "Evasive": "Activation: make the Sprint dodge roll (Reflex + Mobility + Evasion) without spending a Sprint",
  "Stowage": "Holds X items of cargo or salvage",
  "Analog": "It cannot be disrupted by Disruptor attacks",
  "Shielded": "Disrupting this part costs X more successes",

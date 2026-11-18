@@ -8,6 +8,36 @@ Simply locate the new triangle icon on the chat controls, and click it. This wil
 
 The caltrops character sheet can now forward dice rolls to foundry. The character sheet is intended to be run side-by-side with foundry.
 
+# Token conditions
+
+The module adds Scrap Lancer conditions to the token HUD, after Foundry's own: Dodge, Target lock, Sitting Duck, Stunned, Shut down, Overheated, Out of action, Suppressed, Staggered, Grappled, In smoke, Jamming, Spoofing, Cloaked, Deflection, Point-defence and Grounding. Dodge tokens are counted with a status-counter module.
+
+To add one, put a white-on-transparent SVG in `icons/` and add a line to `CALTROPS_CONDITIONS` in `scripts/main.js`.
+
+## Icon credits
+
+Icons from [game-icons.net](https://game-icons.net), licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/), with the black background removed:
+
+| Condition | Icon | Author |
+|---|---|---|
+| Dodge | Dodging | Lorc |
+| Target lock | Convergence target | Delapouite |
+| Sitting Duck | Duck | Delapouite |
+| Stunned | Knocked out stars | Delapouite |
+| Shut down | Power button | Lord Berandas |
+| Overheated | Thermometer hot | Delapouite |
+| Out of action | Broken skull | Lorc |
+| Suppressed | Bullets | Lorc |
+| Staggered | Unbalanced | Delapouite |
+| Grappled | Grab | Lorc |
+| In smoke | Smoke bomb | Darkzaitzev |
+| Jamming | Static waves | Lorc |
+| Spoofing | Mirror mirror | Lorc |
+| Cloaked | Cloak | Lucasms |
+| Deflection | Shield reflect | Lorc |
+| Point-defence | Energy shield | Lorc |
+| Grounding | Electrical crescent | Lorc |
+
 # Installation
 
 The manifest URL for foundry installation is:

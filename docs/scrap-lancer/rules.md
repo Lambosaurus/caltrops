@@ -18,9 +18,21 @@ Caltrops at heart. Attachments grant d4 rolls using pilot aspects and skills. Su
 
 The tool does the maths. Location ranges, aim costs, energy, heat and speed are all derived from the loadout and shown on the sheet.
 
-In scope: chassis, attachments, the mech turn, heat, damage, repair, examples. Not yet decided, and deliberately left open: the detailed combat flow (initiative, pilot vs mech actions) and the categorical skill system. Skill names below (Gunnery, Tech, Mobility) are placeholders for that work.
+In scope: chassis, attachments, the mech turn, heat, damage, repair, examples. Not yet decided, and deliberately left open: the detailed combat flow (initiative, pilot vs mech actions).
 
 Anything marked (call) is Claude's suggestion, not yet agreed.
+
+### Pilot skills
+
+Mech rolls use a pilot's aspects and a separate set of pilot skills: Gunnery, Melee, Mobility, Tech and Repair. They are their own track, bought with their own points (1.5 per level, rounded up, at normal skill costs). A character's own skills, including their own Gunnery, Melee and Repair, are what their body can do and never add to a mech roll; Piloting is not a character skill.
+
+| Pilot skill | Rolls for |
+|---|---|
+| Gunnery | Machine guns, autocannons, cannons, mortars and artillery, mass drivers, flamers, rockets and missiles |
+| Melee | Melee weapons, claws, hands and winches |
+| Mobility | The Sprint dodge roll |
+| Tech | Lasers, plasma, EM weapons, sensors and tactical AI cores |
+| Repair | Repair rigs and field repair |
 
 ## Chassis
 
@@ -101,16 +113,16 @@ Armour sits in each section's Armour slot as a stack of points. Each point absor
 
 ### Ammo bins
 
-Ammo lives in Ammo Bin attachments: Size 1, Generic, holding one ammo type. More ammo costs slots. Bins are Volatile: if a bin is disabled while it holds ammo, it cooks off. Roll d4s equal to the rounds left times the ammo's volatility; each success is a hit to that section, and its armour soaks them first.
+Ammo lives in Ammo Bin attachments: Size 1, Generic, holding one ammo type. More ammo costs slots. Bins are Volatile (X), with X set by the ammo type: if a bin is disabled while it holds any ammo, it cooks off. Roll Xd4, however many rounds are left; each success is a hit to that section, and its armour soaks them first. An empty bin does not cook off.
 
-| Ammo | Rounds per bin | Volatility | Full-bin cook-off |
+| Ammo | Rounds per bin | Volatile (X) | Cook-off |
 |---|---|---|---|
-| Light | 16 | ×1 | 16d4 |
-| Standard | 8 | ×2 | 16d4 |
-| Missile | 5 | ×3 | 15d4 |
-| Heavy | 4 | ×4 | 16d4 |
+| Light | 16 | 2 | 2d4 |
+| Standard | 8 | 4 | 4d4 |
+| Heavy | 4 | 6 | 6d4 |
+| Missile | 5 | 8 | 8d4 |
 
-A full bin of any type averages about 4 wounds, so where you put ammo matters. The Catalogue tab adds Slug (8 rounds, ×0, never cooks off) and Fuel (5 rounds, ×3). To be confirmed in play-testing.
+Heavier ammo is more dangerous to carry. The Catalogue tab adds Slug (8 rounds, never cooks off) and Fuel (5 rounds, Volatile (6)). To be confirmed in play-testing.
 
 ### Tags
 
@@ -124,7 +136,7 @@ A full bin of any type averages about 4 wounds, so where you put ammo matters. T
 | Deflection (X) | Gain X deflection until your next turn; each cancels one incoming success |
 | Indirect | May fire without line of sight at a locked target |
 | Area (X) | Roll once against every target within X tiles of the point of impact |
-| Volatile | Cooks off when disabled (see Ammo bins). Other parts use Volatile (X), defined on the Catalogue tab with about forty more tags |
+| Volatile (X) | Cooks off when disabled: roll Xd4, each success a hit to that section, armour first (see Ammo bins). Defined on the Catalogue tab with about forty more tags |
 | Kinetic / Thermal / Explosive / EM | Damage types, used by Armoured and Weak |
 
 ### Scale
@@ -150,7 +162,7 @@ A target is in one of four bands. The map is about 120 tiles (1,200 m) square, s
 | Mid | 7–25 | 61–250 m | Autocannons, lasers, most guns |
 | Long | 26–65 | 251–650 m | Cannons, rails, long-range missiles |
 
-Each weapon has one range band: Short, Mid or Long. Ranged attacks roll Reflex + Gunnery at Engaged or Short and Precision + Gunnery at Mid or Long.
+Each weapon has one range band: Short, Mid or Long. Ranged attacks roll Reflex + the weapon's skill at Engaged or Short and Precision + the weapon's skill at Mid or Long: Gunnery for most guns, Tech for lasers, plasma and EM weapons.
 
 Target beyond the weapon's band: cannot fire.
 
@@ -184,7 +196,7 @@ Act, in any order.
 
 Move up to the mech's Speed (sum of surviving legs) for free. Any movement removes Sitting Duck.
 
-Sprint: spend energy and gain heat equal to the chassis Size to move Speed again, and gain Evasion until your next turn. Size follows the chassis class: Ultralight 1, Light 2, Medium 3, Heavy 4, Heavy assault and Super-heavy 5. Small mechs sprint cheaply; a heavy one pays for every dash, which is what evasion jets are for.
+Sprint: spend energy and gain heat equal to the chassis Size to move Speed again, and make a dodge roll (see Mobility). Size follows the chassis class: Ultralight 1, Light 2, Medium 3, Heavy 4, Heavy assault and Super-heavy 5. Small mechs sprint cheaply; a heavy one pays for every dash, which is what evasion jets are for.
 
 Activate attachments: pay energy, gain heat, draw ammo, apply the effect. Each attachment once, unless Repeating.
 
@@ -212,9 +224,11 @@ What a mech did with its legs this turn changes how hard it is to hit, until its
 |---|---|---|
 | Sitting Duck | Did not move (including while shut down, or with no legs left) | +2 dice |
 | Moved | Moved up to Speed | No change |
-| Sprinting | Sprinted (energy and heat equal to Size) | − dice equal to Evasion |
+| Sprinting | Sprinted (energy and heat equal to Size) | No change; the dodge roll below |
 
-Legs provide Evasion the way they provide Speed: the sum over surviving legs. A medium mech's legs give 2 in total. Example values: Jackal 4, Mule 2, Bulwark treads 1 (call: light and heavy values). A shut-down mech is also stunned (+1 die), so it suffers +3 in total (call: they stack).
+Legs provide Evasion the way they provide Speed: the sum over surviving legs. A medium mech's legs give 2 in total. Example values: Jackal 4, Mule 2, Bulwark treads 1 (call: light and heavy values).
+
+Dodge: a Sprint rolls Reflex + Mobility + Evasion. Each success is a dodge token. Spend a token to thwart one success of an attack against the mech. Unspent tokens are lost when the mech's next turn starts. The VTT tracks the tokens, not the sheet. A shut-down mech is also stunned (+1 die), so it suffers +3 in total (call: they stack).
 
 ## Damage
 
@@ -249,7 +263,7 @@ Before rolling, the attacker may name a section and remove dice from their pool 
 
 ### Repair
 
-Field repair: spend 1 Scrap and make a repair check (placeholder: Knowledge + Tech). Each success clears one slot wound, which can re-enable an attachment. Field repair cannot restore armour points or a destroyed section (call).
+Field repair: spend 1 Scrap and make a repair check (Knowledge + Repair). Each success clears one slot wound, which can re-enable an attachment. Field repair cannot restore armour points or a destroyed section (call).
 
 At a haven: armour is refilled and destroyed sections rebuilt, for Scrap or Solari.
 
@@ -302,7 +316,7 @@ Only the Bulwark's three-slot reactor bay can take a size-3 reactor such as the 
 
 ## Example attachments
 
-A starter set to play-test the economy: the original starter parts under their makes and models, with current numbers. The full catalogue and prices are on the Parts tab, and the rules for every tag beyond the core ones are on the Catalogue tab. Effects use placeholder skill names.
+A starter set to play-test the economy: the original starter parts under their makes and models, with current numbers. The full catalogue and prices are on the Parts tab, and the rules for every tag beyond the core ones are on the Catalogue tab.
 
 ### Power and cooling
 
@@ -325,11 +339,11 @@ A starter set to play-test the economy: the original starter parts under their m
 | BRO M12 (machine gun) | 1 | Weapon | 1 | 2 | 1 Light | Short | Repeating (2), Kinetic, Suppressive | Reflex + Gunnery shot: +1 per activation |
 | BRO AC-30 (autocannon) | 2 | Weapon | 2 | 2 | 1 Standard | Mid | Kinetic | Precision + Gunnery shot: +5 |
 | BRO HC-40 (heavy cannon) | 3 | Weapon | 2 | 2 | 1 Heavy | Long | Kinetic, Concussive | Precision + Gunnery shot: +8 |
-| LDE LZ-3 (laser) | 2 | Weapon | 3 | 3 | — | Mid | Thermal, Accurate | Precision + Gunnery shot: +5 |
+| LDE LZ-3 (laser) | 2 | Weapon | 3 | 3 | — | Mid | Thermal, Accurate | Precision + Tech shot: +5 |
 | CMS SRM-2 (short-range missiles) | 1 | Weapon | 1 | 2 | 1 Missile | Short | Missile, Repeating (2), Explosive | Reflex + Gunnery shot: +1 per activation |
 | CMS LRM-3 (long-range missiles) | 2 | Weapon | 1 | 1 | 1 Missile | Long | Missile, Guided, Repeating (3), Indirect, Explosive | Precision + Gunnery shot: +2 per activation |
 | OHS Burnoff BF1 (flamer) | 1 | Weapon | 1 | 4 | — | Short | Area (1), Thermal, Searing (1) | Reflex + Gunnery shot: +2 |
-| SGW Arc Lance Pattern 2 | 2 | Weapon | 3 | 2 | — | Short | EM, Disruptor | Reflex + Gunnery shot: +5 |
+| SGW Arc Lance Pattern 2 | 2 | Weapon | 3 | 2 | — | Short | EM, Disruptor | Reflex + Tech shot: +5 |
 | OHS Breaker BH3 (breaching hammer) | 1 | Hand | 1 | 2 | — | Melee | Kinetic, Overcharge (2) | Violence + Melee strike: +2 |
 | OHS Rotosaw RS2 (rotary saw) | 1 | Hand | 1 | 2 | — | Melee | Kinetic, Grinding, Cutter | Control + Melee strike: +2 |
 
@@ -338,11 +352,11 @@ A starter set to play-test the economy: the original starter parts under their m
 | Attachment | Size | Type | Energy | Heat | Ammo | Tags | Effect |
 |---|---|---|---|---|---|---|---|
 | OHS Manipulator MH1 | 1 | Hand | 1 | 2 | — | Kinetic, Hand, Dextrous (1) | Activate to punch: Violence + Melee +2 |
-| SBL Sensor SA1 (sensor array) | 1 | Tech | 1 | 1 | — | Targeting | Wit + Computing +1: one lock per success; locks give +1 die to attacks |
+| SBL Sensor SA1 (sensor array) | 1 | Tech | 1 | 1 | — | Targeting | Wit + Tech +1: one lock per success; locks give +1 die to attacks |
 | SBL Field Generator FG1 | 2 | Tech | 2 | 4 | — | Deflection (1), Armoured vs Kinetic, Weak vs EM | Its tags last until your next turn |
 | MAS Jump Jets JJ2 | 1 | Generic | 2 | 3 | — | Jump | Leap up to Speed; +2 dice to a melee attack on landing |
 | OHS Rack R3 (stowage rack) | 1 | Generic | — | — | — | Passive, Stowage (3) | Pilot-scale inventory (scrap, supplies, salvage). Destroyed: its items are lost or unreachable until repaired |
-| Ammo Bin | 1 | Generic | — | — | Light 16, Standard 8, Missile 5, Heavy 4, Slug 8, Fuel 5 | Volatile | Feeds weapons of its ammo type |
+| Ammo Bin | 1 | Generic | — | — | Light 16, Standard 8, Missile 5, Heavy 4, Slug 8, Fuel 5 | Volatile (X) by ammo type | Feeds weapons of its ammo type |
 
 ### Armour (Armour slot)
 
@@ -402,8 +416,6 @@ The biggest open item is the combat flow; the rest are numbers and edge cases to
 
 Combat flow: initiative, and how to keep several rolls per pilot per turn fast at the table. (Decided: while piloting, activating the mech is the pilot's action; no separate personal action.)
 
-Categorical skills: replace the placeholder names (Gunnery, Tech, Mobility, Melee) used in effects.
-
 Enemy mechs: full sheets like the players, or Caltrops foe notation with a short slot list?
 
 Economy: Solari prices are drafted on the Catalogue and Parts tabs; Scrap costs, armour refills and section rebuilds still need play-testing.
@@ -431,7 +443,8 @@ Ejection and pilots on foot once a mech is lost.
 | Overheat roll uses the overage after the action; sprint damage lands in the legs | Mech turn |
 | No forced shutdown: a mech can stay overheated across turns | Mech turn |
 | Shut down & purge holds the mech shut down, stunned, through its next turn: +1 die to attacks against it | Mech turn |
-| Evasion per chassis (Jackal 4, Mule 2, Bulwark 1); Sitting Duck +2 and Evasion change attacker dice, not successes | Mobility |
+| Evasion per chassis (Jackal 4, Mule 2, Bulwark 1); a Sprint rolls Reflex + Mobility + Evasion, each success a dodge token that thwarts one attack success until the next turn; Sitting Duck +2 changes attacker dice | Mobility |
+| Pilot skills (Gunnery, Melee, Mobility, Tech, Repair) are a separate track from character skills, 1.5 points per level | Pilot skills |
 | Stunned (+1) and Sitting Duck (+2) stack on a shut-down mech | Mobility |
 | All wounds from one hit go to one section | Damage |
 | Wounds land top to bottom in slot order by default | Damage |

@@ -31,12 +31,18 @@ async function caltrops_show_rolled(rolled, text) {
   }
 }
 
-async function caltrops_recieve(data) {
+async function caltrops_recieve(data, source) {
   // data.text: string     - chat flavour for the roll
   // data.dice: number     - roll this many d4s, successes on a 4
   // data.location: bool   - also roll a d12 hit-location die (mech attacks)
   // data.rolled: number[] - the sheet already rolled these d4s (and applied them): show them as the roll's results
   // data.chat: string     - post a plain chat line instead
+  // data.ping: true       - the sheet checking the link: answer with this module's version
+
+  if (data.ping) {
+    source?.postMessage({ caltrops: "pong", version: game.modules.get("fvtt-caltrops")?.version }, CALTROPS_URI)
+    return
+  }
 
   if (typeof data.chat === "string") {
     await ChatMessage.create({ content: caltrops_escape(data.chat), speaker: ChatMessage.getSpeaker() })
@@ -60,11 +66,41 @@ async function caltrops_recieve(data) {
   }
 }
 
+// Token conditions for Scrap Lancer play. To add one: drop a white-on-transparent SVG in icons/ and add a line here.
+// Icons from game-icons.net (CC BY 3.0); credits in README.md.
+const CALTROPS_CONDITIONS = [
+  ["dodge", "Dodge"],
+  ["target-lock", "Target lock"],
+  ["sitting-duck", "Sitting Duck"],
+  ["stunned", "Stunned"],
+  ["shut-down", "Shut down"],
+  ["overheated", "Overheated"],
+  ["out-of-action", "Out of action"],
+  ["suppressed", "Suppressed"],
+  ["staggered", "Staggered"],
+  ["grappled", "Grappled"],
+  ["smoked", "In smoke"],
+  ["jammed", "Jamming"],
+  ["spoofed", "Spoofing"],
+  ["cloaked", "Cloaked"],
+  ["deflection", "Deflection"],
+  ["point-defence", "Point-defence"],
+  ["grounded", "Grounding"],
+]
+
+Hooks.once('init', () => {
+  // Adds the conditions after Foundry's own, in the token HUD. Both key styles: v10 (label, icon) and v11+ (name, img).
+  for (const [id, name] of CALTROPS_CONDITIONS) {
+    const icon = `modules/fvtt-caltrops/icons/${id}.svg`
+    CONFIG.statusEffects.push({ id: `caltrops-${id}`, label: name, name: name, icon: icon, img: icon })
+  }
+})
+
 Hooks.once('ready', () => {
   // Adds the message handler
   window.addEventListener("message", (event) => {
     if (event.origin == CALTROPS_URI) {
-      caltrops_recieve(event.data)
+      caltrops_recieve(event.data, event.source)
     }
   }, false);
 })

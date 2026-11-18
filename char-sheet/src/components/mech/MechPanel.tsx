@@ -20,8 +20,12 @@ import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, shutdownText,
 import { findAttachment, findChassis, mountCovering } from '../../lib/mech/loadout'
 import { copyMechLink } from '../../lib/mech/store'
 import type { Mech, MechResult, MechRules } from '../../lib/mech/types'
-import type { Rules } from '../../lib/rules'
+import type { Dictionary, Rules } from '../../lib/rules'
+import caltrops from '../../lib/caltrops'
+import foundry from '../../lib/foundry'
+import { alertInfo } from '../../lib/alerts'
 import { roller } from './roller'
+import { mechSkillPath, sprintRoll } from '../../lib/mech/roll'
 
 /*
  * The mech play panel, a widget sized to about three sheet columns: status bar with Sprint / Shut down & purge /
@@ -36,6 +40,9 @@ function MechPanel({ view, editable, showStowage = true }: {
 
   const mech: Mech | undefined = useListener(view, 'mech')
   const rules: Rules | undefined = useListener(view, 'rules')
+  const mode: string | undefined = useListener(view, 'mode')
+  const attributes: Dictionary<number> | undefined = useListener(view, 'sheet/attributes')
+  const skills: Dictionary<number> | undefined = useListener(view, mechSkillPath(rules))
   const [hitSection, setHitSection] = useState(null as string | null)
   const [activeKey, setActiveKey] = useState(null as string | null)
   const [attackOn, setAttackOn] = useState(null as AttackTarget | null)
@@ -88,6 +95,25 @@ function MechPanel({ view, editable, showStowage = true }: {
     showResult(res, mech!.name)
   }
   const publish = (next: Mech) => view.publish('mech', next)
+
+  // Sprint pays, then makes the ruleset's Sprint roll if it has one: to the VTT, or rolled here without one.
+  function doSprint() {
+    const res = sprint(mechRules!, mech!, roller)
+    run(res)
+    const spec = mechRules!.sprintRoll
+    const scores = mode === 'mech' ? {} : { ...(attributes ?? {}), ...(skills ?? {}) }
+    const info = rules && spec ? sprintRoll(rules, res.mech, scores) : null
+    if (!info || !spec) return
+    const what = `Sprint, ${spec.label}`
+    if (foundry.isPresent()) {
+      foundry.submitRoll(info, { detail: [`${mech!.name}: ${what}`, spec.note].filter(Boolean).join(': ') })
+    } else {
+      const dice = caltrops.rollDice(info)
+      const n = dice.filter(d => d === 4).length
+      const note = spec.note ? `, ${spec.note}` : ''
+      alertInfo(`${what}: ${n} success${n === 1 ? '' : 'es'} (${dice.length}d4: ${dice.join(' ') || 'none'})${note}.`)
+    }
+  }
 
   // Why each status-bar control is disabled, shown on hover (null = enabled).
   const readOnly = play ? null : 'Read only: you cannot play this mech.'
@@ -149,7 +175,7 @@ function MechPanel({ view, editable, showStowage = true }: {
         : hot ? <span className='badge badge-error rounded-none font-bold'>OVERHEATED</span> : null}
       <span className='flex-1'/>
       <Why why={sprintWhy}>
-        <button className={`btn btn-xs btn-outline rounded-none ${off(sprintWhy)}`} disabled={!!sprintWhy} onClick={() => run(sprint(mechRules, mech, roller))}>
+        <button className={`btn btn-xs btn-outline rounded-none ${off(sprintWhy)}`} disabled={!!sprintWhy} onClick={doSprint}>
           Sprint ({sprintCosts.energy}E +{sprintCosts.heat}H)
         </button>
       </Why>

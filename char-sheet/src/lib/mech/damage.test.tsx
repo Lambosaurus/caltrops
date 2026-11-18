@@ -49,15 +49,15 @@ describe('applyWounds', () => {
     m = setWounds(m, 'core', [true, true, true, true, true, false])
     const { mech, events } = applyWounds(FIXTURE_RULES, m, 'core', 1, off)
     expect(mech.sections.core.mounts.find(x => x.name === 'Ammo Bin: Standard')!.ammo).toBe(8)
-    expect(events.some(e => e.includes('16d4'))).toBe(true)
+    expect(events.some(e => e.includes('4d4'))).toBe(true) // Standard: Volatile (4)
   })
   it('rolls the cook-off and applies its hits', () => {
     const calls: number[] = []
     const roller = (n: number) => { calls.push(n); return Array(n).fill(4) }
-    // Light bin (slot 4, 16 rounds x1) is the last slot but one; the hit disables it.
+    // Light bin (slot 4, Volatile (2)) is the last slot but one; the hit disables it.
     const m = setArmourPoints(FIXTURE_RULES, setWounds(mule(), 'core', [true, true, true, true, false, true]), 'core', 0)
     const { mech, events } = applyWounds(FIXTURE_RULES, m, 'core', 1, { cookoff: true, roller })
-    expect(calls[0]).toBe(16)
+    expect(calls[0]).toBe(2)
     expect(mech.sections.core.mounts.find(x => x.name === 'Ammo Bin: Light')!.ammo).toBe(0)
     expect(events.some(e => e.includes('COOK-OFF'))).toBe(true)
     expect(mech.turn.out).toBe(true)
@@ -104,7 +104,7 @@ describe('notices', () => {
   it('flags cook-off whether rolled or by hand', () => {
     let m = setArmourPoints(FIXTURE_RULES, mule(), 'core', 0)
     m = setWounds(m, 'core', [true, true, true, true, true, false])
-    expect(applyWounds(FIXTURE_RULES, m, 'core', 1, off).notices.some(n => n.includes('16d4'))).toBe(true)
+    expect(applyWounds(FIXTURE_RULES, m, 'core', 1, off).notices.some(n => n.includes('4d4'))).toBe(true)
     expect(applyWounds(FIXTURE_RULES, m, 'core', 1, { cookoff: true, roller: roll1 }).notices.some(n => n.includes('COOK-OFF'))).toBe(true)
   })
   it('markWounds adds none', () => {
@@ -113,9 +113,10 @@ describe('notices', () => {
 })
 
 describe('cookoffDice', () => {
-  it('is rounds times volatility', () => {
+  it("is the ammo type's flat Volatile value while the bin holds any rounds", () => {
     const bin = mule().sections.core.mounts.find(x => x.name === 'Ammo Bin: Standard')!
-    expect(cookoffDice(FIXTURE_RULES, bin)).toBe(16)
+    expect(cookoffDice(FIXTURE_RULES, bin)).toBe(4)
+    expect(cookoffDice(FIXTURE_RULES, { ...bin, ammo: 1 })).toBe(4)
     expect(cookoffDice(FIXTURE_RULES, { ...bin, ammo: 0 })).toBe(0)
   })
 })

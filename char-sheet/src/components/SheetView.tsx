@@ -66,13 +66,17 @@ function SheetView( { view, editable=EditMode.Live }: {
 
         {/* Skills */}
         <section className='flex gap-4 flex-col'>
-          <SkillTable
-            skills={rules.skills}
-            skillView={view.view('sheet/skills')}
-            rollView={view.view('roll')}
-            maxCostTotal={caltrops.skillCostMax(rules, level)}
-            editable={editable}
-          />
+          {caltrops.skillSets(rules).map(set =>
+            <SkillTable
+              key={set.id}
+              title={set.name}
+              skills={set.skills}
+              skillView={view.view(caltrops.skillSetPath(rules, set.id))}
+              rollView={view.view('roll')}
+              maxCostTotal={caltrops.skillSetCostMax(set, level)}
+              editable={editable}
+            />
+          )}
         </section>
 
         {/* Mech widget, about three columns wide, before the items column (wraps to full width on narrow screens) */}

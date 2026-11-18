@@ -39,12 +39,12 @@ export function markOut(mech: Mech, notices: string[]) {
   notices.push('Mech is out of action.')
 }
 
-/** Cook-off dice: an ammo bin's rounds left × volatility, or a Volatile (X) part's X until it has cooked off once. */
+/** Cook-off dice: a Volatile (X) part's X. An ammo bin only cooks off while it holds rounds; any other part once. */
 export function cookoffDice(rules: MechRules, mount: Mount): number {
   const att = findAttachment(rules, mount.name)
-  if (!att?.bin) return att?.volatile && !mount.state?.cooked ? att.volatile : 0
-  const volatility = rules.ammo.find(a => a.name === att.bin)?.volatility ?? 1
-  return Math.max(0, mount.ammo ?? 0) * volatility
+  if (!att?.volatile) return 0
+  const armed = att.bin ? (mount.ammo ?? 0) > 0 : !mount.state?.cooked
+  return armed ? att.volatile : 0
 }
 
 interface Opts { ignoreArmour?: boolean, cookoff: boolean, roller: Roller, rolls?: MechRoll[] /* collects cook-off rolls */ }
@@ -97,7 +97,7 @@ function checkCookoffs(rules: MechRules, mech: Mech, sectionId: string, opts: Op
     const att = findAttachment(rules, m.name)
     const dice = cookoffDice(rules, m)
     if (!att || !dice || !mountDisabled(rules, mech, sectionId, m)) continue
-    const what = att.bin ? `${m.ammo} rounds × ${dice / (m.ammo ?? 1)}` : `Volatile (${att.volatile})`
+    const what = `Volatile (${att.volatile})`
     // A Volatile part cooks off once; repairing it re-arms it (see toggleWound).
     if (!att.bin) m.state = { ...(m.state ?? {}), cooked: true }
     const where = sectionName(findChassis(rules, mech.chassis), sectionId)

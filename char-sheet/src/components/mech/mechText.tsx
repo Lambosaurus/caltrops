@@ -88,7 +88,6 @@ export function keyStats(rules: MechRules, att: MechAttachment): PopStat[] {
   if (att.bin) {
     const ammo = rules.ammo.find(a => a.name === att.bin)
     S.push({ value: `${ammo?.perBin ?? '?'}`, label: `${att.bin} rounds` })
-    if (ammo?.volatility) S.push({ value: `${ammo.volatility}d4`, label: 'per round on cook-off', tone: 'warn' })
   }
   if (att.roll && isWeapon(att)) S.push({ value: `${signed(att.roll.bonus ?? 0)}`, label: 'dice' })
   if (att.range) S.push({ value: att.range })
@@ -248,14 +247,14 @@ export function statPop(rules: MechRules, mech: Mech, kind: StatKind): PopText {
           ...(d.heavy ? [{ value: `−${d.heavy}`, label: 'Heavy parts', tone: 'warn' as Tone }] : []),
         ],
         lines: [
-          `Moving is free. Sprint: ${d.speed * 2} tiles (${run.metres} m) for ${sp.energy}E +${sp.heat}H, and gain Evasion.`,
+          `Moving is free. Sprint: ${d.speed * 2} tiles (${run.metres} m) for ${sp.energy}E +${sp.heat}H, and roll to dodge.`,
           `Travel: ${walk.kmPerMin} km a minute, ${walk.kmh} km an hour.`,
         ],
         note: '1 tile = 10 m · 1 turn = 6 s',
       }
     }
     case 'evasion':
-      return { title: `Evasion ${d.evasion}`, lines: ['After a Sprint, attacks against the mech roll this many fewer dice.'] }
+      return { title: `Evasion ${d.evasion}`, lines: ['Sprint dodge roll: Reflex + Mobility + this many dice. Each success is a dodge token that thwarts one success of an attack until your next turn.'] }
     case 'hand':
       return { title: `Hand ${d.hand ? '✓' : '✗'}`, lines: ['Needs a working Manipulator on a surviving arm: grab, carry and use hand-held gear.'] }
     case 'stowage':

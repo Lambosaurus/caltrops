@@ -12,7 +12,7 @@ import { showNotices } from './notify'
 jest.mock('../../lib/alerts')
 
 function makeView(tweak?: (m: any) => void) {
-  const rules: any = { name: 'x', mechs: FIXTURE_RULES, equipment: [] }
+  const rules: any = { name: 'x', mechs: { ...FIXTURE_RULES, sprintRoll: { label: 'Dodge', aspect: 'Reflex', skill: 'Mobility', add: ['evasion'] } }, equipment: [] }
   const mech = newMech(rules, 'Mule', 'Rusty')
   tweak?.(mech)
   const view = new ObjectService().view('')
@@ -56,6 +56,7 @@ test('Sprint pays energy and heat; New turn clears used marks', () => {
   render(withDnd(<MechPanel view={view} editable={EditMode.Live}/>))
   fireEvent.click(screen.getByText('Sprint (2E +2H)'))
   expect(view.read('mech').turn.used.sprint).toBe(1)
+  expect(alertInfo).toHaveBeenCalledWith(expect.stringMatching(/^Sprint, Dodge: \d+ success(es)? \(\d+d4: /))
   expect((screen.getByText('Sprint (2E +2H)') as HTMLButtonElement).disabled).toBe(true)
   fireEvent.click(screen.getByText(/New turn/))
   expect(view.read('mech').turn.used).toEqual({})

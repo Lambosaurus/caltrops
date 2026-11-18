@@ -17,6 +17,17 @@ export interface Skill {
     trained?: boolean, // If true, this skill can not be used without at least 1 point.
 }
 
+/*
+ * A section of skills with its own points. The first set's scores live in sheet.skills; every further set's in
+ * sheet.skillSets[id]. perLevel defaults to levelup.skills for the first set.
+ */
+export interface SkillSet {
+    id: string,
+    name: string,
+    skills: Skill[],
+    perLevel?: number,
+}
+
 export interface Currency {
     name: string,
     precision?: number,
@@ -54,7 +65,7 @@ export interface Power {
 export interface Rules {
     name: string,
     theme: string,
-    skills: Skill[],
+    skills: Skill[] | SkillSet[], // one list, or several sections
     attributes: Attribute[],
     equipment: Equipment[],
     containers: Container[],
@@ -100,6 +111,7 @@ export interface Sheet {
     currency: Dictionary<number>,
     equipment: Dictionary<SheetEquipment[]>,
     skills: Dictionary<number>,
+    skillSets: Dictionary<Dictionary<number>>, // scores for every skill set after the first, by set id
     attributes: Dictionary<number>,
     powers: Dictionary<number>,
     wounds: Dictionary<SheetWound[]>,

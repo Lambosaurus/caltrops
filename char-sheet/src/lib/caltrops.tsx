@@ -1,4 +1,4 @@
-import { Attribute, Rules, Sheet, Power, SheetWound, Dictionary, Equipment, RollInfo, Skill, Container } from './rules'
+import { Attribute, Rules, Sheet, Power, SheetWound, Dictionary, Equipment, RollInfo, Skill, SkillSet, Container } from './rules'
 import RULESETS from '../data/rulesets'
 import { v4 as uuidv4 } from 'uuid';
 import { filterObject } from './util';
@@ -43,7 +43,30 @@ function skillCostTotal(scores: Dictionary<number>): number {
 }
 
 function skillCostMax(rules: Rules, level: number): number {
-    return Math.ceil(level * rules.levelup.skills);
+    return skillSetCostMax(skillSets(rules)[0], level);
+}
+
+function isSkillSetList(skills: Skill[] | SkillSet[]): skills is SkillSet[] {
+    return skills.length > 0 && 'skills' in skills[0]
+}
+
+/* The ruleset's skill sections: a plain skill list is one set called Skills. */
+function skillSets(rules: Rules): (SkillSet & { perLevel: number })[] {
+    const skills = rules.skills ?? []
+    const perLevel = rules.levelup?.skills ?? 0
+    if (!isSkillSetList(skills)) {
+        return [{ id: 'skills', name: 'Skills', skills: skills, perLevel: perLevel }]
+    }
+    return skills.map((s, i) => ({ ...s, perLevel: s.perLevel ?? (i === 0 ? perLevel : 0) }))
+}
+
+/* Where a set's scores live in the sheet view: the first set in sheet/skills, the rest under sheet/skillSets. */
+function skillSetPath(rules: Rules, id: string): string {
+    return skillSets(rules)[0]?.id === id ? 'sheet/skills' : `sheet/skillSets/${id}`
+}
+
+function skillSetCostMax(set: { perLevel: number }, level: number): number {
+    return Math.ceil(level * set.perLevel);
 }
 
 function skillIsRollable(skill: Skill, scores: Dictionary<number>): boolean {
@@ -178,6 +201,7 @@ function loadSheet(obj: any = {}): Sheet {
         owner: obj.owner ?? null,
         equipment: filterObject(obj.equipment, truthyValues ),
         skills: filterObject(obj.skills, truthyValues),
+        skillSets: Object.fromEntries(Object.entries(obj.skillSets ?? {}).map(([id, s]) => [id, filterObject(s as Dictionary<number>, truthyValues)])),
         attributes: filterObject(obj.attributes, truthyValues),
         powers: filterObject(obj.powers, truthyValues),
         wounds: filterObject(obj.wounds, truthyValues),
@@ -284,6 +308,9 @@ const caltrops = {
     skillIncrementCost: skillIncrementCost,
     skillCostTotal: skillCostTotal,
     skillCostMax: skillCostMax,
+    skillSets: skillSets,
+    skillSetPath: skillSetPath,
+    skillSetCostMax: skillSetCostMax,
     skillIsRollable: skillIsRollable,
     attributeMin: ATTRIBUTE_MIN,
     attributeMax: attributeMax,
