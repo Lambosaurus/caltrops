@@ -48,6 +48,8 @@ export interface MechRules {
   tagsShort?: { [tag: string]: string } /* tag name -> one-line summary for popovers; X and Y stand for its number and type */,
   skillSet?: string /* id of the ruleset skill set mech rolls use; default the first */,
   sprintRoll?: MechRollSpec & { label: string, note?: string } /* rolled after a Sprint; none if absent */,
+  effectTags?: string[] /* tags that are standing effects on the whole mech, listed in the Effects panel in this order */,
+  effectNotes?: string[] /* tags shown beside a part's effects as qualifiers (e.g. Frontal) */,
 }
 export interface Mount { name: string, start: number, ammo?: number, charges?: number, state?: { [k: string]: any } }
 export interface MechSectionState { armour: { name: string, points: number } | null, mounts: Mount[], wounds: boolean[] }
