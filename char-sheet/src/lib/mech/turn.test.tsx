@@ -97,7 +97,7 @@ describe('blockers', () => {
     let m = mule()
     m = activate(R, m, MG, never, S).mech
     m = activate(R, m, MG, never, S).mech
-    expect(activationBlocker(R, m, MG)).toContain('Already activated 2×')
+    expect(activationBlocker(R, m, MG)).toBe('Already fired this turn.')
   })
   it('energy', () => {
     const m = mule()

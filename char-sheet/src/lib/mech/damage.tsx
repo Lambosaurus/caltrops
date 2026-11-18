@@ -1,5 +1,5 @@
 import { findAttachment, findChassis, mountCovering } from './loadout'
-import { mountDisabled } from './derive'
+import { mountWrecked } from './derive'
 import type { Chassis, Mech, MechRoll, MechRules, MechSectionState, Mount, Roller, MechResult } from './types'
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
@@ -85,7 +85,7 @@ function apply(rules: MechRules, mech: Mech, startId: string, count: number, ign
     n--
     const hit = mountCovering(rules, mech, sectionId, i)
     const what = hit ? hit.name : def.slots[i] === 'Hull' ? 'hull' : 'empty'
-    events.push(`  ${def.name} slot ${i + 1}: ${what} wounded${hit && mountDisabled(rules, mech, sectionId, hit) ? ' → DISABLED' : ''}.`)
+    events.push(`  ${def.name} slot ${i + 1}: ${what} wounded${hit && mountWrecked(rules, mech, sectionId, hit) ? ' → DISABLED' : ''}.`)
     checkCookoffs(rules, mech, sectionId, opts, events, notices)
     if (s.wounds.every(Boolean)) events.push(`  ${def.name} DESTROYED.`)
   }
@@ -96,7 +96,7 @@ function checkCookoffs(rules: MechRules, mech: Mech, sectionId: string, opts: Op
   for (const m of mech.sections[sectionId].mounts) {
     const att = findAttachment(rules, m.name)
     const dice = cookoffDice(rules, m)
-    if (!att || !dice || !mountDisabled(rules, mech, sectionId, m)) continue
+    if (!att || !dice || !mountWrecked(rules, mech, sectionId, m)) continue
     const what = `Volatile (${att.volatile})`
     // A Volatile part cooks off once; repairing it re-arms it (see toggleWound).
     if (!att.bin) m.state = { ...(m.state ?? {}), cooked: true }
@@ -156,9 +156,23 @@ export function toggleWound(rules: MechRules, mech: Mech, sectionId: string, slo
   // A repaired Volatile part can cook off again.
   next = withSection(next, sectionId, sec => ({
     ...sec,
-    mounts: sec.mounts.map(m => (m.state?.cooked && !mountDisabled(rules, next, sectionId, m) ? { ...m, state: { ...m.state, cooked: false } } : m)),
+    mounts: sec.mounts.map(m => (m.state?.cooked && !mountWrecked(rules, next, sectionId, m) ? { ...m, state: { ...m.state, cooked: false } } : m)),
   }))
   return { ...next, turn: { ...next.turn, out: coreDestroyed(rules, next) } }
+}
+
+/**
+ * Disrupts the part covering `slot`, or restores it if already disrupted. A disrupted part is disabled but takes no
+ * wounds (so it never cooks off). Analog parts cannot be disrupted; an empty slot or an Analog part changes nothing.
+ */
+export function toggleDisrupt(rules: MechRules, mech: Mech, sectionId: string, slot: number): Mech {
+  const mount = mountCovering(rules, mech, sectionId, slot)
+  const att = mount && findAttachment(rules, mount.name)
+  if (!mount || !att || (!mount.disrupted && /\bAnalog\b/.test(att.tags ?? ''))) return mech
+  return withSection(mech, sectionId, sec => ({
+    ...sec,
+    mounts: sec.mounts.map(m => (m === mount ? { ...m, disrupted: !m.disrupted } : m)),
+  }))
 }
 
 export function setArmourPoints(rules: MechRules, mech: Mech, sectionId: string, points: number): Mech {

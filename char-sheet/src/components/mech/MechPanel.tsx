@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react'
 import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { deriveStats, overheated, turnEnergy } from '../../lib/mech/derive'
-import { adjustAmmo, setArmourPoints, toggleWound } from '../../lib/mech/damage'
+import { adjustAmmo, setArmourPoints, toggleDisrupt, toggleWound } from '../../lib/mech/damage'
 import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, shutdownText, sprint, sprintBlocker, sprintCost } from '../../lib/mech/turn'
 import { findAttachment, findChassis, mountCovering } from '../../lib/mech/loadout'
 import { copyMechLink } from '../../lib/mech/store'
@@ -220,6 +220,7 @@ function MechPanel({ view, editable, showStowage = true }: {
             onHit={setHitSection}
             onActivate={onActivate}
             onWound={(id, i) => publish(toggleWound(mechRules, mech, id, i))}
+            onDisrupt={(id, i) => publish(toggleDisrupt(mechRules, mech, id, i))}
             onArmour={(id, points) => {
               const cur = mech.sections[id]?.armour?.points
               // Clicking the current top pip lowers it by one, so the last pip can be cleared.

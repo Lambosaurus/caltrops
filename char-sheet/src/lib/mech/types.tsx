@@ -51,7 +51,8 @@ export interface MechRules {
   effectTags?: string[] /* tags that are standing effects on the whole mech, listed in the Effects panel in this order */,
   effectNotes?: string[] /* tags shown beside a part's effects as qualifiers (e.g. Frontal) */,
 }
-export interface Mount { name: string, start: number, ammo?: number, charges?: number, state?: { [k: string]: any } }
+/** `disrupted`: switched off by a Disruptor hit, without wounds; disabled until repaired (toggled off). */
+export interface Mount { name: string, start: number, ammo?: number, charges?: number, disrupted?: boolean, state?: { [k: string]: any } }
 export interface MechSectionState { armour: { name: string, points: number } | null, mounts: Mount[], wounds: boolean[] }
 /** Ranged weapons (shot) and melee weapons (strike) are picked in separate attack dialogs. */
 export type ShotKind = 'shot' | 'strike'

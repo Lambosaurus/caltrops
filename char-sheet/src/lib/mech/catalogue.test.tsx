@@ -114,9 +114,22 @@ describe('each weapon rolls on its own', () => {
     expect(weaponRoll(rules, res.volleys[1], 'Mid', scores)).toMatchObject({ attribute: { name: 'Precision', score: 2 }, skill: { name: 'Gunnery', score: 1 } })
     expect(weaponTags(mr, 'ARH Thunderer 120')).toContain('Piercing (2)')
     expect(weaponTags(mr, 'BRO AC-30')).toEqual(['Kinetic'])
-    // No once-a-turn limit: a weapon with shots left can fire again this turn.
-    expect(activationBlocker(mr, adjustTurn(res.mech, { energy: 9 }), keyOf(m, 'BRO Twin AC-33'), 'Mid')).toContain('Already activated 2×')
+    // One attack a turn per weapon: once it has fired, it is done for the turn.
+    expect(activationBlocker(mr, adjustTurn(res.mech, { energy: 9 }), keyOf(m, 'BRO Twin AC-33'), 'Mid')).toBe('Already fired this turn.')
     expect(activationBlocker(mr, adjustTurn(res.mech, { energy: 9 }), keyOf(m, 'BRO AC-20'), 'Mid')).toBeNull()
+  })
+
+  it('a Repeating weapon fires once a turn: a single shot spends the rest', () => {
+    const m = prefab('Workhorse')
+    const mg = keyOf(m, 'BRO M12')
+    const res = attack(mr, m, 'Short', { [mg]: 1 }, roll1)
+    expect(res.volleys[0].shots).toBe(1)
+    expect(res.mech.turn.energy).toBe(m.turn.energy - findAttachment(mr, 'BRO M12')!.energy!)
+    expect(activationBlocker(mr, res.mech, mg, 'Short')).toBe('Already fired this turn.')
+    expect(shotsBlocker(mr, res.mech, {}, mg, 1, 'Short')).toBe('Already fired this turn.')
+    expect(attack(mr, res.mech, 'Short', { [mg]: 1 }, roll1).volleys).toEqual([])
+    // A new turn frees it again.
+    expect(activationBlocker(mr, newTurn(mr, res.mech).mech, mg, 'Short')).toBeNull()
   })
 
   it('stops a weapon early when it runs out of energy', () => {

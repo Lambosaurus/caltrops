@@ -6,9 +6,15 @@ export function slotsOf(rules: MechRules, mount: Mount): number[] {
   return Array.from({ length: size }, (_, i) => mount.start + i)
 }
 
-export function mountDisabled(rules: MechRules, mech: Mech, sectionId: string, mount: Mount): boolean {
+/** Every slot the part occupies is wounded. */
+export function mountWrecked(rules: MechRules, mech: Mech, sectionId: string, mount: Mount): boolean {
   const wounds = mech.sections[sectionId]?.wounds ?? []
   return slotsOf(rules, mount).every(i => wounds[i])
+}
+
+/** The part does nothing: wrecked by wounds, or disrupted. */
+export function mountDisabled(rules: MechRules, mech: Mech, sectionId: string, mount: Mount): boolean {
+  return !!mount.disrupted || mountWrecked(rules, mech, sectionId, mount)
 }
 
 export function sectionDestroyed(mech: Mech, sectionId: string): boolean {

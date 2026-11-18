@@ -1,7 +1,7 @@
 // One-line tag summaries for popovers, hand-written from the rules' tag glossary (TAGS in scraplancerCatalogue).
 // X is replaced with the tag's number and Y with its damage type, e.g. 'Piercing (2)' or 'Armoured vs Kinetic'.
 export const TAG_SHORT: { [tag: string]: string } = {
-  Repeating: 'up to X activations a turn',
+  Repeating: 'up to X shots a turn, all in one attack',
   Passive: 'always on',
   Powerful: '+1 success if the roll scores any',
   Armoured: 'Y attacks against it lose 1 success',

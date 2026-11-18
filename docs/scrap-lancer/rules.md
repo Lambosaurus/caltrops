@@ -128,7 +128,7 @@ Heavier ammo is more dangerous to carry. The Catalogue tab adds Slug (8 rounds, 
 
 | Tag | Rule |
 |---|---|
-| Repeating (X) | May be activated up to X times per turn; on a weapon, each activation adds its dice to that weapon's roll |
+| Repeating (X) | May be activated up to X times per turn; on a weapon, all of them in one attack, each activation adding its dice to that weapon's roll |
 | Passive | Always on, never activated |
 | Powerful | +1 success if the roll already scores at least one |
 | Armoured vs Y | Incoming attacks of damage type Y lose 1 success |
@@ -174,7 +174,7 @@ Melee attachments (punch, hammer, saw) need an Engaged target.
 
 Each weapon fires on its own. Its roll is the pilot's aspect + skill, plus the weapon's dice for each shot, against one target, with its own d12 hit location. Firing an AC-30 (+5) and an HC-40 (+8) at the same target is two rolls: Precision + Gunnery + 5, and Precision + Gunnery + 8.
 
-Shots: a weapon fires once a turn, or up to X times if it is Repeating (X). Pick how many shots before rolling; each shot pays its own energy, heat and ammo, and adds the weapon's dice to that weapon's one roll. An M12 firing both shots rolls Reflex + Gunnery + 2.
+Shots: a weapon attacks once a turn, firing one shot, or up to X if it is Repeating (X). Pick how many shots before rolling; shots you don't fire are lost for the turn, so a Repeating weapon can't split its shots across separate rolls; each shot pays its own energy, heat and ammo, and adds the weapon's dice to that weapon's one roll. An M12 firing both shots rolls Reflex + Gunnery + 2.
 
 Several weapons can fire in the same turn, at the same target or different ones, as long as the energy, heat and ammo last.
 
