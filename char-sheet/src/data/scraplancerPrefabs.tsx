@@ -1610,5 +1610,764 @@ export const PREFABS: MechPrefab[] = [
     ]
    }
   }
+ },
+ {
+  "name": "Cleaver",
+  "chassis": "OHS Mule Mk II",
+  "description": "Melee. Jump in, shear and breaker in both hands, smoke to cover the run-in. For the pilot who wants to be in their face.",
+  "loadout": {
+   "lleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "MAS Jump Jets JJ3",
+      1
+     ],
+     [
+      "HTC Halcyon HS-2",
+      2
+     ]
+    ]
+   },
+   "rleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "CWF Fin-2",
+      1
+     ],
+     [
+      "Ammo Bin: Light",
+      2
+     ]
+    ]
+   },
+   "larm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "VCC Shear SB2",
+      0
+     ],
+     [
+      "CWF Fin-2",
+      1
+     ],
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "core": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "HRW Dipole D6",
+      1
+     ],
+     [
+      "HTC Halcyon HX-3",
+      3
+     ],
+     [
+      "CWF Array RA4",
+      4
+     ]
+    ]
+   },
+   "rarm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "OHS Breaker BH4",
+      0
+     ],
+     [
+      "CWF Fin-2",
+      1
+     ]
+    ]
+   },
+   "cockpit": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "CWF Fin-2",
+      1
+     ]
+    ]
+   },
+   "shoulder": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "BRO M8",
+      0
+     ],
+     [
+      "HPY Smoke SL4",
+      1
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "name": "Longshot",
+  "chassis": "HCA Warden Block 2",
+  "description": "Long range. A marksman autocannon and an extended one, a long-sight rangefinder: two Precision shots at Long every turn. For the patient sniper.",
+  "loadout": {
+   "lleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "CWF Fin-2",
+      1
+     ],
+     [
+      "HTC Halcyon HS-2",
+      2
+     ]
+    ]
+   },
+   "rleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "Ammo Bin: Standard",
+      1
+     ],
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "larm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "OHS Manipulator MH1",
+      0
+     ],
+     [
+      "BRO AC-30E",
+      1
+     ]
+    ]
+   },
+   "core": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "HRW Dipole D6",
+      1
+     ],
+     [
+      "HTC Halcyon HX-3",
+      3
+     ],
+     [
+      "HTC Halcyon HX-3",
+      4
+     ],
+     [
+      "Ammo Bin: Standard",
+      5
+     ]
+    ]
+   },
+   "rarm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "BRO AC-35M",
+      1
+     ],
+     [
+      "CWF Fin-2",
+      3
+     ]
+    ]
+   },
+   "cockpit": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "SBL Rangefinder RF2",
+      1
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "name": "Patchwork",
+  "chassis": "GWC Willow Pattern 2",
+  "description": "Mechanic. A Greenward repair arm, a rack of Scrap to fix with, and enough gun to stay useful. Fast enough to reach whoever is burning. For the crew engineer.",
+  "loadout": {
+   "lleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "Ammo Bin: Light",
+      2
+     ]
+    ]
+   },
+   "rleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "Ammo Bin: Standard",
+      2
+     ]
+    ]
+   },
+   "larm": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "GWC Repair Arm Pattern 1",
+      1
+     ],
+     [
+      "BRO LMG-6",
+      2
+     ]
+    ]
+   },
+   "core": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "HRW Dipole D6",
+      1
+     ]
+    ]
+   },
+   "rarm": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "BRO AC-30",
+      0
+     ]
+    ]
+   },
+   "lshoulder": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "OHS Rack R3",
+      0
+     ],
+     [
+      "CWF Fin-2",
+      1
+     ]
+    ]
+   },
+   "cockpit": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "HTC Halcyon HX-3",
+      1
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "name": "Doorkicker",
+  "chassis": "KR Brute R5",
+  "description": "Brawler. A burst cannon, an SRM-4, a flamer and a breaker on a nine-energy core, wrapped in seven Hull. Slow, loud and hard to stop. For the one who walks through the wall.",
+  "loadout": {
+   "lleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "Ammo Bin: Standard",
+      2
+     ]
+    ]
+   },
+   "rleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "larm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "OHS Breaker BH4",
+      0
+     ],
+     [
+      "BRO AC-25",
+      1
+     ]
+    ]
+   },
+   "core": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "HRW Arc-point A9",
+      1
+     ],
+     [
+      "CWF Array RA4",
+      4
+     ]
+    ]
+   },
+   "rarm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "OHS Burnoff BF2",
+      1
+     ],
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "shoulder": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "CMS SRM-4",
+      0
+     ],
+     [
+      "Ammo Bin: Missile",
+      2
+     ]
+    ]
+   },
+   "cockpit": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "HTC Halcyon HS-2",
+      1
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "name": "Sparkplug",
+  "chassis": "MAS Osprey O-5",
+  "description": "Tech. Everything rolls Tech: a laser, a plasma gun and a sensor to lock targets for the lance. No ammo to cook off. For the egghead.",
+  "loadout": {
+   "lleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "HTC Halcyon HS-2",
+      1
+     ],
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "rleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "HTC Halcyon HS-2",
+      1
+     ],
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "larm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "LDE LZ-3",
+      0
+     ],
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "core": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "HRW Dipole D6",
+      1
+     ],
+     [
+      "SBL Sensor SA1",
+      3
+     ],
+     [
+      "CWF Fin-2",
+      4
+     ]
+    ]
+   },
+   "rarm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "LDE Plasma PX2",
+      0
+     ],
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "cockpit": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "HTC Halcyon HX-3",
+      1
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "name": "Hare",
+  "chassis": "HCA Outrider Block 3",
+  "description": "Scout. Speed 16, Evasion 4 and evasion jets, a sensor to spot for the guns and smoke to break contact. Light guns, light armour. For the one who goes first.",
+  "loadout": {
+   "lleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "Ammo Bin: Light",
+      1
+     ]
+    ]
+   },
+   "rleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "Ammo Bin: Standard",
+      1
+     ]
+    ]
+   },
+   "larm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "OHS Manipulator MH1",
+      0
+     ],
+     [
+      "BRO M12",
+      1
+     ]
+    ]
+   },
+   "core": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "HRW Dipole D5",
+      1
+     ],
+     [
+      "HTC Halcyon HX-2",
+      3
+     ]
+    ]
+   },
+   "rarm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "BRO AC-15",
+      0
+     ],
+     [
+      "CWF Fin-2",
+      1
+     ]
+    ]
+   },
+   "shoulder": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "MAS Flicker FL1",
+      0
+     ],
+     [
+      "HPY Smoke SL4",
+      1
+     ]
+    ]
+   },
+   "cockpit": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "SBL Sensor SA1",
+      0
+     ],
+     [
+      "SBL Rangefinder RF1",
+      1
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "name": "Steady",
+  "chassis": "GWC Thornback Pattern 3",
+  "description": "Mid range. A piercing AC-30HV and an MRM-3 rack on a frame with eleven Hull: plants itself at Mid and trades all day. For the reliable soldier.",
+  "loadout": {
+   "lleg": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "rleg": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "CWF Fin-2",
+      2
+     ]
+    ]
+   },
+   "larm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "OHS Manipulator MH1",
+      1
+     ],
+     [
+      "BRO AC-30HV",
+      2
+     ]
+    ]
+   },
+   "core": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "HRW Dipole D6",
+      3
+     ],
+     [
+      "HTC Halcyon HX-3",
+      5
+     ],
+     [
+      "Ammo Bin: Standard",
+      6
+     ],
+     [
+      "Ammo Bin: Missile",
+      7
+     ]
+    ]
+   },
+   "rarm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "CMS MRM-3",
+      1
+     ]
+    ]
+   },
+   "cockpit": {
+    "armour": "AWP Plate P2",
+    "mounts": []
+   }
+  }
+ },
+ {
+  "name": "Snare",
+  "chassis": "HCA Picket Block 1",
+  "description": "Disabler. An Arc Lance to switch parts off, a grab claw to hold, a suppressive gun to pin and a jammer to break locks. Kills little, ruins plans. For the trickster.",
+  "loadout": {
+   "lleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "Ammo Bin: Light",
+      1
+     ]
+    ]
+   },
+   "rleg": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "CWF Fin-2",
+      1
+     ]
+    ]
+   },
+   "larm": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "OHS Grab Claw GC2",
+      0
+     ],
+     [
+      "BRO LMG-6",
+      1
+     ]
+    ]
+   },
+   "core": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "HRW Dipole D6",
+      1
+     ],
+     [
+      "HTC Halcyon HX-3",
+      3
+     ]
+    ]
+   },
+   "rarm": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "SGW Arc Lance Pattern 2",
+      0
+     ]
+    ]
+   },
+   "cockpit": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "SBL Jammer J1",
+      0
+     ],
+     [
+      "CWF Fin-2",
+      1
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "name": "Thumper",
+  "chassis": "HCA Bulwark Block 4",
+  "description": "Artillery. Lock with the sensor, then drop a mortar and an LRM-3 on targets it cannot even see. Slow treads, deep bins. For the one who plans the fight.",
+  "loadout": {
+   "treads": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "Ammo Bin: Heavy",
+      2
+     ],
+     [
+      "CWF Fin-2",
+      3
+     ]
+    ]
+   },
+   "larm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "BRO Mortar MT3",
+      1
+     ],
+     [
+      "CWF Fin-2",
+      3
+     ]
+    ]
+   },
+   "core": {
+    "armour": "AWP Composite C3",
+    "mounts": [
+     [
+      "HRW Dipole D6",
+      2
+     ],
+     [
+      "HTC Halcyon HX-3",
+      5
+     ],
+     [
+      "Ammo Bin: Missile",
+      6
+     ],
+     [
+      "Ammo Bin: Heavy",
+      7
+     ],
+     [
+      "CWF Fin-2",
+      8
+     ]
+    ]
+   },
+   "rarm": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "CMS LRM-3",
+      1
+     ],
+     [
+      "CWF Fin-2",
+      3
+     ]
+    ]
+   },
+   "cockpit": {
+    "armour": "AWP Plate P2",
+    "mounts": [
+     [
+      "SBL Sensor SA1",
+      1
+     ],
+     [
+      "SBL Rangefinder RF2",
+      2
+     ]
+    ]
+   }
+  }
  }
 ]
