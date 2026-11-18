@@ -208,22 +208,10 @@ export function sprint(rules: MechRules, mech: Mech, roller: Roller): MechResult
   t.heat += heat
   t.used = { ...t.used, sprint: 1 }
   const d = deriveStats(rules, next)
-  const events = [`Sprint: −${energy}E +${heat}H, move up to ${d.speed * 2} tiles in total. Dodge roll: Reflex + Mobility + ${d.evasion}.`]
+  const events = [`Sprint: −${energy}E +${heat}H, move up to ${d.speed * 2} tiles in total.`]
   const notices: string[] = []
   const rolls: MechRoll[] = []
   return { mech: heatAfterAction(rules, next, wasOver, null, roller, events, notices, rolls), events, notices, rolls }
-}
-
-/**
- * The Sprint dodge roll: the pilot's Reflex + Mobility, plus the mech's Evasion dice. Each success is a dodge token
- * that thwarts one success of an attack until the mech's next turn; the VTT tracks the tokens, not the sheet.
- */
-export function dodgeRoll(rules: MechRules, mech: Mech, scores: Dictionary<number>): RollInfo {
-  return {
-    attribute: { name: 'Reflex', score: scores.Reflex ?? 0 },
-    skill: { name: 'Mobility', score: scores.Mobility ?? 0 },
-    bonus: deriveStats(rules, mech).evasion,
-  }
 }
 
 /**

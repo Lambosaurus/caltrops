@@ -13,6 +13,7 @@ import foundry from '../../lib/foundry'
 import { findAttachment, findChassis } from '../../lib/mech/loadout'
 import { attack, gunBand, planCost, rangePenalty, shotsBlocker, TARGET_BANDS, weaponRoll, weaponTags, type AttackCounts } from '../../lib/mech/turn'
 import type { Mech, ShotKind, TargetBand, Volley } from '../../lib/mech/types'
+import { mechSkillPath } from '../../lib/mech/roll'
 import type { Dictionary, Rules } from '../../lib/rules'
 import { roller } from './roller'
 import { showResult } from './notify'
@@ -40,7 +41,7 @@ function ShotModal({ rules, view, target, close }: {
   const mech: Mech | undefined = useListener(view, 'mech')
   const mode: string | undefined = useListener(view, 'mode')
   const attributes: Dictionary<number> | undefined = useListener(view, 'sheet/attributes')
-  const skills: Dictionary<number> | undefined = useListener(view, 'sheet/pilotSkills')
+  const skills: Dictionary<number> | undefined = useListener(view, mechSkillPath(rules))
   const [shots, setShots] = useState(1)
   const [band, setBand] = useState(null as TargetBand | null)
   const [bonus, setBonus] = useState(0)

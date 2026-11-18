@@ -7381,7 +7381,9 @@ export const ATTACHMENTS: MechAttachment[] = [
    "skill": "Mobility",
    "bonus": 0,
    "aspect": "Reflex",
-   "evasion": true
+   "add": [
+    "evasion"
+   ]
   }
  },
  {
@@ -7402,7 +7404,9 @@ export const ATTACHMENTS: MechAttachment[] = [
    "skill": "Mobility",
    "bonus": 0,
    "aspect": "Reflex",
-   "evasion": true
+   "add": [
+    "evasion"
+   ]
   }
  },
  {
@@ -8204,6 +8208,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "type": "Generic",
   "tags": "Volatile (2)",
   "bin": "Light",
+  "volatile": 2,
   "description": "16 Light rounds. Cooks off if disabled while loaded. Refill 100 Solari."
  },
  {
@@ -8214,6 +8219,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "type": "Generic",
   "tags": "Volatile (4)",
   "bin": "Standard",
+  "volatile": 4,
   "description": "8 Standard rounds. Cooks off if disabled while loaded. Refill 150 Solari."
  },
  {
@@ -8224,6 +8230,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "type": "Generic",
   "tags": "Volatile (8)",
   "bin": "Missile",
+  "volatile": 8,
   "description": "5 Missile rounds. Cooks off if disabled while loaded. Refill 300 Solari."
  },
  {
@@ -8234,6 +8241,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "type": "Generic",
   "tags": "Volatile (6)",
   "bin": "Heavy",
+  "volatile": 6,
   "description": "4 Heavy rounds. Cooks off if disabled while loaded. Refill 250 Solari."
  },
  {
@@ -8254,6 +8262,7 @@ export const ATTACHMENTS: MechAttachment[] = [
   "type": "Generic",
   "tags": "Volatile (6)",
   "bin": "Fuel",
+  "volatile": 6,
   "description": "5 Fuel rounds. Cooks off if disabled while loaded. Refill 150 Solari."
  }
 ]
@@ -8262,37 +8271,31 @@ export const AMMO: MechAmmo[] = [
  {
   "name": "Light",
   "perBin": 16,
-  "volatility": 2,
   "refill": 100
  },
  {
   "name": "Standard",
   "perBin": 8,
-  "volatility": 4,
   "refill": 150
  },
  {
   "name": "Missile",
   "perBin": 5,
-  "volatility": 8,
   "refill": 300
  },
  {
   "name": "Heavy",
   "perBin": 4,
-  "volatility": 6,
   "refill": 250
  },
  {
   "name": "Slug",
   "perBin": 8,
-  "volatility": 0,
   "refill": 200
  },
  {
   "name": "Fuel",
   "perBin": 5,
-  "volatility": 6,
   "refill": 150
  }
 ]

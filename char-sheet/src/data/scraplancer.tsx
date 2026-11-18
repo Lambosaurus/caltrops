@@ -27,6 +27,8 @@ const mechs: MechRules = {
     // Mechs saved before the catalogue gave every frame a make and model.
     chassisAliases: { Jackal: 'MAS Jackal J-7', Mule: 'OHS Mule Mk II', Bulwark: 'HCA Bulwark Block 4' },
     rangeAspects: { Short: 'Reflex', Mid: 'Precision', Long: 'Precision' },
+    skillSet: 'pilot', // mech rolls use the pilot skills
+    sprintRoll: { label: 'Dodge', aspect: 'Reflex', skill: 'Mobility', add: ['evasion'], note: 'each success is a dodge token until your next turn' },
     sprint: { energy: 2, heat: 2 }, // every chassis here has a size, which sets the Sprint cost instead
 }
 
@@ -37,22 +39,44 @@ const scrapLancerRuleset: Rules = {
     theme: 'lancers',
     useAspects: true,
     attributes: DEFAULT_RULES.attributes,
-    // Aspects, not attributes, go up with level (the Lancer ruleset has no aspects).
-    levelup: { aspects: 0.5, attributes: 0, skills: lancerRuleset.levelup.skills },
-    // The character's own body skills; piloting is the separate pilot track below.
-    skills: lancerRuleset.skills
-        .filter(s => s.name !== 'Piloting')
-        .map(s => s.name === 'Gunnary' ? { ...s, name: 'Gunnery' } : { ...s }),
-    pilotSkills: {
-        perLevel: 1.5,
-        skills: [
-            { name: 'Gunnery', description: 'Ballistic guns, mass drivers, mortars, flamers, rockets and missiles.' },
-            { name: 'Melee', description: 'Mech melee weapons, claws, hands and winches.' },
-            { name: 'Mobility', description: 'The Sprint dodge roll: Reflex + Mobility + Evasion.' },
-            { name: 'Tech', description: 'Lasers, plasma, EM weapons, sensors and Mind parts.' },
-            { name: 'Repair', description: 'Repair rigs and field repair.' },
-        ],
-    },
+    levelup: { aspects: 0.5, attributes: 0, skills: 2.5 },
+    // The character's own skills, then the pilot's skills through a mech (mechs.skillSet), each with its own points.
+    skills: [
+        {
+            id: 'skills',
+            name: 'Skills',
+            skills: [
+                { name: 'Athletics' },
+                { name: 'Computing' },
+                { name: 'Diplomacy' },
+                { name: 'Engineering' },
+                { name: 'Gunnery' },
+                { name: 'History' },
+                { name: 'Medicine' },
+                { name: 'Melee' },
+                { name: 'Observation' },
+                { name: 'Repair' },
+                { name: 'Science' },
+                { name: 'Sneak' },
+                { name: 'Survival' },
+                { name: 'Overload', trained: true },
+                { name: 'Robotics', trained: true },
+                { name: 'Orbital', trained: true },
+            ],
+        },
+        {
+            id: 'pilot',
+            name: 'Pilot skills',
+            perLevel: 1.5,
+            skills: [
+                { name: 'Gunnery', description: 'Ballistic guns, mass drivers, mortars, flamers, rockets and missiles.' },
+                { name: 'Melee', description: 'Mech melee weapons, claws, hands and winches.' },
+                { name: 'Mobility', description: 'The Sprint dodge roll: Reflex + Mobility + Evasion.' },
+                { name: 'Tech', description: 'Lasers, plasma, EM weapons, sensors and Mind parts.' },
+                { name: 'Repair', description: 'Repair rigs and field repair.' },
+            ],
+        },
+    ],
     currency: [
         { name: 'Solari', precision: 1 },
         { name: 'U', precision: 1 },

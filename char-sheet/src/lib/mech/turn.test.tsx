@@ -1,8 +1,7 @@
 import { DEFAULT_RULES } from '../rules'
 import { FIXTURE_RULES } from './fixture'
 import { newMech } from './loadout'
-import { deriveStats } from './derive'
-import { activate, dodgeRoll, activationBlocker, adjustTurn, newTurn, outOfRange, rangePenalty, shutdownPurge, sprint, sprintBlocker, travel } from './turn'
+import { activate, activationBlocker, adjustTurn, newTurn, outOfRange, rangePenalty, shutdownPurge, sprint, sprintBlocker, travel } from './turn'
 import type { Mech, MechSettings } from './types'
 
 const RULES = { ...DEFAULT_RULES, name: 'Test', mechs: FIXTURE_RULES }
@@ -189,16 +188,5 @@ describe('scale', () => {
   it('speed is tiles per turn: 1 tile = 10 m, 1 turn = 6 s', () => {
     expect(travel(12)).toEqual({ metres: 120, mps: '20', kmh: '72', kmPerMin: '1.2' })
     expect(travel(4)).toEqual({ metres: 40, mps: '6.7', kmh: '24', kmPerMin: '0.4' })
-  })
-})
-
-describe('dodge roll', () => {
-  it('is Reflex + Mobility + the Evasion dice', () => {
-    const m = mule()
-    const ev = deriveStats(R, m).evasion
-    expect(dodgeRoll(R, m, { Reflex: 2, Mobility: 1, Gunnery: 5 })).toEqual({
-      attribute: { name: 'Reflex', score: 2 }, skill: { name: 'Mobility', score: 1 }, bonus: ev,
-    })
-    expect(dodgeRoll(R, m, {})).toEqual({ attribute: { name: 'Reflex', score: 0 }, skill: { name: 'Mobility', score: 0 }, bonus: ev })
   })
 })

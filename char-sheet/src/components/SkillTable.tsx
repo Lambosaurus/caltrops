@@ -18,7 +18,7 @@ function SkillTable({skills, skillView, maxCostTotal, editable = EditMode.Live, 
   }): JSX.Element {
 
   const scores: Dictionary<number> = useListener(skillView) ?? {}
-  // Only skills in this table count, so a score for a skill the ruleset dropped (Scrap Lancer's Piloting) costs nothing.
+  // Only the skills listed in this table count toward its cost, so a stale score for a skill no longer listed costs nothing.
   const totalCost = caltrops.skillCostTotal(Object.fromEntries(skills.map(s => [s.name, scores[s.name] ?? 0])))
   const sparePoints = maxCostTotal - totalCost;
 

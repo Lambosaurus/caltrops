@@ -88,7 +88,6 @@ export function keyStats(rules: MechRules, att: MechAttachment): PopStat[] {
   if (att.bin) {
     const ammo = rules.ammo.find(a => a.name === att.bin)
     S.push({ value: `${ammo?.perBin ?? '?'}`, label: `${att.bin} rounds` })
-    if (ammo?.volatility) S.push({ value: `${ammo.volatility}d4`, label: 'cook-off while loaded', tone: 'warn' })
   }
   if (att.roll && isWeapon(att)) S.push({ value: `${signed(att.roll.bonus ?? 0)}`, label: 'dice' })
   if (att.range) S.push({ value: att.range })

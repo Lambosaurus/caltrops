@@ -16,7 +16,7 @@ import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { deriveStats, overheated, turnEnergy } from '../../lib/mech/derive'
 import { adjustAmmo, setArmourPoints, toggleWound } from '../../lib/mech/damage'
-import { adjustTurn, dodgeRoll, isWeapon, newTurn, shotKindOf, shutdownPurge, shutdownText, sprint, sprintBlocker, sprintCost } from '../../lib/mech/turn'
+import { adjustTurn, isWeapon, newTurn, shotKindOf, shutdownPurge, shutdownText, sprint, sprintBlocker, sprintCost } from '../../lib/mech/turn'
 import { findAttachment, findChassis, mountCovering } from '../../lib/mech/loadout'
 import { copyMechLink } from '../../lib/mech/store'
 import type { Mech, MechResult, MechRules } from '../../lib/mech/types'
@@ -25,6 +25,7 @@ import caltrops from '../../lib/caltrops'
 import foundry from '../../lib/foundry'
 import { alertInfo } from '../../lib/alerts'
 import { roller } from './roller'
+import { mechSkillPath, sprintRoll } from '../../lib/mech/roll'
 
 /*
  * The mech play panel, a widget sized to about three sheet columns: status bar with Sprint / Shut down & purge /
@@ -41,7 +42,7 @@ function MechPanel({ view, editable, showStowage = true }: {
   const rules: Rules | undefined = useListener(view, 'rules')
   const mode: string | undefined = useListener(view, 'mode')
   const attributes: Dictionary<number> | undefined = useListener(view, 'sheet/attributes')
-  const pilotSkills: Dictionary<number> | undefined = useListener(view, 'sheet/pilotSkills')
+  const skills: Dictionary<number> | undefined = useListener(view, mechSkillPath(rules))
   const [hitSection, setHitSection] = useState(null as string | null)
   const [activeKey, setActiveKey] = useState(null as string | null)
   const [attackOn, setAttackOn] = useState(null as AttackTarget | null)
@@ -95,18 +96,22 @@ function MechPanel({ view, editable, showStowage = true }: {
   }
   const publish = (next: Mech) => view.publish('mech', next)
 
-  // Sprint pays, then makes the dodge roll: to the VTT (which tracks the tokens), or rolled here without one.
+  // Sprint pays, then makes the ruleset's Sprint roll if it has one: to the VTT, or rolled here without one.
   function doSprint() {
     const res = sprint(mechRules!, mech!, roller)
     run(res)
-    const scores = mode === 'mech' ? {} : { ...(attributes ?? {}), ...(pilotSkills ?? {}) }
-    const info = dodgeRoll(mechRules!, res.mech, scores)
+    const spec = mechRules!.sprintRoll
+    const scores = mode === 'mech' ? {} : { ...(attributes ?? {}), ...(skills ?? {}) }
+    const info = rules && spec ? sprintRoll(rules, res.mech, scores) : null
+    if (!info || !spec) return
+    const what = `Sprint, ${spec.label}`
     if (foundry.isPresent()) {
-      foundry.submitRoll(info, { detail: `${mech!.name}: Sprint dodge, each success is a dodge token until your next turn` })
+      foundry.submitRoll(info, { detail: [`${mech!.name}: ${what}`, spec.note].filter(Boolean).join(': ') })
     } else {
       const dice = caltrops.rollDice(info)
       const n = dice.filter(d => d === 4).length
-      alertInfo(`Dodge: ${n} token${n === 1 ? '' : 's'} (${dice.length}d4: ${dice.join(' ') || 'none'}), each thwarts one success until your next turn.`)
+      const note = spec.note ? `, ${spec.note}` : ''
+      alertInfo(`${what}: ${n} success${n === 1 ? '' : 'es'} (${dice.length}d4: ${dice.join(' ') || 'none'})${note}.`)
     }
   }
 

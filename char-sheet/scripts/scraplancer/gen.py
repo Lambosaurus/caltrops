@@ -70,9 +70,9 @@ def parse_roll(s):
     if not s or s in DASH:
         return None
     s = s.replace('−', '-')
-    d = re.match(r'(\w+) \+ (\w+) \+ Evasion$', s.strip())
-    if d:  # the dodge roll: aspect + skill + the mech's Evasion
-        return {'skill': d.group(2), 'bonus': 0, 'aspect': d.group(1), 'evasion': True}
+    d = re.match(r'(\w+) \+ (\w+)((?: \+ [A-Z][a-z]+)+)$', s.strip())
+    if d:  # aspect + skill + mech stats, e.g. 'Reflex + Mobility + Evasion'
+        return {'skill': d.group(2), 'bonus': 0, 'aspect': d.group(1), 'add': [x.lower() for x in re.findall(r'\+ (\w+)', d.group(3))]}
     m = re.match(r'(?:(\w+) \+ )?(\w+) ([+-]\d+)$', s.strip())
     if not m:
         raise ValueError('roll ' + s)
@@ -194,18 +194,20 @@ for t in PARTS:
 
 # Ammo (Catalogue tab ammo table) and one bin per ammo type.
 ammo = []
+bin_volatile = {}  # ammo type -> its bins' Volatile (X)
 i = next(k for k, l in enumerate(CAT) if l.startswith('| Ammo | Rounds per bin'))
 for l in CAT[i + 1:]:
     if not l.startswith('|'):
         break
     c = cells(l)
     name = c[0].replace(' (new)', '')
-    ammo.append({'name': name, 'perBin': num(c[1]), 'volatility': num(c[2].replace('×', '')), 'refill': num(c[4])})
+    ammo.append({'name': name, 'perBin': num(c[1]), 'refill': num(c[4])})
+    bin_volatile[name] = num(c[2])
 for am in ammo:
-    vol = am['volatility']
+    vol = bin_volatile[am['name']]
     attachments.append({
         'name': f"Ammo Bin: {am['name']}", 'group': 'Ammo', 'family': 'Ammo bins', 'size': 1, 'type': 'Generic',
-        'tags': f'Volatile ({vol})' if vol else '', 'bin': am['name'],
+        'tags': f'Volatile ({vol})' if vol else '', 'bin': am['name'], **({'volatile': vol} if vol else {}),
         'description': f"{am['perBin']} {am['name']} rounds. " + (
             'Cooks off if disabled while loaded.' if vol else 'Inert: never cooks off.') + f" Refill {am['refill']} Solari.",
     })

@@ -9,15 +9,15 @@ import MechPanel from './MechPanel'
 jest.mock('../../lib/alerts')
 
 function setup(mode: 'sheet' | 'mech' = 'sheet', change?: (m: any) => void) {
-  const rules: any = { name: 'x', mechs: FIXTURE_RULES }
+  const rules: any = { name: 'x', levelup: { skills: 2 }, skills: [{ id: 'skills', name: 'Skills', skills: [] }, { id: 'pilot', name: 'Pilot', skills: [] }], mechs: { ...FIXTURE_RULES, skillSet: 'pilot' } }
   const mech = newMech(rules, 'Mule', 'Rusty')
   change?.(mech)
   const view = new ObjectService().view('')
   view.publish('rules', rules)
   view.publish('mode', mode)
   view.publish('mech', mech)
-  // The character's own Gunnery (9) must not count: mech rolls use the pilot's Gunnery (2).
-  view.publish('sheet', { attributes: { Precision: 3 }, skills: { Gunnery: 9 }, pilotSkills: { Gunnery: 2 } })
+  // The first set's Gunnery (9) must not count: mech rolls use the set the mech rules name (pilot, Gunnery 2).
+  view.publish('sheet', { attributes: { Precision: 3 }, skills: { Gunnery: 9 }, skillSets: { pilot: { Gunnery: 2 } } })
   render(withDnd(<MechPanel view={view} editable={EditMode.Live}/>))
   return { view, energy: mech.turn.energy }
 }

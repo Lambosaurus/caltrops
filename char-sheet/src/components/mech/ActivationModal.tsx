@@ -13,7 +13,7 @@ import foundry from '../../lib/foundry'
 import { findAttachment, mountKey as keyOf } from '../../lib/mech/loadout'
 import { overheated, deriveStats } from '../../lib/mech/derive'
 import { activate, activationBlocker, rangePenalty } from '../../lib/mech/turn'
-import { activationRoll } from '../../lib/mech/roll'
+import { activationRoll, mechSkillPath, statDice } from '../../lib/mech/roll'
 import type { Mech, RangeBand, TargetBand } from '../../lib/mech/types'
 import type { Dictionary, RollInfo, Rules } from '../../lib/rules'
 import { roller } from './roller'
@@ -35,7 +35,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
   const mech: Mech | undefined = useListener(view, 'mech')
   const mode: string | undefined = useListener(view, 'mode')
   const attributes: Dictionary<number> | undefined = useListener(view, 'sheet/attributes')
-  const skills: Dictionary<number> | undefined = useListener(view, 'sheet/pilotSkills')
+  const skills: Dictionary<number> | undefined = useListener(view, mechSkillPath(rules))
   const [aspectScore, setAspectScore] = useState(0)
   const [skillScore, setSkillScore] = useState(0)
   const [other, setOther] = useState(0)
@@ -72,8 +72,8 @@ function ActivationModal({ rules, view, mountKey, close }: {
   const scores: Dictionary<number> = mechMode && names
     ? { [names.attribute!.name]: aspectScore, [names.skill!.name]: skillScore }
     : { ...(attributes ?? {}), ...(skills ?? {}) }
-  const evasion = deriveStats(mechRules, mech).evasion
-  const base = activationRoll(rules, att, band, scores, evasion)
+  const stats = statDice(mechRules, mech, att.roll?.add)
+  const base = activationRoll(rules, att, band, scores, stats.reduce((n, d) => n + d.value, 0))
   const info: RollInfo | null = base ? { ...base, bonus: (base.bonus ?? 0) + other } : null
   const count = info ? Math.max(0, caltrops.rollDiceCount(info)) : 0
 
@@ -91,7 +91,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
     parts.push({ label: `${info.attribute!.name} (aspect)`, value: info.attribute!.score })
     parts.push({ label: `${info.skill!.name} (skill)`, value: info.skill!.score })
     if (att.roll!.bonus) parts.push({ label: `${att.name} bonus`, value: att.roll!.bonus })
-    if (att.roll!.evasion) parts.push({ label: 'Evasion (mech)', value: evasion })
+    for (const d of stats) parts.push({ label: `${d.name[0].toUpperCase()}${d.name.slice(1)} (mech)`, value: d.value })
     const pen = rangePenalty(att, band)
     if (pen) parts.push({ label: `Target ${band} (weapon ${att.range})`, value: -pen })
   }
