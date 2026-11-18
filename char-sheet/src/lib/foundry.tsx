@@ -43,12 +43,27 @@ function submitRolled(rolled: number[], text: string): void {
     window.opener.postMessage({ dice: rolled.length, rolled: rolled, text: text }, "*")
 }
 
+/**
+ * The modal action that sends a result already rolled in the sheet to Foundry as a roll card (for when the roll was
+ * made here instead of in the VTT). Null without Foundry. `sent` / `setSent` keep it to one send per result.
+ */
+function sendResultAction(dice: number[], text: string, sent: boolean, setSent: (sent: boolean) => void) {
+    if (!isPresent()) return null
+    return {
+        name: sent ? 'Sent to VTT' : 'Send result to VTT',
+        disabled: sent,
+        stayOpen: true,
+        callback: () => { submitRolled(dice, text); setSent(true) },
+    }
+}
+
 const foundry = {
     isPresent: isPresent,
     submitRoll: submitRoll,
     submitDice: submitDice,
     submitChat: submitChat,
     submitRolled: submitRolled,
+    sendResultAction: sendResultAction,
 }
 
 export default foundry;

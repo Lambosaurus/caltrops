@@ -143,3 +143,38 @@ test('a weapon goes to the VTT as its own roll, with a d12 location', () => {
     Object.defineProperty(window, 'opener', { value: null, configurable: true })
   }
 })
+
+test('a weapon rolled in the app can still send that result to the VTT, once', () => {
+  const postMessage = jest.fn()
+  Object.defineProperty(window, 'opener', { value: { postMessage }, configurable: true })
+  try {
+    const { view, energy } = setup()
+    open('Autocannon')
+    fireEvent.click(screen.getByText('Fire'))
+    expect(postMessage).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByText('Send result to VTT'))
+    expect(postMessage).toHaveBeenCalledTimes(1)
+    const msg = postMessage.mock.calls[0][0]
+    expect(msg.rolled).toHaveLength(8) // the dice shown, not a re-roll
+    expect(msg.text).toMatch(/Autocannon at Mid .*hit location d12 \d+/)
+    expect((screen.getByText('Sent to VTT').closest('button') as HTMLButtonElement).disabled).toBe(true)
+    expect(view.read('mech').turn.energy).toBe(energy - 2) // paid once
+  } finally {
+    Object.defineProperty(window, 'opener', { value: null, configurable: true })
+  }
+})
+
+test('an activation rolled in the app can send that result to the VTT', () => {
+  const postMessage = jest.fn()
+  Object.defineProperty(window, 'opener', { value: { postMessage }, configurable: true })
+  try {
+    setup()
+    open(/Sensor Array/)
+    fireEvent.click(screen.getByText(/^Roll \d+ dice & activate$/))
+    fireEvent.click(screen.getByText('Send result to VTT'))
+    expect(postMessage.mock.calls[0][0]).toMatchObject({ text: expect.stringContaining('Sensor Array') })
+    expect(Array.isArray(postMessage.mock.calls[0][0].rolled)).toBe(true)
+  } finally {
+    Object.defineProperty(window, 'opener', { value: null, configurable: true })
+  }
+})

@@ -41,6 +41,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
   const [other, setOther] = useState(0)
   const [chosen, setChosen] = useState(null as RangeBand | null)
   const [done, setDone] = useState(null as { dice: number[], info: RollInfo } | null)
+  const [sent, setSent] = useState(false)
 
   useEffect(() => {
     setAspectScore(0)
@@ -48,6 +49,7 @@ function ActivationModal({ rules, view, mountKey, close }: {
     setOther(0)
     setChosen(null)
     setDone(null)
+    setSent(false)
   }, [mountKey])
 
   const mechRules = rules.mechs
@@ -119,6 +121,8 @@ function ActivationModal({ rules, view, mountKey, close }: {
 
   const actions: ModalActionInfo[] = []
   if (done) {
+    const send = foundry.sendResultAction(done.dice, `${att.name}: ${caltrops.rollDescribe(done.info)}`, sent, setSent)
+    if (send) actions.push(send)
     actions.push({ name: 'Done', type: 'primary', callback: () => {} })
   } else {
     actions.push({ name: 'Cancel', callback: () => {} })
