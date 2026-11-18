@@ -8301,7 +8301,7 @@ export const AMMO: MechAmmo[] = [
 ]
 
 export const TAGS: { [tag: string]: string } = {
- "Repeating": "May be activated up to X times per turn; on a weapon, each activation adds its dice to that weapon's roll",
+ "Repeating": "May be activated up to X times per turn; on a weapon, all of them in one attack, each activation adding its dice to that weapon's roll",
  "Passive": "Always on, never activated",
  "Powerful": "+1 success if the roll already scores at least one",
  "Armoured": "Incoming attacks of damage type Y lose 1 success",

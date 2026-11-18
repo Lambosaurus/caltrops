@@ -62,8 +62,12 @@ export function activationBlocker(rules: MechRules, mech: Mech, key: string, tar
   if (t.out) return 'Mech is out of action.'
   if (t.shutdown) return shutdownText(mech)
   if (sectionDestroyed(mech, found.sectionId)) return 'Section destroyed.'
+  if (found.mount.disrupted) return 'Disrupted: disabled until repaired.'
   if (mountDisabled(rules, mech, found.sectionId, found.mount)) return 'Disabled: every slot it occupies is wounded.'
-  if ((t.used[key] ?? 0) >= (att.repeat ?? 1)) return att.repeat ? `Already activated ${att.repeat}× this turn.` : 'Already activated this turn.'
+  if ((t.used[key] ?? 0) >= (att.repeat ?? 1)) {
+    if (isWeapon(att)) return 'Already fired this turn.'
+    return att.repeat ? `Already activated ${att.repeat}× this turn.` : 'Already activated this turn.'
+  }
   const energy = att.energy ?? 0
   if (t.energy < energy) return `Not enough energy: needs ${energy}, have ${t.energy}.`
   if (att.charges && !((found.mount.charges ?? 0) > 0)) return 'No charges left.'
@@ -353,7 +357,7 @@ export function shotsBlocker(rules: MechRules, mech: Mech, counts: AttackCounts,
   const rep = att.repeat ?? 1
   if (used + n > rep) {
     const left = rep - used
-    return left <= 0 ? `Already fired ${rep === 1 ? 'this turn' : `all ${rep} shots this turn`}.`
+    return left <= 0 ? 'Already fired this turn.'
       : `Only ${plural(left, 'shot')} left this turn (Repeating ${rep}).`
   }
   const plan = { ...counts, [key]: n }
@@ -403,7 +407,10 @@ export function attack(rules: MechRules, mech: Mech, target: TargetBand, counts:
       rolls.push(...(res.rolls ?? []))
       shots++
     }
-    if (shots) volleys.push({ key, name: att.name, shots, dice: att.roll.bonus ?? 0, penalty: rangePenalty(att, target) })
+    if (!shots) continue
+    // One attack a turn: firing fewer shots than a Repeating weapon allows still spends the rest.
+    m = { ...m, turn: { ...m.turn, used: { ...m.turn.used, [key]: Math.max(m.turn.used[key] ?? 0, att.repeat ?? 1) } } }
+    volleys.push({ key, name: att.name, shots, dice: att.roll.bonus ?? 0, penalty: rangePenalty(att, target) })
   }
   return { mech: m, events, notices, rolls, volleys }
 }

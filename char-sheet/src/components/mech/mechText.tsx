@@ -122,13 +122,14 @@ export function mountPop(rules: MechRules, mech: Mech, sectionId: string, mount:
   const slots = slotsOf(rules, mount)
   const hurt = slots.filter(i => wounds[i]).length
   const status: PopLine[] = []
-  if (mountDisabled(rules, mech, sectionId, mount)) status.push({ text: 'DISABLED: every slot wounded', tone: 'bad' })
+  if (mount.disrupted) status.push({ text: 'DISRUPTED: disabled until repaired (ctrl-click a slot box to restore)', tone: 'bad' })
+  else if (mountDisabled(rules, mech, sectionId, mount)) status.push({ text: 'DISABLED: every slot wounded', tone: 'bad' })
   else if (hurt) status.push({ text: `${hurt}/${slots.length} slots wounded`, tone: 'warn' })
   if (att.bin) status.push({ text: `${mount.ammo ?? 0}/${binCapacity(rules, att)} rounds left`, tone: mount.ammo ? undefined : 'warn' })
   if (att.charges) status.push({ text: `${mount.charges ?? 0}/${att.charges} charges left`, tone: mount.charges ? undefined : 'warn' })
   if (att.energy !== undefined) {
     const used = mech.turn.used[key] ?? 0
-    if (used) status.push({ text: `Used ${used}/${att.repeat ?? 1} this turn` })
+    if (used) status.push({ text: isWeapon(att) ? 'Fired this turn' : `Used ${used}/${att.repeat ?? 1} this turn` })
     const why = activationBlocker(rules, mech, key)
     if (why && editable && !mountDisabled(rules, mech, sectionId, mount)) status.push({ text: why, tone: 'warn' })
     else if (!why && editable) {
@@ -192,7 +193,7 @@ export function woundPop(section: ChassisSection, index: number, wounded: boolea
   return {
     title: `${section.name} slot ${index + 1}`,
     status: [wounded ? { text: 'Wounded', tone: 'bad' } : { text: 'Unwounded' }],
-    lines: [wounded ? 'Click to repair (1 Scrap + a check).' : 'Click to mark a wound.'],
+    lines: [wounded ? 'Click to repair (1 Scrap + a check).' : 'Click to mark a wound.', 'Ctrl-click to disrupt or restore the part here (no wound).'],
   }
 }
 

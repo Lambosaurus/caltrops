@@ -169,3 +169,17 @@ test('standalone panel keeps its stowage, embedded panel (showStowage=false) doe
   rerender(withDnd(<MechPanel view={view} editable={EditMode.Full} showStowage={false}/>))
   expect(screen.queryAllByText('Items: Stowage').length).toBe(0)
 })
+
+test('ctrl-clicking a slot box disrupts the part there without wounding it; ctrl-clicking again restores it', () => {
+  setup(EditMode.Full)
+  const box = screen.getByLabelText('Left arm slot 3 wound')
+  fireEvent.click(box, { ctrlKey: true })
+  const name = screen.getByText('Autocannon')
+  expect(name.className).toContain('line-through')
+  expect(name.className).toContain('text-warning')
+  expect(box.className).not.toContain('bg-error')
+  fireEvent.click(box, { ctrlKey: true })
+  expect(screen.getByText('Autocannon').className).not.toContain('line-through')
+  fireEvent.click(box)
+  expect(box.className).toContain('bg-error')
+})

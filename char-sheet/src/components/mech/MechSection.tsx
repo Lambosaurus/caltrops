@@ -8,7 +8,7 @@ import { View, useListener } from '../../lib/objectservice'
 import { EditMode } from '../../lib/util'
 import { canDropArmour, canDropPart, findAttachment, mountCovering, mountKey, type PartDrag } from '../../lib/mech/loadout'
 import { mountDisabled, sectionDestroyed } from '../../lib/mech/derive'
-import { activationBlocker } from '../../lib/mech/turn'
+import { activationBlocker, isWeapon } from '../../lib/mech/turn'
 import type { ChassisSection, Mech, MechRules, MechSlotType } from '../../lib/mech/types'
 import {
   aimText, armourPop, costText, emptySlotPop, mountPop, passiveText, binCapacity, sectionPop, slotTag, slotTypePop,
@@ -35,7 +35,7 @@ export function TypeTag({ rules, type, label }: { rules: MechRules, type: string
   </Popover>
 }
 
-function MechSection({ rules, section, view, editable, loadout = false, onHit, onActivate, onWound, onArmour, onAmmo, onDropPart, onUnmount, onDropArmour, onClearArmour }: {
+function MechSection({ rules, section, view, editable, loadout = false, onHit, onActivate, onWound, onDisrupt, onArmour, onAmmo, onDropPart, onUnmount, onDropArmour, onClearArmour }: {
     rules: MechRules,
     section: ChassisSection,
     view: View, // the mech
@@ -44,6 +44,8 @@ function MechSection({ rules, section, view, editable, loadout = false, onHit, o
     onHit(sectionId: string): void,
     onActivate(key: string): void,
     onWound?(sectionId: string, index: number): void,
+    /** Ctrl- or Cmd-click on a slot's wound box: disrupt or restore the part there. */
+    onDisrupt?(sectionId: string, index: number): void,
     onArmour?(sectionId: string, points: number): void,
     onAmmo?(key: string, delta: number): void,
     onDropPart?(item: PartDrag, sectionId: string, start: number): void,
@@ -104,7 +106,7 @@ function MechSection({ rules, section, view, editable, loadout = false, onHit, o
         const disabled = mountDisabled(rules, mech!, section.id, mount)
         const pop = mountPop(rules, mech!, section.id, mount, key, play)
         const name = <Popover content={pop}>
-          <span className={`flex-1 min-w-0 truncate ${(att.size ?? 1) > 1 ? 'border-l-4 border-primary pl-1' : ''} ${disabled ? 'text-error line-through' : ''}`}>
+          <span className={`flex-1 min-w-0 truncate ${(att.size ?? 1) > 1 ? 'border-l-4 border-primary pl-1' : ''} ${mount.disrupted ? 'text-warning line-through' : disabled ? 'text-error line-through' : ''}`}>
             {att.name}
           </span>
         </Popover>
@@ -119,7 +121,7 @@ function MechSection({ rules, section, view, editable, loadout = false, onHit, o
           const used = mech!.turn.used[key] ?? 0
           const rep = att.repeat ?? 1
           const blocked = activationBlocker(rules, mech!, key) !== null
-          const label = rep > 1 ? `${costText(att)} ${used}/${rep}` : used ? 'used' : costText(att)
+          const label = used && isWeapon(att) ? 'fired' : rep > 1 ? `${costText(att)} ${used}/${rep}` : used ? 'used' : costText(att)
           // The popover's status line says why a disabled button can't be used; the span lets the hover reach it.
           right = <Popover content={pop}>
             <span className={`inline-flex ${!play || blocked ? 'cursor-not-allowed' : ''}`}>
@@ -160,7 +162,7 @@ function MechSection({ rules, section, view, editable, loadout = false, onHit, o
           className={`w-3 h-3 border flex-none ${wounded ? 'bg-error border-error' : 'border-current'}`}
           disabled={!play || !onWound}
           aria-label={`${section.name} slot ${i + 1} wound`}
-          onClick={() => onWound?.(section.id, i)}
+          onClick={e => ((e.ctrlKey || e.metaKey) && onDisrupt ? onDisrupt(section.id, i) : onWound?.(section.id, i))}
         />
       </Popover>}
     </>
